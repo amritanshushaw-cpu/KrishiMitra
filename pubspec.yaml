@@ -1,0 +1,39 @@
+name: smartfarm_app
+description: "Edge-Native 100% Offline Smart Agriculture Compute Hub (Phone-as-the-Brain)"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_blue_plus: ^1.34.5
+  http: ^1.2.1
+  tflite_flutter: ^0.12.1
+  image: ^4.2.0
+  flutter_tts: ^4.0.2
+  provider: ^6.1.2
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10+1
+  path_provider: ^2.1.3
+  intl: ^0.20.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/data/labels.txt
+    - assets/data/advisory_db.json
+    - assets/demo/tomato_late_blight.jpg
+    - assets/demo/potato_healthy.jpg
+    - assets/demo/rice_leaf_blast.jpg
+    - assets/models/

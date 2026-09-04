@@ -1,0 +1,417 @@
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../core/theme/app_theme.dart';
+import '../../models/inference_result.dart';
+import '../../state/farm_provider.dart';
+
+class LeafInspectionViewfinder extends StatefulWidget {
+  final Uint8List? imageBytes;
+  final bool isCapturing;
+  final bool isInferenceRunning;
+  final InferenceResult? inferenceResult;
+  final VoidCallback onCapture;
+  final VoidCallback? onOpenDemoModal;
+
+  const LeafInspectionViewfinder({
+    super.key,
+    required this.imageBytes,
+    required this.isCapturing,
+    required this.isInferenceRunning,
+    required this.inferenceResult,
+    required this.onCapture,
+    this.onOpenDemoModal,
+  });
+
+  @override
+  State<LeafInspectionViewfinder> createState() => _LeafInspectionViewfinderState();
+}
+
+class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _scanController;
+  int _selectedSectionIndex = 0;
+
+  final List<Map<String, String>> _plantSections = [
+    {'name': 'Leaf', 'samples': 'Active Scan'},
+    {'name': 'Stem', 'samples': 'Normal'},
+    {'name': 'Root', 'samples': 'Moist'},
+    {'name': 'Twigs', 'samples': 'Optimal'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _scanController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _scanController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<FarmProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isScanning = widget.isCapturing || widget.isInferenceRunning;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
+          width: 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : const Color(0xFF1B4D3E).withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Section Tabs: Leaf / Stem / Root / Twigs (inspired by AgricAI)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            color: isDark ? const Color(0xFF0F1A13) : const Color(0xFFF7FAF7),
+            child: Row(
+              children: [
+                for (int i = 0; i < _plantSections.length; i++) ...[
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => setState(() => _selectedSectionIndex = i),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        decoration: BoxDecoration(
+                          color: _selectedSectionIndex == i
+                              ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              _plantSections[i]['name']!,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: _selectedSectionIndex == i
+                                    ? (isDark ? Colors.black : Colors.white)
+                                    : (isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary),
+                              ),
+                            ),
+                            Text(
+                              _plantSections[i]['samples']!,
+                              style: GoogleFonts.jetBrainsMono(
+                                fontSize: 8.5,
+                                color: _selectedSectionIndex == i
+                                    ? (isDark ? Colors.black.withValues(alpha: 0.7) : Colors.white.withValues(alpha: 0.8))
+                                    : (isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  if (i < _plantSections.length - 1) const SizedBox(width: 6),
+                ],
+              ],
+            ),
+          ),
+
+          // Viewfinder Camera Stream & Pinpoint Nodes
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 11,
+                child: widget.imageBytes != null
+                    ? Image.memory(
+                        widget.imageBytes!,
+                        fit: BoxFit.cover,
+                      )
+                    : Container(
+                        color: isDark ? const Color(0xFF0A120D) : const Color(0xFFEFF5F0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.camera_enhance_outlined,
+                              size: 40,
+                              color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'ESP32 CAM SOFTAP // 192.168.4.1/capture',
+                              style: GoogleFonts.jetBrainsMono(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Tap below to capture live foliage or inject demo asset',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11,
+                                color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+              ),
+
+              // Corner Reticle Framing
+              Positioned.fill(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildCorner(true, true),
+                          _buildCorner(true, false),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildCorner(false, true),
+                          _buildCorner(false, false),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Animated Scanning Line (when capturing or inferring)
+              if (isScanning)
+                AnimatedBuilder(
+                  animation: _scanController,
+                  builder: (context, child) {
+                    return Positioned(
+                      top: 15 + _scanController.value * 180,
+                      left: 20,
+                      right: 20,
+                      child: Container(
+                        height: 2,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Colors.transparent,
+                              AppTheme.emeraldLight.withValues(alpha: 0.9),
+                              Colors.transparent,
+                            ],
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.emeraldLight.withValues(alpha: 0.6),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+              // Floating Pinpoint Nodes (inspired by AgricAI)
+              if (widget.imageBytes != null && !isScanning) ...[
+                Positioned(
+                  top: 20,
+                  right: 18,
+                  child: _buildPinpointNode(
+                    icon: Icons.biotech_outlined,
+                    title: 'Leaf Tissue',
+                    value: '0.783 Chl',
+                    isDark: isDark,
+                  ),
+                ),
+                Positioned(
+                  bottom: 24,
+                  left: 18,
+                  child: _buildPinpointNode(
+                    icon: Icons.hub_outlined,
+                    title: 'Pipeline Model',
+                    value: '224x224 RGB',
+                    isDark: isDark,
+                  ),
+                ),
+                if (widget.inferenceResult != null)
+                  Positioned(
+                    bottom: 24,
+                    right: 18,
+                    child: _buildPinpointNode(
+                      icon: Icons.speed_outlined,
+                      title: 'Edge Latency',
+                      value: '${widget.inferenceResult!.inferenceLatency.inMilliseconds}ms',
+                      isDark: isDark,
+                      accentColor: AppTheme.emeraldLight,
+                    ),
+                  ),
+              ],
+
+              // Loading / Processing Overlay
+              if (isScanning)
+                Container(
+                  color: Colors.black.withValues(alpha: 0.6),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(
+                          width: 32,
+                          height: 32,
+                          child: CircularProgressIndicator(
+                            color: AppTheme.emeraldLight,
+                            strokeWidth: 2.5,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          widget.isCapturing
+                              ? 'DOWNLOADING ESP32 SOFTAP STREAM...'
+                              : 'AI MODEL INFERENCE IN PROGRESS...',
+                          style: GoogleFonts.jetBrainsMono(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+
+          // Action Toolbar
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: isScanning ? null : widget.onCapture,
+                    icon: const Icon(Icons.camera_alt_outlined, size: 16),
+                    label: Text(provider.strings.captureLeaf),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ),
+                if (widget.onOpenDemoModal != null) ...[
+                  const SizedBox(width: 8),
+                  OutlinedButton.icon(
+                    onPressed: widget.onOpenDemoModal,
+                    icon: const Icon(Icons.shield_outlined, size: 16),
+                    label: Text(provider.strings.demoAsset),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPinpointNode({
+    required IconData icon,
+    required String title,
+    required String value,
+    required bool isDark,
+    Color? accentColor,
+  }) {
+    final color = accentColor ?? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.88),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: color.withValues(alpha: 0.5),
+          width: 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 6,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 5),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                title,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 8.5,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                ),
+              ),
+              Text(
+                value,
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCorner(bool isTop, bool isLeft) {
+    return Container(
+      width: 14,
+      height: 14,
+      decoration: BoxDecoration(
+        border: Border(
+          top: isTop ? const BorderSide(color: AppTheme.emeraldLight, width: 2) : BorderSide.none,
+          bottom: !isTop ? const BorderSide(color: AppTheme.emeraldLight, width: 2) : BorderSide.none,
+          left: isLeft ? const BorderSide(color: AppTheme.emeraldLight, width: 2) : BorderSide.none,
+          right: !isLeft ? const BorderSide(color: AppTheme.emeraldLight, width: 2) : BorderSide.none,
+        ),
+      ),
+    );
+  }
+}
