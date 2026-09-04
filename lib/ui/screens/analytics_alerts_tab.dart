@@ -49,7 +49,7 @@ class AnalyticsAlertsTab extends StatelessWidget {
                 const SizedBox(height: 16),
               ],
 
-              // Active Farm Alerts (Screen 9 in README)
+              // Active Farm Alerts
               Text(
                 'ACTIVE FARM ALERTS (3 NOTIFICATIONS)',
                 style: GoogleFonts.jetBrainsMono(
@@ -124,7 +124,7 @@ class AnalyticsAlertsTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Soil & Temperature Curves (Screen 10 in README & Image 5)
+              // Soil & Temperature Curves
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(

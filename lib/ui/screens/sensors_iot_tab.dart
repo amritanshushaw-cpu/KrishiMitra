@@ -67,7 +67,7 @@ class SensorsIotTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // ESP32 Hardware Status Card (Screen 13 in README)
+              // ESP32 Hardware Status Card
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(

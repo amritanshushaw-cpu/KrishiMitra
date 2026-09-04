@@ -36,7 +36,7 @@ class _DataMeetsGrowthCockpitScreenState
     final isDark = theme.brightness == Brightness.dark;
     final farm = Provider.of<FarmProvider>(context);
 
-    // Warm organic cream canvas matching reference image (#F7F8F4)
+    // Warm organic cream canvas background
     final canvasBg = isDark ? const Color(0xFF0D120E) : const Color(0xFFF7F8F4);
     final textDark = isDark ? Colors.white : const Color(0xFF141E16);
     final textMuted = isDark ? const Color(0xFF8FA395) : const Color(0xFF7A8B7E);

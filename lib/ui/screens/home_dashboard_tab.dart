@@ -89,7 +89,7 @@ class HomeDashboardTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Farm Health Score Card (inspired by AgriConnect & AgricAI)
+              // Farm Health Score Card
               FarmHealthRingCard(
                 healthScore: provider.farmHealthScore,
                 statusText: provider.farmHealthScore >= 80 ? 'Healthy Farm' : 'Attention Required',
@@ -101,14 +101,14 @@ class HomeDashboardTab extends StatelessWidget {
               ),
               const SizedBox(height: 14),
 
-              // Ambient Weather & Environment Bar (inspired by Emura)
+              // Ambient Weather & Environment Bar
               WeatherStatusBar(
                 sensorData: provider.sensorData,
                 activeZone: provider.activeFieldZone,
               ),
               const SizedBox(height: 16),
 
-              // Quick Actions Grid (Screen 3 in README)
+              // Quick Actions Grid
               Text(
                 'QUICK ACTIONS',
                 style: GoogleFonts.jetBrainsMono(
@@ -164,7 +164,7 @@ class HomeDashboardTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Today's Action Plan (Screen 8 in README)
+              // Today's Action Plan
               _buildActionPlanCard(context, provider),
               const SizedBox(height: 14),
 

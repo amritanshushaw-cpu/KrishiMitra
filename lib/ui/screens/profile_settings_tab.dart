@@ -43,7 +43,7 @@ class ProfileSettingsTab extends StatelessWidget {
               ),
               const SizedBox(height: 14),
 
-              // Farmer Profile Card (Screen 15 in README)
+              // Farmer Profile Card
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -106,7 +106,7 @@ class ProfileSettingsTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Vernacular Audio Language Selector (Screen 16 in README)
+              // Vernacular Audio Language Selector
               Text(
                 provider.strings.languageSettings,
                 style: GoogleFonts.jetBrainsMono(
@@ -232,7 +232,7 @@ class ProfileSettingsTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Pitch Safety Net Hardware Bypass
+              // Demonstration & Hardware Bypass Utility
               Text(
                 'DEMONSTRATION & PITCH UTILITY',
                 style: GoogleFonts.jetBrainsMono(

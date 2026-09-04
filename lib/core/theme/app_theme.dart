@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// KrishiMitra AI / AgriSense Pro Design System
-/// Inspired by AgriConnect, AgricAI, and modern SaaS agricultural cockpits.
+/// Mobile and dashboard theme tokens for field operations.
 class AppTheme {
-  // Organic Light Palette (AgriConnect & AgricAI reference)
+  // Organic Light Palette
   static const Color forestGreen = Color(0xFF1B4D3E);     // Deep Forest Green (Primary Brand)
   static const Color forestGreenDark = Color(0xFF13382D); // Deep Shadow Forest
   static const Color sproutGreen = Color(0xFF40916C);     // Sprout / Leaf Green

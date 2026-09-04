@@ -46,3 +46,9 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Documentation and agent files
+*.md
+.agents/
+skills-lock.json
+

@@ -83,7 +83,7 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Section Tabs: Leaf / Stem / Root / Twigs (inspired by AgricAI)
+          // Plant Anatomical Section Tabs: Leaf / Stem / Root / Twigs
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             color: isDark ? const Color(0xFF0F1A13) : const Color(0xFFF7FAF7),
@@ -234,7 +234,7 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
                   },
                 ),
 
-              // Floating Pinpoint Nodes (inspired by AgricAI)
+              // Inspection Pinpoint Overlay Nodes
               if (widget.imageBytes != null && !isScanning) ...[
                 Positioned(
                   top: 20,

@@ -76,7 +76,7 @@ class ScanVisionTab extends StatelessWidget {
               ),
               const SizedBox(height: 14),
 
-              // Viewfinder with Pinpoint Nodes (inspired by AgricAI)
+              // Leaf Inspection Viewfinder
               LeafInspectionViewfinder(
                 imageBytes: provider.currentLeafBytes,
                 isCapturing: provider.isCapturing,
