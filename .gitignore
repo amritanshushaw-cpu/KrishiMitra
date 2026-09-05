@@ -48,7 +48,7 @@ app.*.map.json
 .widget_preview/
 
 # Documentation and agent files
-*.md
+#*.md
 .agents/
 skills-lock.json
 
