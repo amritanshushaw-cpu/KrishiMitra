@@ -10,13 +10,13 @@ class WifiCameraService {
   /// Fetches an 800x600 JPEG from ESP32-CAM via SoftAP (http://192.168.4.1/capture)
   Future<Uint8List> captureFromEsp32() async {
     final response = await http
-        .get(Uri.parse('\/capture'))
+        .get(Uri.parse('$baseUrl/capture'))
         .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
       return response.bodyBytes;
     } else {
-      throw Exception('ESP32-CAM returned status \');
+      throw Exception('ESP32-CAM returned status ${response.statusCode}');
     }
   }
 
@@ -24,7 +24,7 @@ class WifiCameraService {
   Future<Map<String, dynamic>?> fetchSensorData() async {
     try {
       final response = await http
-          .get(Uri.parse('\/sensors'))
+          .get(Uri.parse('$baseUrl/sensors'))
           .timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
