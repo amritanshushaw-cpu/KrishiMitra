@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+﻿import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import '../core/constants/app_constants.dart';
 import '../core/localization/app_strings.dart';
@@ -10,6 +10,7 @@ import '../services/sensor_fusion_service.dart';
 import '../services/tflite_service.dart';
 import '../services/voice_tts_service.dart';
 import '../services/wifi_camera_service.dart';
+import '../services/secure_db_service.dart';
 
 class FarmProvider extends ChangeNotifier {
   final BleService _bleService = BleService();
@@ -76,9 +77,9 @@ class FarmProvider extends ChangeNotifier {
         await playVoiceAdvisory();
       } else {
         final testMsg = _ttsLanguage == TtsLanguage.bengali
-            ? 'টেক্সট টু ভয়েস সক্রিয় আছে। ফসল স্ক্যান করলে স্বয়ংক্রিয় প্রেসক্রিপশন শোনানো হবে।'
+            ? 'à¦Ÿà§‡à¦•à§à¦¸à¦Ÿ à¦Ÿà§ à¦­à¦¯à¦¼à§‡à¦¸ à¦¸à¦•à§à¦°à¦¿à¦¯à¦¼ à¦†à¦›à§‡à¥¤ à¦«à¦¸à¦² à¦¸à§à¦•à§à¦¯à¦¾à¦¨ à¦•à¦°à¦²à§‡ à¦¸à§à¦¬à¦¯à¦¼à¦‚à¦•à§à¦°à¦¿à¦¯à¦¼ à¦ªà§à¦°à§‡à¦¸à¦•à§à¦°à¦¿à¦ªà¦¶à¦¨ à¦¶à§‹à¦¨à¦¾à¦¨à§‹ à¦¹à¦¬à§‡à¥¤'
             : (_ttsLanguage == TtsLanguage.hindi
-                ? 'टेक्स्ट टू वॉयस सक्रिय है। फसल स्कैन करने पर स्वचालित सलाह सुनाई जाएगी।'
+                ? 'à¤Ÿà¥‡à¤•à¥à¤¸à¥à¤Ÿ à¤Ÿà¥‚ à¤µà¥‰à¤¯à¤¸ à¤¸à¤•à¥à¤°à¤¿à¤¯ à¤¹à¥ˆà¥¤ à¤«à¤¸à¤² à¤¸à¥à¤•à¥ˆà¤¨ à¤•à¤°à¤¨à¥‡ à¤ªà¤° à¤¸à¥à¤µà¤šà¤¾à¤²à¤¿à¤¤ à¤¸à¤²à¤¾à¤¹ à¤¸à¥à¤¨à¤¾à¤ˆ à¤œà¤¾à¤à¤—à¥€à¥¤'
                 : 'Text to voice is active. Diagnosis and ICAR prescription will be read aloud automatically.');
         await _ttsService.speak(testMsg, overrideLang: _ttsLanguage);
         notifyListeners();
@@ -163,7 +164,7 @@ class FarmProvider extends ChangeNotifier {
   Future<void> triggerSafetyNetDemo({String? assetPath}) async {
     _isSafetyNetMode = true;
     _isInferenceRunning = true;
-    _statusMessage = '🛡️ Safety Net Active: Loading Local Pitch Asset...';
+    _statusMessage = 'ðŸ›¡ï¸ Safety Net Active: Loading Local Pitch Asset...';
     notifyListeners();
 
     try {
@@ -260,3 +261,4 @@ class FarmProvider extends ChangeNotifier {
     super.dispose();
   }
 }
+
