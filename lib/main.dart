@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/app_theme.dart';
 import 'services/voice_tts_service.dart';
 import 'state/farm_provider.dart';
 import 'ui/screens/main_shell_screen.dart';
+import 'ui/screens/auth_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,10 +56,35 @@ class SmartFarmEdgeApp extends StatelessWidget {
               Locale('bn', 'IN'),
               Locale('hi', 'IN'),
             ],
-            home: const MainShellScreen(),
+            home: const AuthGuard(),
           );
         },
       ),
+    );
+  }
+}
+
+class AuthGuard extends StatelessWidget {
+  const AuthGuard({Key? key}) : super(key: key);
+
+  Future<bool> _checkAuth() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: _checkAuth(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        if (snapshot.data == true) {
+          return const MainShellScreen();
+        }
+        return const AuthScreen();
+      },
     );
   }
 }
