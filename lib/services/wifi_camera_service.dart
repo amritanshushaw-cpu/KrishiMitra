@@ -7,10 +7,11 @@ import '../core/constants/app_constants.dart';
 class WifiCameraService {
   static const String baseUrl = "http://192.168.4.1";
 
-  /// Fetches an 800x600 JPEG from ESP32-CAM via SoftAP (http://192.168.4.1/capture)
+  /// Fetches an 800x600 JPEG from ESP32-CAM via SoftAP
   Future<Uint8List> captureFromEsp32() async {
+    // FIXED: Changed /capture to /snapshot to match C++ Hardware
     final response = await http
-        .get(Uri.parse('$baseUrl/capture'))
+        .get(Uri.parse('$baseUrl/snapshot'))
         .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
@@ -23,8 +24,9 @@ class WifiCameraService {
   /// Fetches the JSON sensor data payload from the hardware
   Future<Map<String, dynamic>?> fetchSensorData() async {
     try {
+      // FIXED: Changed /sensors to /api to match C++ Hardware
       final response = await http
-          .get(Uri.parse('$baseUrl/sensors'))
+          .get(Uri.parse('$baseUrl/api'))
           .timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
