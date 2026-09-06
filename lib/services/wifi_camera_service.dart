@@ -9,7 +9,6 @@ class WifiCameraService {
 
   /// Fetches an 800x600 JPEG from ESP32-CAM via SoftAP
   Future<Uint8List> captureFromEsp32() async {
-    // FIXED: Changed /capture to /snapshot to match C++ Hardware
     final response = await http
         .get(Uri.parse('$baseUrl/snapshot'))
         .timeout(const Duration(seconds: 10));
@@ -24,7 +23,6 @@ class WifiCameraService {
   /// Fetches the JSON sensor data payload from the hardware
   Future<Map<String, dynamic>?> fetchSensorData() async {
     try {
-      // FIXED: Changed /sensors to /api to match C++ Hardware
       final response = await http
           .get(Uri.parse('$baseUrl/api'))
           .timeout(const Duration(seconds: 5));
@@ -33,18 +31,17 @@ class WifiCameraService {
         return jsonDecode(response.body); 
       }
     } catch (e) {
-      // Fallback for demo mode if not connected to hardware
+      // Ignore fallback
     }
     return null;
   }
-
-
+  
   /// Controls the water pump via HTTP
   Future<bool> setPumpState(bool state) async {
     try {
       final String endpoint = state ? '/pump/on' : '/pump/off';
       final response = await http
-          .get(Uri.parse('\'))
+          .get(Uri.parse('$baseUrl$endpoint'))
           .timeout(const Duration(seconds: 3));
       return response.statusCode == 200;
     } catch (e) {
