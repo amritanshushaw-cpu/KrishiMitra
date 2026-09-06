@@ -11,6 +11,7 @@ import '../services/sensor_fusion_service.dart';
 import '../services/tflite_service.dart';
 import '../services/voice_tts_service.dart';
 import '../services/wifi_camera_service.dart';
+import 'dart:async';
 import '../services/secure_db_service.dart';
 import '../services/location_service.dart';
 
@@ -20,6 +21,7 @@ class FarmProvider extends ChangeNotifier {
   final TfliteService _tfliteService = TfliteService();
   final SensorFusionService _fusionService = SensorFusionService();
   final VoiceTtsService _ttsService = VoiceTtsService();
+  Timer? _wifiPollingTimer;
 
   // State Variables
   SensorData _currentSensorData = SensorData.defaultInitial();
@@ -141,15 +143,32 @@ class FarmProvider extends ChangeNotifier {
       notifyListeners();
     });
 
-    _bleService.sensorStream.listen((sensorData) {
-      _currentSensorData = sensorData;
-      if (_lastInference != null) {
-        _fusedAdvisory = _fusionService.fuse(
-          inference: _lastInference!,
-          sensor: _currentSensorData,
-        );
-      }
-      notifyListeners();
+    // Start Polling ESP32 Wi-Fi for Sensors instead of BLE
+    _wifiPollingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+      try {
+        final Map<String, dynamic>? data = await _cameraService.fetchSensorData();
+        if (data != null) {
+          final double t = (data['temperature'] as num?)?.toDouble() ?? 0.0;
+          final double h = (data['humidity'] as num?)?.toDouble() ?? 0.0;
+          final int s = (data['soil'] as num?)?.toInt() ?? 0;
+          final bool r = data['rain'] == true;
+          
+          _currentSensorData = SensorData(
+            temperature: t,
+            humidity: h,
+            soilMoisture: s,
+            rain: r ? 1 : 0,
+          );
+          
+          if (_lastInference != null) {
+            _fusedAdvisory = _fusionService.fuse(
+              inference: _lastInference!,
+              sensor: _currentSensorData,
+            );
+          }
+          notifyListeners();
+        }
+      } catch (e) { }
     });
 
     await _bleService.connect();
@@ -162,7 +181,7 @@ class FarmProvider extends ChangeNotifier {
 
   Future<void> togglePump() async {
     final bool nextState = !_isPumpLocked;
-    final bool success = await _bleService.setPumpState(nextState);
+    final bool success = await _cameraService.setPumpState(nextState);
     if (success) {
       _isPumpLocked = nextState;
       notifyListeners();
@@ -225,7 +244,7 @@ class FarmProvider extends ChangeNotifier {
     );
 
     if (_fusedAdvisory!.recommendedPumpAction == 'LOCK' && !_isPumpLocked) {
-      await _bleService.setPumpState(true);
+      await _cameraService.setPumpState(true);
       _isPumpLocked = true;
     }
 
@@ -360,6 +379,7 @@ class FarmProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _wifiPollingTimer?.cancel();
     _bleService.dispose();
     _tfliteService.dispose();
     _ttsService.stop();

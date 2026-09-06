@@ -38,6 +38,20 @@ class WifiCameraService {
     return null;
   }
 
+
+  /// Controls the water pump via HTTP
+  Future<bool> setPumpState(bool state) async {
+    try {
+      final String endpoint = state ? '/pump/on' : '/pump/off';
+      final response = await http
+          .get(Uri.parse('\'))
+          .timeout(const Duration(seconds: 3));
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
   /// Safety Net Bypassing: Loads a high-res sample leaf image from bundled local assets
   Future<Uint8List> loadDemoAssetLeaf({String assetPath = AppConstants.demoLateBlightAsset}) async {
     final ByteData byteData = await rootBundle.load(assetPath);
