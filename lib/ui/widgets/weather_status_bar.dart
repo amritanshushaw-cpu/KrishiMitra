@@ -87,6 +87,14 @@ class WeatherStatusBar extends StatelessWidget {
               _buildDivider(context),
               _buildWeatherMetric(
                 context,
+                icon: Icons.air,
+                label: 'HUMIDITY',
+                value: '${sensorData.humidity.toStringAsFixed(1)}%',
+                sublabel: 'Air Moisture',
+              ),
+              _buildDivider(context),
+              _buildWeatherMetric(
+                context,
                 icon: Icons.water_drop_outlined,
                 label: 'SOIL MOIST',
                 value: '${sensorData.soilMoisture}%',
@@ -98,7 +106,7 @@ class WeatherStatusBar extends StatelessWidget {
               _buildWeatherMetric(
                 context,
                 icon: sensorData.isRaining ? Icons.thunderstorm_outlined : Icons.air_outlined,
-                label: 'PRECIPITATION',
+                label: 'RAIN',
                 value: sensorData.isRaining ? 'RAINING' : '0.0 mm',
                 sublabel: sensorData.isRaining ? 'Spray Alert' : 'Clear Sky',
                 highlightColor: sensorData.isRaining ? AppTheme.skyBlue : null,
