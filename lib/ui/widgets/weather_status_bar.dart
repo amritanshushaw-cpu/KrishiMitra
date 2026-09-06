@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/sensor_data.dart';
+import 'app_glass_container.dart';
 
 class WeatherStatusBar extends StatelessWidget {
   final SensorData sensorData;
@@ -17,16 +18,9 @@ class WeatherStatusBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
+    return AppGlassContainer(
+      radius: 16,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-          width: 1.0,
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

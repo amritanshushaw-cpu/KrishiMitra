@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:fresnel/fresnel.dart';
+import '../../core/theme/app_theme.dart';
 import '../../state/farm_provider.dart';
 import '../widgets/soil_intelligence_wave_chart.dart';
 import '../widgets/climate_iq_arc_gauge.dart';
@@ -23,9 +25,8 @@ class _DataMeetsGrowthCockpitScreenState
 
   final List<String> _navPills = [
     'Dashboard',
+    'Field Pulse',
     'Research Hub',
-    'AI Insights',
-    'Field Intelligence',
     'Sustainability',
     'Reports',
   ];
@@ -36,53 +37,56 @@ class _DataMeetsGrowthCockpitScreenState
     final isDark = theme.brightness == Brightness.dark;
     final farm = Provider.of<FarmProvider>(context);
 
-    // Warm organic cream canvas background
-    final canvasBg = isDark ? const Color(0xFF0D120E) : const Color(0xFFF7F8F4);
-    final textDark = isDark ? Colors.white : const Color(0xFF141E16);
-    final textMuted = isDark ? const Color(0xFF8FA395) : const Color(0xFF7A8B7E);
+    final textDark = isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary;
+    final textMuted = isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary;
 
-    return Scaffold(
-      backgroundColor: canvasBg,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isDesktop = constraints.maxWidth >= 1060;
-            final isTablet = constraints.maxWidth >= 650 && constraints.maxWidth < 1060;
+    return Container(
+      decoration: AppTheme.backgroundDecoration(isDark),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isDesktop = constraints.maxWidth >= 1060;
+              final isTablet = constraints.maxWidth >= 650 && constraints.maxWidth < 1060;
 
-            return CustomScrollView(
-              slivers: [
-                // Top Navigation Bar
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                    child: _buildTopNav(isDark, farm, isDesktop || isTablet),
+              return CustomScrollView(
+                slivers: [
+                  // Top Navigation Bar
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      child: _buildTopNav(isDark, farm, isDesktop || isTablet),
+                    ),
                   ),
-                ),
 
-                // Cockpit Title & Action Bar
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                    child: _buildHeader(isDark, textDark, textMuted, isDesktop),
+                  // Cockpit Title & Action Bar
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                      child: _buildHeader(isDark, textDark, textMuted, isDesktop, farm),
+                    ),
                   ),
-                ),
 
-                // Responsive Bento Grid of Animated Visualizations
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  sliver: SliverToBoxAdapter(
-                    child: isDesktop
-                        ? _buildDesktopGrid()
-                        : (isTablet ? _buildTabletGrid() : _buildMobileStack()),
+                  // Responsive Bento Grid of Animated Visualizations wrapped in Fresnel GlassContainer
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    sliver: SliverToBoxAdapter(
+                      child: GlassContainer(
+                        child: isDesktop
+                            ? _buildDesktopGrid()
+                            : (isTablet ? _buildTabletGrid() : _buildMobileStack()),
+                      ),
+                    ),
                   ),
-                ),
 
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 36),
-                ),
-              ],
-            );
-          },
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 36),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -95,15 +99,19 @@ class _DataMeetsGrowthCockpitScreenState
         Container(
           width: 38,
           height: 38,
-          decoration: const BoxDecoration(
-            color: Color(0xFF19251B),
+          decoration: BoxDecoration(
+            color: isDark ? AppTheme.deepPine : AppTheme.mintDew,
             shape: BoxShape.circle,
+            border: Border.all(
+              color: AppTheme.softSage.withValues(alpha: 0.35),
+              width: 1.2,
+            ),
           ),
-          child: const Center(
+          child: Center(
             child: Icon(
               Icons.spa,
               size: 20,
-              color: Color(0xFF52B788),
+              color: isDark ? AppTheme.softSage : AppTheme.forestMoss,
             ),
           ),
         ),
@@ -121,11 +129,11 @@ class _DataMeetsGrowthCockpitScreenState
               ),
             ),
             style: TextButton.styleFrom(
-              foregroundColor: isDark ? const Color(0xFFA6DEAE) : const Color(0xFF1B4D3E),
+              foregroundColor: isDark ? AppTheme.softSage : AppTheme.forestMoss,
             ),
           ),
 
-        // Center Capsule Pill Bar
+        // Center Capsule Pill Bar with Apple Glassmorphism
         if (showCapsule)
           Expanded(
             child: Center(
@@ -133,10 +141,7 @@ class _DataMeetsGrowthCockpitScreenState
                 scrollDirection: Axis.horizontal,
                 child: Container(
                   padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF161E18) : const Color(0xFFECEFE8),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
+                  decoration: AppTheme.glassCardDecoration(isDark: isDark, radius: 30),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: _navPills.map((pill) {
@@ -153,7 +158,7 @@ class _DataMeetsGrowthCockpitScreenState
                           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? (isDark ? Colors.white : const Color(0xFF151E17))
+                                ? (isDark ? AppTheme.softSage : AppTheme.forestMoss)
                                 : Colors.transparent,
                             borderRadius: BorderRadius.circular(24),
                           ),
@@ -163,8 +168,8 @@ class _DataMeetsGrowthCockpitScreenState
                               fontSize: 12,
                               fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                               color: isSelected
-                                  ? (isDark ? const Color(0xFF151E17) : Colors.white)
-                                  : (isDark ? Colors.white70 : const Color(0xFF5A695E)),
+                                  ? (isDark ? AppTheme.midnightTeal : AppTheme.mintDew)
+                                  : (isDark ? AppTheme.softSage : AppTheme.slatePine),
                             ),
                           ),
                         ),
@@ -222,6 +227,7 @@ class _DataMeetsGrowthCockpitScreenState
     Color textDark,
     Color textMuted,
     bool isDesktop,
+    FarmProvider farm,
   ) {
     return Wrap(
       alignment: WrapAlignment.spaceBetween,
@@ -233,14 +239,47 @@ class _DataMeetsGrowthCockpitScreenState
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Data Drives Growth',
-              style: GoogleFonts.jetBrainsMono(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF52B788),
-                letterSpacing: 0.5,
-              ),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                Text(
+                  'Data Drives Growth',
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.softSage,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppTheme.softSage.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppTheme.softSage.withValues(alpha: 0.25),
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.location_on_outlined, size: 12, color: AppTheme.softSage),
+                      const SizedBox(width: 3),
+                      Text(
+                        farm.farmerLocation,
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.softSage,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 4),
             Text(
@@ -269,10 +308,16 @@ class _DataMeetsGrowthCockpitScreenState
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? const Color(0xFF1E2922) : const Color(0xFF17241A),
+                backgroundColor: isDark ? AppTheme.deepPine : AppTheme.forestMoss,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(
+                    color: AppTheme.softSage.withValues(alpha: isDark ? 0.35 : 0.45),
+                    width: 1.0,
+                  ),
+                ),
                 elevation: 0,
               ),
             ),
@@ -283,7 +328,8 @@ class _DataMeetsGrowthCockpitScreenState
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 side: BorderSide(
-                  color: isDark ? const Color(0xFF2E3D32) : const Color(0xFFD6DDD2),
+                  color: isDark ? AppTheme.darkBorderStrong : AppTheme.sageBorderHover,
+                  width: 1.2,
                 ),
               ),
               child: Text(

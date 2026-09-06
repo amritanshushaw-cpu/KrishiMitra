@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../services/voice_tts_service.dart';
 import '../../state/farm_provider.dart';
+import '../widgets/app_glass_container.dart';
 
 class DiagnosisDetailScreen extends StatelessWidget {
   const DiagnosisDetailScreen({super.key});
@@ -23,9 +25,15 @@ class DiagnosisDetailScreen extends StatelessWidget {
     final advisory = fused.advisory;
     final isRainOverride = fused.isSprayOverrideActive;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
+    return Container(
+      decoration: AppTheme.backgroundDecoration(isDark),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          title: Text(
           'PRESCRIPTION // AGRONOMIC REMEDIES',
           style: GoogleFonts.jetBrainsMono(
             fontSize: 12.5,
@@ -59,16 +67,9 @@ class DiagnosisDetailScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             children: [
               // Header Card
-              Container(
+              AppGlassContainer(
+                radius: 18,
                 padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-                    width: 1.0,
-                  ),
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -130,16 +131,10 @@ class DiagnosisDetailScreen extends StatelessWidget {
               const SizedBox(height: 12),
 
               // Vernacular Audio Script Card
-              Container(
+              AppGlassContainer(
+                radius: 16,
+                hasGoldGlow: true,
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.3),
-                    width: 1.0,
-                  ),
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -194,14 +189,23 @@ class DiagnosisDetailScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      '"${fused.ttsScriptBn}"',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
-                        height: 1.5,
-                      ),
+                    Builder(
+                      builder: (context) {
+                        final script = provider.ttsLanguage == TtsLanguage.bengali
+                            ? fused.ttsScriptBn
+                            : (provider.ttsLanguage == TtsLanguage.hindi
+                                ? fused.ttsScriptHi
+                                : fused.ttsScriptEn);
+                        return Text(
+                          '"$script"',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                            height: 1.5,
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -231,18 +235,9 @@ class DiagnosisDetailScreen extends StatelessWidget {
               const SizedBox(height: 12),
 
               // Chemical Control Card (with Rain Override notice)
-              Container(
+              AppGlassContainer(
+                radius: 16,
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isRainOverride
-                        ? AppTheme.amberWarning
-                        : AppTheme.alertRose.withValues(alpha: 0.4),
-                    width: 1.0,
-                  ),
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -317,8 +312,9 @@ class DiagnosisDetailScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildDetailCard(
     BuildContext context, {
@@ -330,16 +326,9 @@ class DiagnosisDetailScreen extends StatelessWidget {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
+    return AppGlassContainer(
+      radius: 16,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-          width: 1.0,
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

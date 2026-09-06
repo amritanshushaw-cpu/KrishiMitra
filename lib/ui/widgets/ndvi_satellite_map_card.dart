@@ -1,6 +1,8 @@
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_theme.dart';
 
 class NdviSatelliteMapCard extends StatefulWidget {
   const NdviSatelliteMapCard({super.key});
@@ -20,7 +22,7 @@ class _NdviSatelliteMapCardState extends State<NdviSatelliteMapCard>
     super.initState();
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 3),
+      duration: const Duration(milliseconds: 2200),
     )..repeat(reverse: true);
   }
 
@@ -34,40 +36,32 @@ class _NdviSatelliteMapCardState extends State<NdviSatelliteMapCard>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final borderColor = isDark ? const Color(0xFF263229) : const Color(0xFFE8EBE3);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141A16) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.35 : 0.04),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          // Terraced Field Contour Canvas with NDVI Thermal Stress Zone
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _pulseController,
-              builder: (context, child) {
-                return CustomPaint(
-                  painter: _TerracedNdviPainter(
-                    zoom: _zoomLevel,
-                    pulse: _pulseController.value,
-                    showThermal: _showThermalLayer,
-                    isDark: isDark,
-                  ),
-                );
-              },
-            ),
-          ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          decoration: AppTheme.glassCardDecoration(isDark: isDark, radius: 24),
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
+            children: [
+              // Terraced Field Contour Canvas with NDVI Thermal Stress Zone
+              Positioned.fill(
+                child: AnimatedBuilder(
+                  animation: _pulseController,
+                  builder: (context, child) {
+                    return CustomPaint(
+                      painter: _TerracedNdviPainter(
+                        zoom: _zoomLevel,
+                        pulse: _pulseController.value,
+                        showThermal: _showThermalLayer,
+                        isDark: isDark,
+                      ),
+                    );
+                  },
+                ),
+              ),
 
           // Map Control Floating Tools (Left Vertical)
           Positioned(
@@ -110,9 +104,9 @@ class _NdviSatelliteMapCardState extends State<NdviSatelliteMapCard>
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.55),
+                color: Colors.black.withValues(alpha: 0.55),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white.withOpacity(0.15)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -121,7 +115,7 @@ class _NdviSatelliteMapCardState extends State<NdviSatelliteMapCard>
                     width: 6,
                     height: 6,
                     decoration: const BoxDecoration(
-                      color: Color(0xFF52B788),
+                      color: AppTheme.softSage,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -144,67 +138,77 @@ class _NdviSatelliteMapCardState extends State<NdviSatelliteMapCard>
             left: 14,
             right: 14,
             bottom: 14,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-              decoration: BoxDecoration(
-                color: (isDark ? const Color(0xFF121915) : const Color(0xFF283A2E))
-                    .withOpacity(0.88),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: Colors.white.withOpacity(0.12)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    blurRadius: 16,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: (isDark ? AppTheme.deepPine : AppTheme.forestMoss).withValues(alpha: 0.85),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: (isDark ? AppTheme.softSage : Colors.white).withValues(alpha: 0.25),
+                      width: 1.0,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.25),
+                        blurRadius: 16,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        child: Text(
-                          'Golden Harvest',
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            letterSpacing: -0.2,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Golden Harvest',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                                letterSpacing: -0.2,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Zone 3B • Irrigated',
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 9.5,
+                              color: AppTheme.softSage,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Zone 3B • Irrigated',
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 9.5,
-                          color: const Color(0xFFA6DEAE),
-                        ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 4,
+                        children: [
+                          _metricInfo('Soil Elevation', '320 m'),
+                          _metricInfo('Nitrogen (N)', '30 - 50 kg/ha'),
+                          _metricInfo('Phosphorus (P)', '15 - 25 kg/ha'),
+                          _metricInfo('Potassium (K)', '150 - 200 kg/ha'),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 12,
-                    runSpacing: 4,
-                    children: [
-                      _metricInfo('Soil Elevation', '320 m'),
-                      _metricInfo('Nitrogen (N)', '30 - 50 kg/ha'),
-                      _metricInfo('Phosphorus (P)', '15 - 25 kg/ha'),
-                      _metricInfo('Potassium (K)', '150 - 200 kg/ha'),
-                    ],
-                  ),
-                ],
+                ),
               ),
             ),
           ),
         ],
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _toolButton({
@@ -220,15 +224,16 @@ class _NdviSatelliteMapCardState extends State<NdviSatelliteMapCard>
         height: 32,
         decoration: BoxDecoration(
           color: isActive
-              ? const Color(0xFF52B788)
-              : (isDark ? const Color(0xFF1E2721) : Colors.white).withOpacity(0.9),
+              ? AppTheme.softSage
+              : (isDark ? AppTheme.slatePine : AppTheme.mintDew).withValues(alpha: 0.85),
           shape: BoxShape.circle,
           border: Border.all(
-            color: isActive ? Colors.transparent : Colors.black.withOpacity(0.1),
+            color: isActive ? Colors.transparent : (isDark ? AppTheme.softSage.withValues(alpha: 0.3) : Colors.black.withValues(alpha: 0.1)),
+            width: 1.0,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withValues(alpha: 0.12),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -237,7 +242,7 @@ class _NdviSatelliteMapCardState extends State<NdviSatelliteMapCard>
         child: Icon(
           icon,
           size: 16,
-          color: isActive ? Colors.white : (isDark ? Colors.white70 : const Color(0xFF26332A)),
+          color: isActive ? AppTheme.midnightTeal : (isDark ? AppTheme.mintDew : AppTheme.forestMoss),
         ),
       ),
     );

@@ -1,5 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_theme.dart';
 
 class SoilIntelligenceWaveChart extends StatefulWidget {
   const SoilIntelligenceWaveChart({super.key});
@@ -24,11 +26,11 @@ class _SoilIntelligenceWaveChartState extends State<SoilIntelligenceWaveChart>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1600),
     );
     _animation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutCubic,
+      curve: Curves.easeInOutCubic,
     );
     _controller.forward();
   }
@@ -43,41 +45,32 @@ class _SoilIntelligenceWaveChartState extends State<SoilIntelligenceWaveChart>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF161C18) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF263229) : const Color(0xFFE8EBE3);
-    final textMuted = isDark ? const Color(0xFF8FA395) : const Color(0xFF7A8B7E);
+    final textPrimary = isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary;
+    final textMuted = isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(22),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header Row
-          Row(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          decoration: AppTheme.glassCardDecoration(isDark: isDark, radius: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
                       'Soil Intelligence',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : const Color(0xFF19241B),
+                        color: textPrimary,
                         letterSpacing: -0.4,
                       ),
                     ),
@@ -109,19 +102,23 @@ class _SoilIntelligenceWaveChartState extends State<SoilIntelligenceWaveChart>
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF202A22) : const Color(0xFFF2F4ED),
+                  color: isDark ? AppTheme.slatePine.withValues(alpha: 0.6) : AppTheme.mintDew.withValues(alpha: 0.8),
+                  border: Border.all(
+                    color: isDark ? AppTheme.softSage.withValues(alpha: 0.25) : AppTheme.softSage.withValues(alpha: 0.4),
+                    width: 1.0,
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.north_east,
                   size: 14,
-                  color: isDark ? Colors.white70 : const Color(0xFF425648),
+                  color: isDark ? AppTheme.mintDew : AppTheme.forestMoss,
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 18),
+          const SizedBox(height: 12),
 
           // Animated Wave Canvas
           Expanded(
@@ -170,22 +167,30 @@ class _SoilIntelligenceWaveChartState extends State<SoilIntelligenceWaveChart>
           ),
         ],
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _metricPill(String label, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E2720) : const Color(0xFFF3F6EE),
-        borderRadius: BorderRadius.circular(6),
+        color: isDark
+            ? AppTheme.slatePine.withValues(alpha: 0.60)
+            : AppTheme.mintDew.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: (isDark ? AppTheme.softSage : AppTheme.forestMoss).withValues(alpha: 0.25),
+          width: 1.0,
+        ),
       ),
       child: Text(
         label,
         style: GoogleFonts.jetBrainsMono(
           fontSize: 10,
           fontWeight: FontWeight.w600,
-          color: isDark ? const Color(0xFFA6DEAE) : const Color(0xFF386B42),
+          color: isDark ? AppTheme.darkTextPrimary : AppTheme.forestMoss,
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -19,14 +20,27 @@ class MainShellScreen extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (ctx) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+            child: Container(
+              decoration: BoxDecoration(
+                color: (isDark ? AppTheme.deepPine : AppTheme.mintDew).withValues(alpha: isDark ? 0.90 : 0.94),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                border: Border(
+                  top: BorderSide(
+                    color: isDark ? AppTheme.softSage.withValues(alpha: 0.3) : AppTheme.softSage.withValues(alpha: 0.45),
+                    width: 1.2,
+                  ),
+                ),
+              ),
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,10 +127,13 @@ class MainShellScreen extends StatelessWidget {
               ],
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      ),
+    ),
+  );
+},
+);
+}
 
   static Widget _buildDemoTile({
     required BuildContext context,
@@ -130,14 +147,18 @@ class MainShellScreen extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0F1A13) : const Color(0xFFF7FAF7),
-          borderRadius: BorderRadius.circular(10),
+          color: isDark
+              ? AppTheme.deepPine.withValues(alpha: 0.50)
+              : AppTheme.pureWhite.withValues(alpha: 0.70),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
+            color: isDark
+                ? AppTheme.softSage.withValues(alpha: 0.20)
+                : AppTheme.softSage.withValues(alpha: 0.35),
             width: 1.0,
           ),
         ),
@@ -217,10 +238,16 @@ class MainShellScreen extends StatelessWidget {
           );
         }
 
-        return Scaffold(
-          appBar: AppBar(
-            titleSpacing: 16,
-            title: Row(
+        return Container(
+          decoration: AppTheme.backgroundDecoration(isDark),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              titleSpacing: 16,
+              title: Row(
               children: [
                 Container(
                   width: 34,
@@ -312,26 +339,31 @@ class MainShellScreen extends StatelessWidget {
             index: provider.activeTabIndex,
             children: tabs,
           ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-          border: Border(
-            top: BorderSide(
-              color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-              width: 1.0,
+      bottomNavigationBar: ClipRRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: (isDark ? AppTheme.deepPine : AppTheme.mintDew).withValues(alpha: isDark ? 0.78 : 0.88),
+              border: Border(
+                top: BorderSide(
+                  color: isDark
+                      ? AppTheme.softSage.withValues(alpha: 0.20)
+                      : AppTheme.softSage.withValues(alpha: 0.32),
+                  width: 1.0,
+                ),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: isDark ? Colors.black.withValues(alpha: 0.35) : AppTheme.deepPine.withValues(alpha: 0.06),
+                  blurRadius: 16,
+                  offset: const Offset(0, -3),
+                ),
+              ],
             ),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -385,8 +417,11 @@ class MainShellScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  },
+    ),
+  ),
+),
+);
+},
 );
 }
 

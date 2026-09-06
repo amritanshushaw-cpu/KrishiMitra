@@ -1,5 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_theme.dart';
 
 class ResearchHubChatPanel extends StatefulWidget {
   const ResearchHubChatPanel({super.key});
@@ -14,36 +16,31 @@ class _ResearchHubChatPanelState extends State<ResearchHubChatPanel> {
 
   final List<_ChatMessage> _messages = [
     _ChatMessage(
-      text: "Yes, very clear. What about energy consumption for all this AI?",
-      isUser: true,
-    ),
-    _ChatMessage(
-      text: "Our edge models run at 45mW on the smartphone NPU with 0 cloud calls, saving 98% carbon overhead vs remote servers.",
+      text: "Field Status: Sensor node B-42 indicates low moisture near root zones. Recommend 12-minute drip burst.",
       isUser: false,
     ),
     _ChatMessage(
-      text: "How does this compare to organic farming methods?",
+      text: "Schedule irrigation now and log SOC delta.",
       isUser: true,
     ),
     _ChatMessage(
-      text: "What are the main challenges in deploying such systems?",
-      isUser: true,
-    ),
-    _ChatMessage(
-      text: "Can AI help with carbon sequestration?",
-      isUser: true,
+      text: "Executing autonomous irrigation via ESP32 BLE mesh. Hydro-telemetry will log at 12:00:00 UTC.",
+      isUser: false,
     ),
   ];
 
   void _sendMessage(String text) {
-    if (text.trim().isEmpty) return;
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
+
     setState(() {
-      _messages.add(_ChatMessage(text: text.trim(), isUser: true));
+      _messages.add(_ChatMessage(text: trimmed, isUser: true));
       _textController.clear();
     });
+    _scrollToBottom();
 
-    // Auto reply after short edge delay
-    Future.delayed(const Duration(milliseconds: 600), () {
+    // Simulated edge response
+    Future.delayed(const Duration(milliseconds: 900), () {
       if (!mounted) return;
       setState(() {
         _messages.add(
@@ -55,7 +52,6 @@ class _ResearchHubChatPanelState extends State<ResearchHubChatPanel> {
       });
       _scrollToBottom();
     });
-    _scrollToBottom();
   }
 
   void _scrollToBottom() {
@@ -81,164 +77,165 @@ class _ResearchHubChatPanelState extends State<ResearchHubChatPanel> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF161C18) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF263229) : const Color(0xFFE8EBE3);
-    final textMuted = isDark ? const Color(0xFF8FA395) : const Color(0xFF7A8B7E);
+    final textPrimary = isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary;
+    final textMuted = isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header with AI Icon
-          Row(
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          decoration: AppTheme.glassCardDecoration(isDark: isDark, radius: 24),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF52B788),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.auto_awesome,
-                  size: 16,
-                  color: Colors.white,
-                ),
+              // Header with AI Icon
+              Row(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: const BoxDecoration(
+                      color: AppTheme.forestMoss,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.auto_awesome,
+                      size: 16,
+                      color: AppTheme.mintDew,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Research AI Stream',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: textPrimary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppTheme.slatePine.withValues(alpha: 0.6) : AppTheme.mintDew.withValues(alpha: 0.8),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: (isDark ? AppTheme.softSage : AppTheme.forestMoss).withValues(alpha: 0.25),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Text(
+                      'Edge-LLM Active',
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? AppTheme.softSage : AppTheme.forestMoss,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
+
+              const SizedBox(height: 14),
+
+              // Message Stream
               Expanded(
-                child: Text(
-                  'Research AI Stream',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF19241B),
-                  ),
-                  overflow: TextOverflow.ellipsis,
+                child: ListView.separated(
+                  controller: _scrollController,
+                  itemCount: _messages.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    final msg = _messages[index];
+                    return Align(
+                      alignment: msg.isUser ? Alignment.centerRight : Alignment.centerLeft,
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 320),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: msg.isUser
+                              ? (isDark ? AppTheme.slatePine.withValues(alpha: 0.75) : AppTheme.mintDew.withValues(alpha: 0.85))
+                              : (isDark ? AppTheme.deepPine.withValues(alpha: 0.90) : Colors.white.withValues(alpha: 0.90)),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: msg.isUser
+                                ? AppTheme.softSage.withValues(alpha: 0.3)
+                                : AppTheme.softSage.withValues(alpha: 0.4),
+                          ),
+                        ),
+                        child: Text(
+                          msg.text,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            height: 1.4,
+                            color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-              const SizedBox(width: 6),
+
+              const SizedBox(height: 12),
+
+              // Input Bar
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF202A22) : const Color(0xFFEFF3EB),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  'Edge-LLM Active',
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF52B788),
+                  color: isDark ? AppTheme.slatePine.withValues(alpha: 0.5) : AppTheme.mintDew.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: (isDark ? AppTheme.softSage : Colors.white).withValues(alpha: 0.3),
+                    width: 1.0,
                   ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.add, size: 18, color: textMuted),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: _textController,
+                        onSubmitted: _sendMessage,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          color: textPrimary,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: "How can I improve my field's yield?",
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            fontSize: 11,
+                            color: textMuted.withValues(alpha: 0.8),
+                          ),
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () => _sendMessage(_textController.text),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                          color: AppTheme.forestMoss,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.arrow_upward, size: 14, color: AppTheme.mintDew),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-
-          const SizedBox(height: 14),
-
-          // Message Stream
-          Expanded(
-            child: ListView.separated(
-              controller: _scrollController,
-              itemCount: _messages.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 10),
-              itemBuilder: (context, index) {
-                final msg = _messages[index];
-                return Align(
-                  alignment: msg.isUser ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    constraints: const BoxConstraints(maxWidth: 320),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: msg.isUser
-                          ? (isDark ? const Color(0xFF1F2B23) : const Color(0xFFF3F5EF))
-                          : (isDark ? const Color(0xFF1B3828) : const Color(0xFFE8F5E9)),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: msg.isUser
-                            ? borderColor
-                            : const Color(0xFF52B788).withOpacity(0.3),
-                      ),
-                    ),
-                    child: Text(
-                      msg.text,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        height: 1.4,
-                        color: isDark ? Colors.white70 : const Color(0xFF28362A),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Input Bar
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1A221C) : const Color(0xFFF6F8F4),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: borderColor),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.add, size: 18, color: textMuted),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: _textController,
-                    onSubmitted: _sendMessage,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      color: isDark ? Colors.white : const Color(0xFF19241B),
-                    ),
-                    decoration: InputDecoration(
-                      hintText: "How can I improve my field's yield?",
-                      hintStyle: GoogleFonts.plusJakartaSans(
-                        fontSize: 11,
-                        color: textMuted.withOpacity(0.8),
-                      ),
-                      border: InputBorder.none,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () => _sendMessage(_textController.text),
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF52B788),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.arrow_upward, size: 14, color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -52,7 +52,7 @@ class CameraPreviewCard extends StatelessWidget {
                             const SizedBox(height: 8),
                             Text(
                               'ESP32_SOFTAP // 192.168.4.1:80/capture',
-                              style: AppTheme.monoLabel,
+                              style: AppTheme.monoLabel(context),
                             ),
                           ],
                         ),

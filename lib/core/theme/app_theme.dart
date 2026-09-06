@@ -2,42 +2,195 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// KrishiMitra AI / AgriSense Pro Design System
-/// Mobile and dashboard theme tokens for field operations.
+/// Calibrated Minimal Green Palette & Apple-Grade Glassmorphism Architecture
 class AppTheme {
-  // Organic Light Palette
-  static const Color forestGreen = Color(0xFF1B4D3E);     // Deep Forest Green (Primary Brand)
-  static const Color forestGreenDark = Color(0xFF13382D); // Deep Shadow Forest
-  static const Color sproutGreen = Color(0xFF40916C);     // Sprout / Leaf Green
-  static const Color emeraldLight = Color(0xFF52B788);    // Emerald Accent (#52B788)
-  static const Color mintSoft = Color(0xFFD8F3DC);        // 15% Mint tint
-  static const Color ivoryCanvas = Color(0xFFF6F8F5);     // Warm, non-glare organic canvas
-  static const Color pureWhite = Color(0xFFFFFFFF);       // Floating card surface
-  static const Color sageBorder = Color(0xFFE2E9E2);      // Subtle 1px sage border
-  static const Color sageBorderHover = Color(0xFFCBD5CB); // Stronger border
-  static const Color lightTextPrimary = Color(0xFF192820);// Rich deep green-black text
-  static const Color lightTextSecondary = Color(0xFF4D6154); // Muted body text
-  static const Color lightTextMuted = Color(0xFF7D9284);  // Caption / Monospace text
+  // ==========================================
+  // MINIMAL GREEN COLOR PALETTE (Exact Palette)
+  // ==========================================
+  static const Color midnightTeal = Color(0xFF051F20); // #051F20 - Deepest midnight forest / night canvas
+  static const Color deepPine = Color(0xFF0B2B26);     // #0B2B26 - Dark pine teal / glass card base
+  static const Color slatePine = Color(0xFF163832);    // #163832 - Slate pine / card elevation & hover
+  static const Color forestMoss = Color(0xFF235347);   // #235347 - Deep botanical moss / primary brand
+  static const Color softSage = Color(0xFF8EB69B);     // #8EB69B - Soft sage eucalyptus / secondary accent
+  static const Color mintDew = Color(0xFFDAF1DE);      // #DAF1DE - Luminous pale mint dew / light canvas & highlights
 
-  // Obsidian Dark Palette (High-contrast night field mode)
-  static const Color darkCanvas = Color(0xFF090D0A);      // Deep obsidian night canvas
-  static const Color darkCard = Color(0xFF111C15);        // Elevated card surface
-  static const Color darkCardHover = Color(0xFF18281F);   // Active card
-  static const Color darkBorder = Color(0xFF1E3326);      // Subtle dark border
-  static const Color darkBorderStrong = Color(0xFF2E4E3B);// Active dark hairline
-  static const Color darkTextPrimary = Color(0xFFF1F7F3); // High-contrast text
-  static const Color darkTextSecondary = Color(0xFF9FB5A7); // Muted body
-  static const Color darkTextMuted = Color(0xFF6B8273);   // Technical captions
-
-  // Calibrated Functional Accents
-  static const Color skyBlue = Color(0xFF1976D2);         // Hydration / Rain / AI Insights
-  static const Color skyBlueSoft = Color(0x1F1976D2);     // 12% Sky Tint
-  static const Color alertRose = Color(0xFFE53935);       // Pathogen / Disease Critical
-  static const Color alertRoseSoft = Color(0x1FE53935);   // 12% Rose Tint
-  static const Color amberWarning = Color(0xFFFB8C00);   // Pest / Nutrient Alert
+  // Mockup Metallic & Functional Accents
+  static const Color goldAccent = Color(0xFFD4AF37);   // #D4AF37 - Brass / warm gold metallic ring accent
+  static const Color goldAccentSoft = Color(0x28D4AF37);// 16% Gold tint
+  static const Color alertRose = Color(0xFFE53935);    // Pathogen / Disease critical
+  static const Color alertRoseSoft = Color(0x1FE53935);// 12% Rose Tint
+  static const Color amberWarning = Color(0xFFFB8C00); // Pest / Nutrient alert
   static const Color amberWarningSoft = Color(0x1FFB8C00);// 12% Amber Tint
-  static const Color goldScore = Color(0xFFF4A261);       // Health score accent
+  static const Color skyBlue = Color(0xFF1976D2);      // Rain / Hydration telemetry
+  static const Color skyBlueSoft = Color(0x1F1976D2);  // 12% Sky Tint
 
-  // Technical Monospace Typography (JetBrainsMono)
+  // Backwards-compatible design aliases mapped cleanly to the new palette
+  static const Color forestGreen = forestMoss;         // #235347
+  static const Color forestGreenDark = deepPine;       // #0B2B26
+  static const Color sproutGreen = softSage;           // #8EB69B
+  static const Color emeraldLight = softSage;          // #8EB69B
+  static const Color mintSoft = mintDew;               // #DAF1DE
+  static const Color ivoryCanvas = Color(0xFFF7FCF8);  // Crisp luminous canvas
+  static const Color pureWhite = Color(0xFFFFFFFF);
+  static const Color sageBorder = Color(0x388EB69B);   // 22% Soft Sage hairline
+  static const Color sageBorderHover = Color(0x808EB69B);
+
+  // Text Tokens
+  static const Color lightTextPrimary = midnightTeal;  // #051F20
+  static const Color lightTextSecondary = slatePine;   // #163832
+  static const Color lightTextMuted = Color(0xB2235347);// #235347 with 70% opacity
+
+  static const Color darkCanvas = midnightTeal;        // #051F20
+  static const Color darkCard = deepPine;              // #0B2B26
+  static const Color darkCardHover = slatePine;        // #163832
+  static const Color darkBorder = Color(0x388EB69B);   // 22% Soft Sage hairline
+  static const Color darkBorderStrong = Color(0x668EB69B);
+  static const Color cardBorderStrong = softSage;      // Reticle and strong borders
+  static const Color cardBorder = sageBorder;
+  static const Color accent = forestMoss;
+  static const Color accentSoft = Color(0x338EB69B);
+  static const Color textPrimary = lightTextPrimary;
+  static const Color textSecondary = lightTextSecondary;
+  static const Color textMuted = lightTextMuted;
+  static const Color alertRed = alertRose;
+  static const Color alertRedSoft = alertRoseSoft;
+  static const Color warningAmber = amberWarning;
+  static const Color warningAmberSoft = amberWarningSoft;
+  static const Color card = deepPine;
+  static const Color canvas = midnightTeal;
+  static const Color darkTextPrimary = mintDew;        // #DAF1DE
+  static const Color darkTextSecondary = softSage;     // #8EB69B
+  static const Color darkTextMuted = Color(0xB28EB69B);// 70% Soft Sage
+
+  // ==========================================
+  // AMBIENT BACKGROUND GRADIENTS
+  // ==========================================
+
+  /// Organic Light Mode Ambient Gradient
+  static const LinearGradient lightBackgroundGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    stops: [0.0, 0.40, 0.80, 1.0],
+    colors: [
+      Color(0xFFF8FCF9), // Luminous Dew
+      mintDew,           // #DAF1DE Palette Canvas
+      Color(0xFFE4F6E7), // Soft mint transition
+      Color(0xFFCCE7D2), // Soft sage depth
+    ],
+  );
+
+  /// Obsidian Night Mode Ambient Gradient (Deep Velvet with Slate Pine Glow)
+  static const LinearGradient darkBackgroundGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    stops: [0.0, 0.35, 0.70, 1.0],
+    colors: [
+      slatePine,         // #163832 Slate pine ambient lighting
+      deepPine,          // #0B2B26 Deep pine mid-tones
+      midnightTeal,      // #051F20 Deepest midnight forest base
+      Color(0xFF031415), // Deep velvet shadow
+    ],
+  );
+
+  static BoxDecoration backgroundDecoration(bool isDark) {
+    return BoxDecoration(
+      gradient: isDark ? darkBackgroundGradient : lightBackgroundGradient,
+    );
+  }
+
+  // ==========================================
+  // APPLE-GRADE GLASSMORPHISM DECORATIONS
+  // ==========================================
+
+  /// Generates the frosted glass card decoration matching Apple visionOS/iOS standards
+  static BoxDecoration glassCardDecoration({
+    required bool isDark,
+    double radius = 24.0,
+    bool isHovered = false,
+    bool hasGoldGlow = false,
+    Color? customBorderColor,
+  }) {
+    if (isDark) {
+      return BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            isHovered
+                ? slatePine.withValues(alpha: 0.80)
+                : deepPine.withValues(alpha: 0.65),
+            isHovered
+                ? deepPine.withValues(alpha: 0.75)
+                : midnightTeal.withValues(alpha: 0.75),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(radius),
+        border: Border.all(
+          color: customBorderColor ??
+              (hasGoldGlow
+                  ? goldAccent.withValues(alpha: isHovered ? 0.65 : 0.40)
+                  : softSage.withValues(alpha: isHovered ? 0.40 : 0.20)),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: midnightTeal.withValues(alpha: 0.50),
+            blurRadius: 28,
+            spreadRadius: 0,
+            offset: const Offset(0, 10),
+          ),
+          if (hasGoldGlow)
+            BoxShadow(
+              color: goldAccent.withValues(alpha: 0.18),
+              blurRadius: 22,
+              offset: const Offset(0, 4),
+            ),
+        ],
+      );
+    } else {
+      return BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            isHovered
+                ? Colors.white.withValues(alpha: 0.90)
+                : Colors.white.withValues(alpha: 0.78),
+            isHovered
+                ? mintDew.withValues(alpha: 0.70)
+                : mintDew.withValues(alpha: 0.55),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(radius),
+        border: Border.all(
+          color: customBorderColor ??
+              (hasGoldGlow
+                  ? goldAccent.withValues(alpha: isHovered ? 0.60 : 0.40)
+                  : Colors.white.withValues(alpha: isHovered ? 0.95 : 0.70)),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: forestMoss.withValues(alpha: 0.08),
+            blurRadius: 24,
+            spreadRadius: 0,
+            offset: const Offset(0, 8),
+          ),
+          if (hasGoldGlow)
+            BoxShadow(
+              color: goldAccent.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 4),
+            ),
+        ],
+      );
+    }
+  }
+
+  // ==========================================
+  // TYPOGRAPHY TOKENS
+  // ==========================================
+
   static TextStyle monoHeader(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return GoogleFonts.jetBrainsMono(
@@ -68,16 +221,19 @@ class AppTheme {
     );
   }
 
-  /// Organic Light Theme (Default SaaS experience)
+  // ==========================================
+  // THEME DATA DEFINITIONS
+  // ==========================================
+
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      scaffoldBackgroundColor: ivoryCanvas,
+      scaffoldBackgroundColor: mintDew,
       colorScheme: const ColorScheme.light(
-        primary: forestGreen,
-        secondary: emeraldLight,
-        surface: pureWhite,
+        primary: forestMoss,
+        secondary: softSage,
+        surface: mintDew,
         error: alertRose,
         onPrimary: Colors.white,
         onSurface: lightTextPrimary,
@@ -113,28 +269,28 @@ class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        color: pureWhite,
+        color: Colors.white.withValues(alpha: 0.80),
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: sageBorder, width: 1.0),
         ),
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: ivoryCanvas,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: forestGreen,
+          backgroundColor: forestMoss,
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w700,
@@ -144,11 +300,11 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: forestGreen,
-          side: const BorderSide(color: sageBorderHover, width: 1.0),
+          foregroundColor: forestMoss,
+          side: const BorderSide(color: sageBorderHover, width: 1.2),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w700,
@@ -159,18 +315,17 @@ class AppTheme {
     );
   }
 
-  /// Obsidian Dark Theme (High-contrast Night field mode)
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: darkCanvas,
+      scaffoldBackgroundColor: midnightTeal,
       colorScheme: const ColorScheme.dark(
-        primary: emeraldLight,
-        secondary: emeraldLight,
-        surface: darkCard,
+        primary: softSage,
+        secondary: mintDew,
+        surface: deepPine,
         error: alertRose,
-        onPrimary: Colors.black,
+        onPrimary: midnightTeal,
         onSurface: darkTextPrimary,
       ),
       textTheme: GoogleFonts.plusJakartaSansTextTheme(
@@ -204,28 +359,28 @@ class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        color: darkCard,
+        color: deepPine.withValues(alpha: 0.70),
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           side: const BorderSide(color: darkBorder, width: 1.0),
         ),
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: darkCanvas,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: emeraldLight,
-          foregroundColor: Colors.black,
+          backgroundColor: softSage,
+          foregroundColor: midnightTeal,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w700,
@@ -236,10 +391,10 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: darkTextPrimary,
-          side: const BorderSide(color: darkBorderStrong, width: 1.0),
+          side: const BorderSide(color: darkBorderStrong, width: 1.2),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(14),
           ),
           textStyle: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w700,

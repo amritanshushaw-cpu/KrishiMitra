@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:fresnel/fresnel.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/voice_tts_service.dart';
@@ -278,9 +279,10 @@ class DashboardScreen extends StatelessWidget {
           return Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1200),
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: isWideScreen
+              child: GlassContainer(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: isWideScreen
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -327,7 +329,7 @@ class DashboardScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildMatrixHeader(provider),
+                                _buildMatrixHeader(context, provider),
                                 const SizedBox(height: 12),
                                 _buildMatrixContent(provider),
                                 const SizedBox(height: 16),
@@ -371,7 +373,7 @@ class DashboardScreen extends StatelessWidget {
                             onCapture: () => provider.captureAndAnalyze(),
                           ),
                           const SizedBox(height: 16),
-                          _buildMatrixHeader(provider),
+                          _buildMatrixHeader(context, provider),
                           const SizedBox(height: 10),
                           _buildMatrixContent(provider),
                           const SizedBox(height: 16),
@@ -380,6 +382,7 @@ class DashboardScreen extends StatelessWidget {
                           ],
                         ],
                       ),
+                ),
               ),
             ),
           );
@@ -388,7 +391,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMatrixHeader(FarmProvider provider) {
+  Widget _buildMatrixHeader(BuildContext context, FarmProvider provider) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -398,7 +401,7 @@ class DashboardScreen extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               '5-PARAMETER DIAGNOSTIC MATRIX',
-              style: AppTheme.monoLabel,
+              style: AppTheme.monoLabel(context),
             ),
           ],
         ),
@@ -561,7 +564,7 @@ class DashboardScreen extends StatelessWidget {
           // Remedy Preview
           Text(
             'ORGANIC REMEDY (জৈব সমাধান):',
-            style: AppTheme.monoLabel,
+            style: AppTheme.monoLabel(context),
           ),
           const SizedBox(height: 3),
           Text(

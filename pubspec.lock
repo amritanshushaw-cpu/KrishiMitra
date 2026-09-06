@@ -205,6 +205,54 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fresnel:
+    dependency: "direct main"
+    description:
+      name: fresnel
+      sha256: bb8c72132d762c8539fc3ea6619c3c6e543cc1d3e303fe4a99a38b31818baaca
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
+  fresnel_android:
+    dependency: transitive
+    description:
+      name: fresnel_android
+      sha256: e9e579c3643a4c8ee93c37b7db16ae6470b36d04a0ad9c2518bb0105d59f527f
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
+  fresnel_ios:
+    dependency: transitive
+    description:
+      name: fresnel_ios
+      sha256: "8a34798a14983af2e1381198084654d403699405e336da7eb74ed7c3530a8568"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
+  fresnel_macos:
+    dependency: transitive
+    description:
+      name: fresnel_macos
+      sha256: "537bef26e87afeb00cdc0fd520295e161f5d22f641881f3933f9a1d38199707f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
+  fresnel_platform_interface:
+    dependency: transitive
+    description:
+      name: fresnel_platform_interface
+      sha256: "56d59827c449eb3e4d58653b47b2777366dc72d344419b5c51177e0a8473286a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
+  fresnel_shader:
+    dependency: transitive
+    description:
+      name: fresnel_shader
+      sha256: "5b3082940c9c3c47ceac69c5ce63d26c0ea220c804ec4897b6efd4faf99456ae"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
   google_fonts:
     dependency: "direct main"
     description:

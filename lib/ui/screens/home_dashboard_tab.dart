@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../core/constants/app_constants.dart';
+import 'package:fresnel/fresnel.dart';
 import '../../core/theme/app_theme.dart';
 import '../../state/farm_provider.dart';
+import '../widgets/app_glass_container.dart';
 import '../widgets/farm_health_ring.dart';
 import '../widgets/field_zone_card.dart';
 import '../widgets/weather_status_bar.dart';
@@ -18,16 +19,17 @@ class HomeDashboardTab extends StatelessWidget {
     final provider = context.watch<FarmProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 900),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Greeting & Subtitle
-              Row(
+    return GlassContainer(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 900),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Greeting & Subtitle
+                Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
@@ -183,8 +185,9 @@ class HomeDashboardTab extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildQuickActionCard(
     BuildContext context, {
@@ -195,52 +198,33 @@ class HomeDashboardTab extends StatelessWidget {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return InkWell(
+    return AppGlassContainer(
+      radius: 14,
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
-        decoration: BoxDecoration(
-          color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-            width: 1.0,
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+      child: Column(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: color, size: 20),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.2)
-                  : const Color(0xFF1B4D3E).withValues(alpha: 0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+              color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
             ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: color, size: 20),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -248,29 +232,10 @@ class HomeDashboardTab extends StatelessWidget {
   Widget _buildCockpitTeaserCard(BuildContext context, FarmProvider provider) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
+    return AppGlassContainer(
+      radius: 18,
+      hasGoldGlow: true,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: isDark
-              ? [const Color(0xFF141F17), const Color(0xFF1B2A20)]
-              : [const Color(0xFFEDF5EC), const Color(0xFFF6FAF4)],
-        ),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isDark ? const Color(0xFF263C2E) : const Color(0xFFD3E6D5),
-          width: 1.0,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF1B4D3E).withValues(alpha: isDark ? 0.2 : 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -283,13 +248,13 @@ class HomeDashboardTab extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(7),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF52B788).withValues(alpha: 0.16),
+                        color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.16),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.auto_graph,
                         size: 16,
-                        color: Color(0xFF52B788),
+                        color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -300,7 +265,7 @@ class HomeDashboardTab extends StatelessWidget {
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.6,
-                          color: isDark ? const Color(0xFFA6DEAE) : const Color(0xFF1B4D3E),
+                          color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -312,7 +277,7 @@ class HomeDashboardTab extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2.5),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF52B788).withValues(alpha: 0.15),
+                  color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -320,7 +285,7 @@ class HomeDashboardTab extends StatelessWidget {
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 8.5,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? const Color(0xFFA6DEAE) : const Color(0xFF2E8256),
+                    color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
                   ),
                 ),
               ),
@@ -347,7 +312,7 @@ class HomeDashboardTab extends StatelessWidget {
               ),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: isDark ? const Color(0xFF1F3526) : const Color(0xFF1B4D3E),
+              backgroundColor: isDark ? AppTheme.forestMoss : AppTheme.forestGreen,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -363,27 +328,9 @@ class HomeDashboardTab extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isRainOverride = provider.fusedAdvisory?.isSprayOverrideActive ?? false;
 
-    return Container(
+    return AppGlassContainer(
+      radius: 18,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isRainOverride
-              ? AppTheme.amberWarning
-              : (isDark ? AppTheme.darkBorder : AppTheme.sageBorder),
-          width: 1.0,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.25)
-                : const Color(0xFF1B4D3E).withValues(alpha: 0.03),
-            blurRadius: 12,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

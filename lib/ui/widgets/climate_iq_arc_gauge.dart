@@ -1,6 +1,8 @@
 import 'dart:math' as math;
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_theme.dart';
 
 class ClimateIqArcGauge extends StatefulWidget {
   final double temperature;
@@ -42,24 +44,16 @@ class _ClimateIqArcGaugeState extends State<ClimateIqArcGauge>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF161C18) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF263229) : const Color(0xFFE8EBE3);
-    final textMuted = isDark ? const Color(0xFF8FA395) : const Color(0xFF7A8B7E);
+    final textPrimary = isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary;
+    final textMuted = isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(22),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          decoration: AppTheme.glassCardDecoration(isDark: isDark, radius: 24),
+          padding: const EdgeInsets.all(22),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -76,7 +70,7 @@ class _ClimateIqArcGaugeState extends State<ClimateIqArcGauge>
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : const Color(0xFF19241B),
+                        color: textPrimary,
                         letterSpacing: -0.4,
                       ),
                     ),
@@ -96,13 +90,17 @@ class _ClimateIqArcGaugeState extends State<ClimateIqArcGauge>
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF202A22) : const Color(0xFFF2F4ED),
+                  color: isDark ? AppTheme.slatePine.withValues(alpha: 0.6) : AppTheme.mintDew.withValues(alpha: 0.8),
+                  border: Border.all(
+                    color: isDark ? AppTheme.softSage.withValues(alpha: 0.25) : AppTheme.softSage.withValues(alpha: 0.4),
+                    width: 1.0,
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.north_east,
                   size: 14,
-                  color: isDark ? Colors.white70 : const Color(0xFF425648),
+                  color: isDark ? AppTheme.mintDew : AppTheme.forestMoss,
                 ),
               ),
             ],
@@ -147,7 +145,7 @@ class _ClimateIqArcGaugeState extends State<ClimateIqArcGauge>
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 48,
                                       fontWeight: FontWeight.w800,
-                                      color: isDark ? Colors.white : const Color(0xFF19241B),
+                                      color: textPrimary,
                                       letterSpacing: -1.5,
                                     ),
                                   ),
@@ -158,7 +156,7 @@ class _ClimateIqArcGaugeState extends State<ClimateIqArcGauge>
                                       style: GoogleFonts.jetBrainsMono(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w600,
-                                        color: isDark ? const Color(0xFF7CE2DB) : const Color(0xFF2D7A54),
+                                        color: isDark ? AppTheme.softSage : AppTheme.forestMoss,
                                       ),
                                     ),
                                   ),
@@ -175,7 +173,7 @@ class _ClimateIqArcGaugeState extends State<ClimateIqArcGauge>
                                   Expanded(
                                     child: _subMetric(
                                       icon: Icons.wb_sunny_outlined,
-                                      color: const Color(0xFFE5B824),
+                                      color: AppTheme.goldAccent,
                                       title: 'Sun',
                                       value: '25% Boost',
                                       isDark: isDark,
@@ -184,7 +182,7 @@ class _ClimateIqArcGaugeState extends State<ClimateIqArcGauge>
                                   Expanded(
                                     child: _subMetric(
                                       icon: Icons.air,
-                                      color: const Color(0xFF45AAF2),
+                                      color: AppTheme.softSage,
                                       title: 'Wind',
                                       value: 'Up to 40%',
                                       isDark: isDark,
@@ -193,7 +191,7 @@ class _ClimateIqArcGaugeState extends State<ClimateIqArcGauge>
                                   Expanded(
                                     child: _subMetric(
                                       icon: Icons.water_drop_outlined,
-                                      color: const Color(0xFF2ED573),
+                                      color: AppTheme.forestMoss,
                                       title: 'Rain',
                                       value: '30% Reduced',
                                       isDark: isDark,
@@ -213,7 +211,9 @@ class _ClimateIqArcGaugeState extends State<ClimateIqArcGauge>
           ),
         ],
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _subMetric({

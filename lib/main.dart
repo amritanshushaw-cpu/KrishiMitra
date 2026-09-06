@@ -7,10 +7,12 @@ import 'core/theme/app_theme.dart';
 import 'services/voice_tts_service.dart';
 import 'state/farm_provider.dart';
 import 'ui/screens/main_shell_screen.dart';
+import 'package:fresnel/fresnel.dart';
 import 'ui/screens/auth_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Fresnel.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(

@@ -1,5 +1,7 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/theme/app_theme.dart';
 
 class SigmoidGrowthCurveChart extends StatefulWidget {
   const SigmoidGrowthCurveChart({super.key});
@@ -28,13 +30,13 @@ class _SigmoidGrowthCurveChartState extends State<SigmoidGrowthCurveChart>
     );
     _drawAnimation = CurvedAnimation(
       parent: _drawController,
-      curve: Curves.easeOutCubic,
+      curve: Curves.easeInOutCubic,
     );
     _drawController.forward();
 
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1800),
+      duration: const Duration(milliseconds: 900),
     )..repeat(reverse: true);
     _pulseAnimation = Tween<double>(begin: 0.85, end: 1.25).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
@@ -48,81 +50,78 @@ class _SigmoidGrowthCurveChartState extends State<SigmoidGrowthCurveChart>
     super.dispose();
   }
 
-  void _triggerAiDetect() async {
+  void _triggerAiDetect() {
     setState(() => _isDetecting = true);
-    await Future.delayed(const Duration(milliseconds: 900));
-    if (mounted) {
-      setState(() => _isDetecting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'AI Phenology: Crop in Stage 2 (Stem Elongation) with +2.3% weekly biomass surge.',
-            style: GoogleFonts.plusJakartaSans(),
+    Future.delayed(const Duration(milliseconds: 1800), () {
+      if (mounted) {
+        setState(() => _isDetecting = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Autonomous Edge Detection: Vegetative phase 94.2% optimal',
+              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+            ),
+            backgroundColor: AppTheme.forestMoss,
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
           ),
-          backgroundColor: const Color(0xFF1B4D3E),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-      );
-    }
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xFF161C18) : Colors.white;
-    final borderColor = isDark ? const Color(0xFF263229) : const Color(0xFFE8EBE3);
-    final textMuted = isDark ? const Color(0xFF8FA395) : const Color(0xFF7A8B7E);
+    final textPrimary = isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary;
+    final textMuted = isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: borderColor),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(22),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+        child: Container(
+          decoration: AppTheme.glassCardDecoration(isDark: isDark, radius: 24),
+          padding: const EdgeInsets.all(22),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  'Data Meets Growth',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF19241B),
-                    letterSpacing: -0.4,
+              // Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Data Meets Growth',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: textPrimary,
+                        letterSpacing: -0.4,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  overflow: TextOverflow.ellipsis,
-                ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppTheme.slatePine.withValues(alpha: 0.6) : AppTheme.mintDew.withValues(alpha: 0.8),
+                      border: Border.all(
+                        color: isDark ? AppTheme.softSage.withValues(alpha: 0.25) : AppTheme.softSage.withValues(alpha: 0.4),
+                        width: 1.0,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.north_east,
+                      size: 14,
+                      color: isDark ? AppTheme.mintDew : AppTheme.forestMoss,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF202A22) : const Color(0xFFF2F4ED),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.north_east,
-                  size: 14,
-                  color: isDark ? Colors.white70 : const Color(0xFF425648),
-                ),
-              ),
-            ],
-          ),
 
           const SizedBox(height: 16),
 
@@ -168,7 +167,9 @@ class _SigmoidGrowthCurveChartState extends State<SigmoidGrowthCurveChart>
           ),
         ],
       ),
-    );
+    ),
+  ),
+);
   }
 
   Widget _buildCurveCanvas(bool isDark, Color textMuted) {
@@ -210,16 +211,19 @@ class _SigmoidGrowthCurveChartState extends State<SigmoidGrowthCurveChart>
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
         color: isActive
-            ? (const Color(0xFF52B788).withOpacity(0.14))
+            ? AppTheme.softSage.withValues(alpha: 0.20)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
+        border: isActive
+            ? Border.all(color: AppTheme.softSage.withValues(alpha: 0.40), width: 1.0)
+            : null,
       ),
       child: Text(
         title,
         style: GoogleFonts.plusJakartaSans(
           fontSize: 10,
           fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-          color: isActive ? const Color(0xFF2E8256) : textMuted,
+          color: isActive ? (textMuted) : textMuted,
         ),
       ),
     );
@@ -250,12 +254,16 @@ class _SigmoidGrowthCurveChartState extends State<SigmoidGrowthCurveChart>
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E2821) : const Color(0xFF17241A),
+              color: isDark ? AppTheme.deepPine : AppTheme.forestMoss,
               borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: (isDark ? AppTheme.softSage : Colors.white).withValues(alpha: 0.35),
+                width: 1.0,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF52B788).withOpacity(0.25),
-                  blurRadius: 10,
+                  color: (isDark ? AppTheme.midnightTeal : AppTheme.forestMoss).withValues(alpha: 0.30),
+                  blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
               ],
@@ -270,7 +278,7 @@ class _SigmoidGrowthCurveChartState extends State<SigmoidGrowthCurveChart>
                       width: 8 * _pulseAnimation.value,
                       height: 8 * _pulseAnimation.value,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF52B788),
+                        color: AppTheme.softSage,
                         shape: BoxShape.circle,
                       ),
                     );
@@ -305,7 +313,7 @@ class _SigmoidGrowthCurveChartState extends State<SigmoidGrowthCurveChart>
             style: GoogleFonts.jetBrainsMono(
               fontSize: 11,
               fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : const Color(0xFF19241B),
+              color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 1),
@@ -313,7 +321,7 @@ class _SigmoidGrowthCurveChartState extends State<SigmoidGrowthCurveChart>
             label,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 9,
-              color: isDark ? const Color(0xFF8FA395) : const Color(0xFF7A8B7E),
+              color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
               fontWeight: FontWeight.w500,
             ),
           ),

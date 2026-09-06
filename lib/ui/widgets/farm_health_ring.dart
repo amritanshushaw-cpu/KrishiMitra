@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
+import 'app_glass_container.dart';
 
 class FarmHealthRingCard extends StatelessWidget {
   final int healthScore; // 0 - 100
@@ -26,128 +27,109 @@ class FarmHealthRingCard extends StatelessWidget {
         ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
         : (healthScore >= 60 ? AppTheme.amberWarning : AppTheme.alertRose);
 
-    return InkWell(
+    return AppGlassContainer(
+      radius: 20,
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-            width: 1.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withValues(alpha: 0.3)
-                  : const Color(0xFF1B4D3E).withValues(alpha: 0.04),
-              blurRadius: 16,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            // Circular Gradient Gauge
-            SizedBox(
-              width: 90,
-              height: 90,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  CustomPaint(
-                    size: const Size(90, 90),
-                    painter: _HealthScorePainter(
-                      scorePercent: healthScore / 100.0,
-                      trackColor: isDark ? const Color(0xFF1B2E22) : const Color(0xFFE8EFE8),
-                      progressColor: primaryColor,
-                    ),
+      padding: const EdgeInsets.all(18),
+      child: Row(
+        children: [
+          // Circular Gradient Gauge
+          SizedBox(
+            width: 90,
+            height: 90,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CustomPaint(
+                  size: const Size(90, 90),
+                  painter: _HealthScorePainter(
+                    scorePercent: healthScore / 100.0,
+                    trackColor: isDark ? AppTheme.deepPine : AppTheme.mintDew.withValues(alpha: 0.6),
+                    progressColor: primaryColor,
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        '$healthScore%',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
-                          letterSpacing: -0.5,
-                        ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '$healthScore%',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                        letterSpacing: -0.5,
                       ),
-                      Text(
-                        'CROP SCORE',
+                    ),
+                    Text(
+                      'CROP SCORE',
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 18),
+          // Metrics & Status Information
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: primaryColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        statusText.toUpperCase(),
                         style: GoogleFonts.jetBrainsMono(
-                          fontSize: 8,
+                          fontSize: 9.5,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                          color: primaryColor,
                           letterSpacing: 0.4,
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 18),
-            // Metrics & Status Information
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: primaryColor.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Text(
-                          statusText.toUpperCase(),
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w700,
-                            color: primaryColor,
-                            letterSpacing: 0.4,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'Overall Farm Health Index',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
                     ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Overall Farm Health Index',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
                   ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 4,
-                    children: [
-                      _buildMetricPill(
-                        context,
-                        icon: Icons.eco_outlined,
-                        label: 'Soil: $soilStatus',
-                      ),
-                      _buildMetricPill(
-                        context,
-                        icon: Icons.water_drop_outlined,
-                        label: 'Moist: $moistureStatus',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 4,
+                  children: [
+                    _buildMetricPill(
+                      context,
+                      icon: Icons.eco_outlined,
+                      label: 'Soil: $soilStatus',
+                    ),
+                    _buildMetricPill(
+                      context,
+                      icon: Icons.water_drop_outlined,
+                      label: 'Moist: $moistureStatus',
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -161,10 +143,10 @@ class FarmHealthRingCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF14241B) : const Color(0xFFF1F6F2),
+        color: isDark ? AppTheme.slatePine.withValues(alpha: 0.45) : AppTheme.mintDew.withValues(alpha: 0.70),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(
-          color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
+          color: isDark ? AppTheme.softSage.withValues(alpha: 0.20) : AppTheme.softSage.withValues(alpha: 0.35),
           width: 0.8,
         ),
       ),

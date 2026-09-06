@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/voice_tts_service.dart';
 import '../../state/farm_provider.dart';
+import '../widgets/app_glass_container.dart';
+import 'auth_screen.dart';
 
 class ProfileSettingsTab extends StatelessWidget {
   final VoidCallback onOpenSafetyNet;
@@ -44,16 +46,10 @@ class ProfileSettingsTab extends StatelessWidget {
               const SizedBox(height: 14),
 
               // Farmer Profile Card
-              Container(
+              AppGlassContainer(
+                radius: 18,
+                hasGoldGlow: true,
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-                    width: 1.0,
-                  ),
-                ),
                 child: Row(
                   children: [
                     Container(
@@ -75,7 +71,7 @@ class ProfileSettingsTab extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Saptak (Farmer / Operator)',
+                            '${provider.farmerName} (Farmer / Operator)',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
@@ -83,22 +79,72 @@ class ProfileSettingsTab extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 2),
-                          Text(
-                            'Bardhaman, West Bengal • 3.5 Acres Plot',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
                           Row(
                             children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 13,
+                                color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                              ),
+                              const SizedBox(width: 3),
+                              Flexible(
+                                child: Text(
+                                  '${provider.farmerLocation} • 3.5 Acres Plot',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (provider.isFetchingLocation) ...[
+                                const SizedBox(width: 6),
+                                SizedBox(
+                                  width: 10,
+                                  height: 10,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 1.5,
+                                    color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 4,
+                            children: [
                               _buildBadge(context, 'CROP: TOMATO & RICE'),
-                              const SizedBox(width: 6),
                               _buildBadge(context, 'ICAR REGISTERED'),
+                              if (provider.coordinatesDisplay.isNotEmpty)
+                                _buildBadge(context, 'GPS: ${provider.coordinatesDisplay}'),
                             ],
                           ),
                         ],
+                      ),
+                    ),
+                    Tooltip(
+                      message: 'Log Out',
+                      child: InkWell(
+                        onTap: () => _confirmLogout(context, provider),
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppTheme.alertRose.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: AppTheme.alertRose.withValues(alpha: 0.25),
+                              width: 1,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.logout_rounded,
+                            size: 18,
+                            color: AppTheme.alertRose,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -117,18 +163,9 @@ class ProfileSettingsTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Material(
-                color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-                      width: 1.0,
-                    ),
-                  ),
-                  child: Column(
+              AppGlassContainer(
+                radius: 16,
+                child: Column(
                   children: [
                     _buildLanguageTile(
                       context,
@@ -137,7 +174,12 @@ class ProfileSettingsTab extends StatelessWidget {
                       isSelected: provider.ttsLanguage == TtsLanguage.bengali,
                       onTap: () => provider.setTtsLanguage(TtsLanguage.bengali),
                     ),
-                    const Divider(height: 1),
+                    Divider(
+                      height: 1,
+                      color: isDark
+                          ? AppTheme.softSage.withValues(alpha: 0.15)
+                          : AppTheme.softSage.withValues(alpha: 0.25),
+                    ),
                     _buildLanguageTile(
                       context,
                       title: 'हिन्दी (Hindi)',
@@ -145,7 +187,12 @@ class ProfileSettingsTab extends StatelessWidget {
                       isSelected: provider.ttsLanguage == TtsLanguage.hindi,
                       onTap: () => provider.setTtsLanguage(TtsLanguage.hindi),
                     ),
-                    const Divider(height: 1),
+                    Divider(
+                      height: 1,
+                      color: isDark
+                          ? AppTheme.softSage.withValues(alpha: 0.15)
+                          : AppTheme.softSage.withValues(alpha: 0.25),
+                    ),
                     _buildLanguageTile(
                       context,
                       title: 'English (US / Global)',
@@ -156,8 +203,7 @@ class ProfileSettingsTab extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // Theme Mode Toggle (Light vs Dark)
               Text(
@@ -170,16 +216,9 @@ class ProfileSettingsTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Container(
+              AppGlassContainer(
+                radius: 16,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-                    width: 1.0,
-                  ),
-                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -224,8 +263,138 @@ class ProfileSettingsTab extends StatelessWidget {
                     const SizedBox(width: 8),
                     Switch(
                       value: provider.isDarkMode,
-                      activeColor: AppTheme.emeraldLight,
+                      activeThumbColor: AppTheme.emeraldLight,
                       onChanged: (_) => provider.toggleTheme(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Farm Location & Geolocation Settings
+              Text(
+                'FARM LOCATION & GPS SYNCHRONIZATION',
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.6,
+                  color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                ),
+              ),
+              const SizedBox(height: 8),
+              AppGlassContainer(
+                radius: 16,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.location_on_outlined,
+                          color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'EDGE GEOLOCATION // FARM PLOT',
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (provider.isFetchingLocation)
+                          SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                            ),
+                          )
+                        else
+                          _buildBadge(context, 'AUTO-DETECTED'),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      provider.farmerLocation,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                      ),
+                    ),
+                    if (provider.coordinatesDisplay.isNotEmpty) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        'GPS Coordinates: ${provider.coordinatesDisplay}',
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 11,
+                          color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: provider.isFetchingLocation
+                                ? null
+                                : () async {
+                                    await provider.autoFetchLocation();
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Farm location updated: ${provider.farmerLocation}'),
+                                          backgroundColor: AppTheme.forestGreen,
+                                        ),
+                                      );
+                                    }
+                                  },
+                            icon: const Icon(Icons.my_location_rounded, size: 16),
+                            label: Text(
+                              provider.isFetchingLocation ? 'FETCHING LOCATION...' : 'AUTO-FETCH LOCATION',
+                              style: GoogleFonts.jetBrainsMono(
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                              foregroundColor: isDark ? Colors.black : Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              elevation: 0,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton.icon(
+                          onPressed: () => _editLocationDialog(context, provider),
+                          icon: const Icon(Icons.edit_location_alt_outlined, size: 16),
+                          label: Text(
+                            'CUSTOM',
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                            side: BorderSide(
+                              color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 12),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -243,16 +412,9 @@ class ProfileSettingsTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Container(
+              AppGlassContainer(
+                radius: 16,
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-                    width: 1.0,
-                  ),
-                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -304,12 +466,229 @@ class ProfileSettingsTab extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
+
+              // Security & Log Out Section
+              AppGlassContainer(
+                radius: 16,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.security_outlined,
+                          color: AppTheme.alertRose,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'SECURITY & OPERATOR SESSION',
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.alertRose,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'End active edge session for ${provider.farmerName} and securely lock local SQLCipher farm logs.',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () => _confirmLogout(context, provider),
+                        icon: const Icon(Icons.logout_rounded, size: 16, color: AppTheme.alertRose),
+                        label: Text(
+                          'LOG OUT // END SESSION (${provider.farmerName.toUpperCase()})',
+                          style: GoogleFonts.jetBrainsMono(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.alertRose,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppTheme.alertRose,
+                          side: const BorderSide(color: AppTheme.alertRose, width: 1.2),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 24),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _confirmLogout(BuildContext context, FarmProvider provider) async {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? AppTheme.deepPine : AppTheme.mintDew,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: isDark
+                ? AppTheme.softSage.withValues(alpha: 0.25)
+                : AppTheme.softSage.withValues(alpha: 0.40),
+          ),
+        ),
+        title: Row(
+          children: [
+            const Icon(Icons.logout_rounded, color: AppTheme.alertRose, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              'Confirm Log Out',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to log out of KrishiMitra? You will need to sign in again to access the farm cockpit and offline edge diagnostics.',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 13,
+            color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(
+              'Cancel',
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.w600,
+                color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.alertRose,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Text(
+              'Log Out',
+              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true && context.mounted) {
+      await provider.logout();
+      if (context.mounted) {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const AuthScreen()),
+          (route) => false,
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Logged out successfully. Secure vault locked.'),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _editLocationDialog(BuildContext context, FarmProvider provider) async {
+    final controller = TextEditingController(text: provider.farmerLocation);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = isDark ? AppTheme.emeraldLight : AppTheme.forestGreen;
+
+    final updated = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: isDark ? AppTheme.deepPine : AppTheme.mintDew,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: isDark
+                ? AppTheme.softSage.withValues(alpha: 0.25)
+                : AppTheme.softSage.withValues(alpha: 0.40),
+          ),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.edit_location_alt_outlined, color: primaryColor, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              'Custom Farm Location',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+              ),
+            ),
+          ],
+        ),
+        content: TextField(
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(
+            labelText: 'Village / District / State',
+            hintText: 'e.g. Bardhaman, West Bengal',
+            filled: true,
+            fillColor: isDark ? AppTheme.slatePine.withValues(alpha: 0.5) : AppTheme.pureWhite.withValues(alpha: 0.7),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(controller.text.trim()),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: primaryColor,
+              foregroundColor: isDark ? Colors.black : Colors.white,
+            ),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (updated != null && updated.isNotEmpty) {
+      provider.setFarmerLocation(updated);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Farm plot location set to: $updated'),
+            backgroundColor: AppTheme.forestGreen,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildLanguageTile(

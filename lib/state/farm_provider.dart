@@ -1,5 +1,6 @@
-﻿import 'dart:typed_data';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants/app_constants.dart';
 import '../core/localization/app_strings.dart';
 import '../models/inference_result.dart';
@@ -11,6 +12,7 @@ import '../services/tflite_service.dart';
 import '../services/voice_tts_service.dart';
 import '../services/wifi_camera_service.dart';
 import '../services/secure_db_service.dart';
+import '../services/location_service.dart';
 
 class FarmProvider extends ChangeNotifier {
   final BleService _bleService = BleService();
@@ -39,6 +41,12 @@ class FarmProvider extends ChangeNotifier {
   bool _isCockpitMode = false;
   bool _isTtsEnabled = true;
   String _activeFieldZone = 'Area 1: Rice & Tomato Block';
+  String _farmerName = 'Saptak';
+  String _farmerLocation = 'Bardhaman, West Bengal';
+  double? _latitude;
+  double? _longitude;
+  bool _isFetchingLocation = false;
+  String? _locationStatusMessage;
 
   // Getters
   SensorData get sensorData => _currentSensorData;
@@ -59,6 +67,20 @@ class FarmProvider extends ChangeNotifier {
   bool get isDarkMode => _isDarkMode;
   bool get isCockpitMode => _isCockpitMode;
   String get activeFieldZone => _activeFieldZone;
+  String get farmerName => _farmerName;
+  String get farmerLocation => _farmerLocation;
+  double? get latitude => _latitude;
+  double? get longitude => _longitude;
+  bool get isFetchingLocation => _isFetchingLocation;
+  String? get locationStatusMessage => _locationStatusMessage;
+  String get coordinatesDisplay {
+    if (_latitude != null && _longitude != null) {
+      final latDir = _latitude! >= 0 ? 'N' : 'S';
+      final lonDir = _longitude! >= 0 ? 'E' : 'W';
+      return '${_latitude!.abs().toStringAsFixed(4)}° $latDir, ${_longitude!.abs().toStringAsFixed(4)}° $lonDir';
+    }
+    return '';
+  }
   AppStrings get strings => AppStrings.of(_ttsLanguage);
 
   void toggleTtsEnabled([bool? value]) {
@@ -77,9 +99,9 @@ class FarmProvider extends ChangeNotifier {
         await playVoiceAdvisory();
       } else {
         final testMsg = _ttsLanguage == TtsLanguage.bengali
-            ? 'à¦Ÿà§‡à¦•à§à¦¸à¦Ÿ à¦Ÿà§ à¦­à¦¯à¦¼à§‡à¦¸ à¦¸à¦•à§à¦°à¦¿à¦¯à¦¼ à¦†à¦›à§‡à¥¤ à¦«à¦¸à¦² à¦¸à§à¦•à§à¦¯à¦¾à¦¨ à¦•à¦°à¦²à§‡ à¦¸à§à¦¬à¦¯à¦¼à¦‚à¦•à§à¦°à¦¿à¦¯à¦¼ à¦ªà§à¦°à§‡à¦¸à¦•à§à¦°à¦¿à¦ªà¦¶à¦¨ à¦¶à§‹à¦¨à¦¾à¦¨à§‹ à¦¹à¦¬à§‡à¥¤'
+            ? 'টেক্সট টু ভয়েস সক্রিয় আছে। ফসল স্ক্যান করলে স্বয়ংক্রিয় প্রেসক্রিপশন শোনানো হবে।'
             : (_ttsLanguage == TtsLanguage.hindi
-                ? 'à¤Ÿà¥‡à¤•à¥à¤¸à¥à¤Ÿ à¤Ÿà¥‚ à¤µà¥‰à¤¯à¤¸ à¤¸à¤•à¥à¤°à¤¿à¤¯ à¤¹à¥ˆà¥¤ à¤«à¤¸à¤² à¤¸à¥à¤•à¥ˆà¤¨ à¤•à¤°à¤¨à¥‡ à¤ªà¤° à¤¸à¥à¤µà¤šà¤¾à¤²à¤¿à¤¤ à¤¸à¤²à¤¾à¤¹ à¤¸à¥à¤¨à¤¾à¤ˆ à¤œà¤¾à¤à¤—à¥€à¥¤'
+                ? 'टेक्स्ट टू वॉइस सक्रिय है। फसल स्कैन करने पर स्वचालित सलाह सुनाई जाएगी।'
                 : 'Text to voice is active. Diagnosis and ICAR prescription will be read aloud automatically.');
         await _ttsService.speak(testMsg, overrideLang: _ttsLanguage);
         notifyListeners();
@@ -109,6 +131,9 @@ class FarmProvider extends ChangeNotifier {
 
     await _tfliteService.initialize();
     await _fusionService.initialize();
+    _ttsService.onPlayingStateChanged = (playing) {
+      notifyListeners();
+    };
     await _ttsService.initialize();
 
     _bleService.stateStream.listen((state) {
@@ -128,6 +153,9 @@ class FarmProvider extends ChangeNotifier {
     });
 
     await _bleService.connect();
+    await _loadFarmerProfile();
+    await _loadFarmerLocation();
+    autoFetchLocation();
     _statusMessage = 'System Ready (Offline)';
     notifyListeners();
   }
@@ -218,7 +246,7 @@ class FarmProvider extends ChangeNotifier {
     } else if (_ttsLanguage == TtsLanguage.english) {
       await _ttsService.speak(_fusedAdvisory!.ttsScriptEn, overrideLang: TtsLanguage.english);
     } else {
-      await _ttsService.speak(_fusedAdvisory!.ttsScriptBn, overrideLang: TtsLanguage.hindi);
+      await _ttsService.speak(_fusedAdvisory!.ttsScriptHi, overrideLang: TtsLanguage.hindi);
     }
     notifyListeners();
   }
@@ -231,6 +259,7 @@ class FarmProvider extends ChangeNotifier {
 
   void setTtsLanguage(TtsLanguage lang) {
     _ttsLanguage = lang;
+    _ttsService.setLanguage(lang);
     notifyListeners();
   }
 
@@ -251,6 +280,82 @@ class FarmProvider extends ChangeNotifier {
 
   void injectTelemetry({required double temp, required int soil, required int rain}) {
     _bleService.injectTelemetry(temp: temp, soil: soil, rain: rain);
+  }
+
+  Future<void> _loadFarmerProfile() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedName = prefs.getString('farmer_name');
+      if (savedName != null && savedName.trim().isNotEmpty) {
+        _farmerName = savedName.trim();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error loading farmer profile: $e');
+    }
+  }
+
+  Future<void> _loadFarmerLocation() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedLoc = prefs.getString('farmer_location');
+      if (savedLoc != null && savedLoc.trim().isNotEmpty) {
+        _farmerLocation = savedLoc.trim();
+      }
+      _latitude = prefs.getDouble('farmer_lat');
+      _longitude = prefs.getDouble('farmer_lon');
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading location: $e');
+    }
+  }
+
+  Future<void> autoFetchLocation() async {
+    _isFetchingLocation = true;
+    _locationStatusMessage = 'Auto-detecting farm location...';
+    notifyListeners();
+
+    try {
+      final loc = await LocationService.instance.fetchCurrentLocation();
+      if (loc != null) {
+        _farmerLocation = loc.formattedPlotLocation;
+        _latitude = loc.latitude;
+        _longitude = loc.longitude;
+        _locationStatusMessage = 'Location synced: $_farmerLocation';
+      } else {
+        _locationStatusMessage = 'Using cached farm location';
+      }
+    } catch (e) {
+      _locationStatusMessage = 'Offline: Using cached location';
+    } finally {
+      _isFetchingLocation = false;
+      notifyListeners();
+    }
+  }
+
+  void setFarmerLocation(String newLocation) {
+    if (newLocation.trim().isNotEmpty) {
+      _farmerLocation = newLocation.trim();
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setString('farmer_location', _farmerLocation);
+      });
+      notifyListeners();
+    }
+  }
+
+  void setFarmerName(String name) {
+    _farmerName = name.trim().isNotEmpty ? name.trim() : 'Saptak';
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString('farmer_name', _farmerName);
+    });
+    notifyListeners();
+  }
+
+  Future<void> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+    await stopVoiceAdvisory();
+    notifyListeners();
   }
 
   @override
