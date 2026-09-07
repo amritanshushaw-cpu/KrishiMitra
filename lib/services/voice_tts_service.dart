@@ -18,7 +18,7 @@ class VoiceTtsService {
   Future<void> initialize() async {
     try {
       await _flutterTts.awaitSpeakCompletion(true);
-      final double naturalRate = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) ? 0.85 : 0.48;
+      final double naturalRate = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) ? 0.45 : 0.45;
       await _flutterTts.setSpeechRate(naturalRate);
       await _flutterTts.setVolume(1.0);
       await _flutterTts.setPitch(1.0);
@@ -96,7 +96,7 @@ class VoiceTtsService {
   /// Deep search for Bengali voice & locale support across OS engines
   Future<void> _setupBengaliVoice() async {
     try {
-      final double naturalRate = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) ? 0.85 : 0.48;
+      final double naturalRate = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) ? 0.45 : 0.45;
       await _flutterTts.setSpeechRate(naturalRate);
       await _flutterTts.setPitch(1.0);
 
@@ -179,7 +179,7 @@ class VoiceTtsService {
 
   Future<void> _setupHindiVoice() async {
     try {
-      final double naturalRate = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) ? 0.85 : 0.48;
+      final double naturalRate = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) ? 0.45 : 0.45;
       await _flutterTts.setSpeechRate(naturalRate);
       await _flutterTts.setPitch(1.0);
 
@@ -233,7 +233,7 @@ class VoiceTtsService {
   }
 
   Future<void> _setupEnglishVoice() async {
-    final double naturalRate = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) ? 0.85 : 0.48;
+    final double naturalRate = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) ? 0.45 : 0.45;
     await _flutterTts.setSpeechRate(naturalRate);
     await _flutterTts.setPitch(1.0);
     await _flutterTts.setLanguage('en-US');
