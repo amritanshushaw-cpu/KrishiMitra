@@ -116,11 +116,53 @@ class FarmProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Composite Crop Health Index (CCHI)
+  /// Algorithm modeled on ICAR Economic Threshold Levels (ETL) and Crop Water Stress Index (CWSI).
   int get farmHealthScore {
-    if (_parsedDiagnosis == null) return 92;
-    if (_parsedDiagnosis!.disease.status == ParameterStatus.critical) return 64;
-    if (_parsedDiagnosis!.disease.status == ParameterStatus.warning) return 78;
-    return 95;
+    int score = 100; // Optimal Yield Potential
+
+    // 1. Pathology Penalty (based on Percent Disease Index - PDI)
+    if (_parsedDiagnosis != null) {
+      if (_parsedDiagnosis!.disease.status == ParameterStatus.critical) {
+        score -= 35; // Severe outbreak reduces yield potential dramatically
+      } else if (_parsedDiagnosis!.disease.status == ParameterStatus.warning) {
+        score -= 15;
+      }
+
+      // 2. Entomology Penalty (based on Economic Threshold Levels - ETL)
+      if (_parsedDiagnosis!.pest.status == ParameterStatus.critical) {
+        score -= 25; 
+      }
+      
+      // 3. Nutritional Stress
+      if (_parsedDiagnosis!.nutrient.status != ParameterStatus.optimal) {
+        score -= 10;
+      }
+    }
+
+    // 4. Hydrology & Meteorological Stress (CWSI - Crop Water Stress Index)
+    final double temp = _currentSensorData.temperature;
+    final int soil = _currentSensorData.soilMoisture;
+
+    // Heat Stress Penalty (Pollen sterility threshold for typical Indian crops > 35C)
+    if (temp > 35.0) {
+      score -= 10;
+    } else if (temp < 10.0) {
+      score -= 5; // Cold stress
+    }
+
+    // Soil Moisture Stress Penalty
+    if (soil < 30) {
+      score -= 20; // Drought stress / Permanent Wilting Point risk
+    } else if (soil > 85) {
+      score -= 15; // Waterlogging / Root Hypoxia risk
+    }
+
+    // Ensure bounds
+    if (score < 15) score = 15; // Minimum baseline to prevent absolute zero logic errors
+    if (score > 100) score = 100;
+
+    return score;
   }
 
   FarmProvider() {
