@@ -79,7 +79,7 @@ class MainShellScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Instantly inject high-res leaf assets to test offline neural diagnosis without requiring live ESP32 camera Wi-Fi.',
+                  provider.strings.safetyNetSub,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,

@@ -1,4 +1,4 @@
-﻿import '../../services/voice_tts_service.dart';
+import '../../services/voice_tts_service.dart';
 
 /// Central in-app localization & regional language translation system
 /// Covers Bengali (বাংলা), Hindi (हिन्दी), and English across all tabs and widgets.
@@ -26,19 +26,6 @@ class AppStrings {
       ? '১০০% অফলাইন // ফোন-অ্যাজ-ব্রেন'
       : (isHindi ? '100% ऑफलाइन // फोन-एज-ब्रेन' : '100% OFFLINE // PHONE-AS-BRAIN');
 
-  // Auth Screen
-  String get authTitle => isBengali ? 'কৃষিমিত্র' : (isHindi ? 'कृषिमित्र' : 'KRISHIMITRA');
-  String get authSignInHeader => isBengali ? 'লগ ইন করুন' : (isHindi ? 'साइन इन करें' : 'Sign In');
-  String get authCreateHeader => isBengali ? 'নতুন অ্যাকাউন্ট তৈরি করুন' : (isHindi ? 'नया खाता बनाएँ' : 'Create Farmer Account');
-  String get authNameLabel => isBengali ? 'আপনার পুরো নাম' : (isHindi ? 'आपका पूरा नाम' : 'FARMER FULL NAME');
-  String get authUsernameLabel => isBengali ? 'ইউজারনেম' : (isHindi ? 'उपयोगकर्ता नाम' : 'USERNAME');
-  String get authUsernameHint => isBengali ? 'উদাহরণ: কৃষক' : (isHindi ? 'उदाहरण: किसान' : 'e.g: farmer');
-  String get authPasswordLabel => isBengali ? 'পাসওয়ার্ড' : (isHindi ? 'पासवर्ड' : 'PASSWORD');
-  String get authSignInBtn => isBengali ? 'অ্যাপে প্রবেশ করুন' : (isHindi ? 'ऐप में साइन इन करें' : 'SIGN IN TO APP');
-  String get authRegisterBtn => isBengali ? 'নিবন্ধন করুন' : (isHindi ? 'पंजीकरण करें' : 'REGISTER & SYNC PROFILE');
-  String get authToggleToRegister => isBengali ? 'অ্যাকাউন্ট নেই? নিবন্ধন করুন' : (isHindi ? 'खाता नहीं है? पंजीकरण करें' : 'No account yet? Create one.');
-  String get authToggleToSignIn => isBengali ? 'অ্যাকাউন্ট আছে? লগ ইন করুন' : (isHindi ? 'खाता है? साइन इन करें' : 'Already have an account? Sign in.');
-
   // Home Screen
   // Dynamic Time-Based Greeting (Morning, Afternoon, Evening, Night)
   String get greetingFarmer => getGreetingFarmer();
@@ -61,12 +48,41 @@ class AppStrings {
     } else {
       return isBengali
           ? 'শুভ রাত্রি, কৃষক বন্ধু'
-          : (isHindi ? 'शुभ रात्रि, किसान मित्र' : 'Good Night, Farmer');
+          : (isHindi ? 'শুভ रात्रि, किसान मित्र' : 'Good Night, Farmer');
     }
   }
 
   String getGreetingSubtitle([DateTime? time]) {
     final hour = (time ?? DateTime.now()).hour;
+    if (hour >= 4 && hour < 12) {
+      return isBengali
+          ? 'সকালের আবহাওয়া স্বাভাবিক। আজকের খামারের পরিস্থিতি দেখুন।'
+          : (isHindi
+              ? 'सुबह का मौसम अनुकूल है। आज का खेत विवरण देखें।'
+              : 'Morning conditions are optimal. Here is your daily farm overview.');
+    } else if (hour >= 12 && hour < 17) {
+      return isBengali
+          ? 'দুপুরের রোদ ও মাটির আর্দ্রতা নিরীক্ষণ করা হচ্ছে।'
+          : (isHindi
+              ? 'दोपहर की धूप और मिट्टी की नमी का विवरण सक्रिय है।'
+              : 'Midday solar & soil telemetry active. Review hydration levels.');
+    } else if (hour >= 17 && hour < 21) {
+      return isBengali
+          ? 'সন্ধ্যার শীতল বাতাস। রাতের সেচ সময়সূচী যাচাই করুন।'
+          : (isHindi
+              ? 'शाम की ठंडक शुरू। रात की सिंचाई और पंप स्थिति देखें।'
+              : 'Evening telemetry logged. Check nighttime pump & moisture schedule.');
+    } else {
+      return isBengali
+          ? 'রাত্রিকালীন পর্যবেক্ষণ সক্রিয়। ১০০% অফলাইন সুরক্ষা চলছে।'
+          : (isHindi
+              ? 'रात्रि निगरानी सक्रिय है। 100% ऑफलाइन सेंसर सुरक्षा चालू है।'
+              : 'Night telemetry active. Autonomous edge protection is running.');
+    }
+  }
+
+  String get timeOfDayPeriod {
+    final hour = DateTime.now().hour;
     if (hour >= 4 && hour < 12) {
       return isBengali ? 'সকাল' : (isHindi ? 'सुबह' : 'Morning');
     } else if (hour >= 12 && hour < 17) {
@@ -105,7 +121,7 @@ class AppStrings {
   String get awaitLeafScanSub => isBengali
       ? 'রোগ নির্ণয় ও প্রতিকার দেখতে "পাতা তুলুন" বা "নমুনা পাতা" চাপুন।'
       : (isHindi
-          ? 'रोग निदान और उपचार देखने के लिए "पत्ती कैप्चर करें" या "डेमो पत्ती" दबाएं।'
+          ? 'रोग निदान और उपचार देखने के लिए "पत्ती कैप्चর करें" या "डेमो पत्ती" दबाएं।'
           : 'Tap "CAPTURE LEAF" or "DEMO ASSET" to run local neural inference and generate disease remedies.');
   String get confidence => isBengali ? 'নিশ্চিততা' : (isHindi ? 'सटीकता' : 'CONFIDENCE');
 
@@ -132,6 +148,22 @@ class AppStrings {
   String get pumpLocked => isBengali ? 'লক করা (নিরাপদ)' : (isHindi ? 'लॉक (सुरक्षित)' : 'LOCKED (Safe)');
   String get pumpUnlocked => isBengali ? 'আনলক (সক্রিয়)' : (isHindi ? 'अनलॉक (सक्रिय)' : 'UNLOCKED (Active)');
 
+  // Auth Screen
+  String get authTitle => isBengali ? 'কৃষিমিত্র' : (isHindi ? 'कृषिमित्र' : 'KRISHIMITRA');
+  String get authSignInHeader => isBengali ? 'লগ ইন করুন' : (isHindi ? 'साइन इन करें' : 'Sign In');
+  String get authCreateHeader => isBengali ? 'নতুন অ্যাকাউন্ট তৈরি করুন' : (isHindi ? 'नया खाता बनाएँ' : 'Create Farmer Account');
+  String get authNameLabel => isBengali ? 'আপনার পুরো নাম' : (isHindi ? 'आपका पूरा नाम' : 'FARMER FULL NAME');
+  String get authUsernameLabel => isBengali ? 'ইউজারনেম' : (isHindi ? 'उपयोगकर्ता नाम' : 'USERNAME');
+  String get authUsernameHint => isBengali ? 'উদাহরণ: কৃষক' : (isHindi ? 'उदाहरण: किसान' : 'e.g: farmer');
+  String get authPasswordLabel => isBengali ? 'পাসওয়ার্ড' : (isHindi ? 'पासवर्ड' : 'PASSWORD');
+  String get authSignInBtn => isBengali ? 'অ্যাপে প্রবেশ করুন' : (isHindi ? 'ऐप में साइन इन करें' : 'SIGN IN TO APP');
+
+  // Settings & Profile
+  String get languageSettings => isBengali ? 'অ্যাপ ও আঞ্চলিক ভয়েস ভাষা' : (isHindi ? 'ऐप और क्षेत्रीय आवाज भाषा' : 'APP & REGIONAL LANGUAGE');
+  String get appearanceTheme => isBengali ? 'চেহারা ও থিম' : (isHindi ? 'दिखावट और थीम' : 'APPEARANCE & THEME');
+  String get darkMode => isBengali ? 'ডার্ক মোড' : (isHindi ? 'डार्क मोड' : 'Dark Mode');
+  String get lightMode => isBengali ? 'অর্গানিক লাইট মোড' : (isHindi ? 'ऑर्गेनिक लाइट मोड' : 'Organic Light Mode');
+  String get safetyNetTitle => isBengali ? 'হার্ডওয়্যার বাইপাস ও ডেমো নেট' : (isHindi ? 'हार्डवेयर बाईपास और डेमो नेट' : 'HARDWARE BYPASS // PITCH SAFETY NET');
 
   // Missing Dashboard Strings
   String get quickActions => isBengali ? 'দ্রুত পদক্ষেপ' : (isHindi ? 'त्वरित कार्रवाई' : 'QUICK ACTIONS');
@@ -144,11 +176,4 @@ class AppStrings {
   String get cropScore => isBengali ? 'ফসল স্কোর' : (isHindi ? 'फसल स्कोर' : 'CROP SCORE');
   String get overallHealth => isBengali ? 'সামগ্রিক খামার স্বাস্থ্য' : (isHindi ? 'समग्र खेत स्वास्थ्य' : 'Overall Farm Health Index');
   String get safetyNetSub => isBengali ? 'অফলাইন ডায়াগনস্টিক পরীক্ষা করতে নমুনা পাতা ব্যবহার করুন' : (isHindi ? 'ऑफ़लाइन निदान परीक्षण के लिए डेमो पत्ती का उपयोग करें' : 'Instantly inject high-res leaf assets to test offline neural diagnosis without requiring live ESP32 camera Wi-Fi.');
-
-  // Settings & Profile
-  String get languageSettings => isBengali ? 'অ্যাপ ও আঞ্চলিক ভয়েস ভাষা' : (isHindi ? 'ऐप और क्षेत्रीय आवाज भाषा' : 'APP & REGIONAL LANGUAGE');
-  String get appearanceTheme => isBengali ? 'চেহারা ও থিম' : (isHindi ? 'दिखावट और थीम' : 'APPEARANCE & THEME');
-  String get darkMode => isBengali ? 'ডার্ক মোড' : (isHindi ? 'डार्क मोड' : 'Dark Mode');
-  String get lightMode => isBengali ? 'অর্গানিক লাইট মোড' : (isHindi ? 'ऑर्गेनिक लाइट मोड' : 'Organic Light Mode');
-  String get safetyNetTitle => isBengali ? 'হার্ডওয়্যার বাইপাস ও ডেমো নেট' : (isHindi ? 'हार्डवेयर बाईपास और डेमो नेट' : 'HARDWARE BYPASS // PITCH SAFETY NET');
 }
