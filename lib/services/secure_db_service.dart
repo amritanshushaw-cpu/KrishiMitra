@@ -235,32 +235,32 @@ class SecureDatabaseService {
       }
 
       if (exportData.isEmpty) {
-        return "No logs found for the past \ days.";
+        return "No logs found for the past \$days days.";
       }
 
       final StringBuffer sb = StringBuffer();
       sb.writeln("=== KrishiMitra Farm Logs ===");
-      sb.writeln("Export period: Past \ days");
-      sb.writeln("Total records: ");
+      sb.writeln("Export period: Past \$days days");
+      sb.writeln("Total records: \${exportData.length}");
       sb.writeln("-----------------------------");
 
       for (var row in exportData) {
-        sb.writeln("Time: ");
-        sb.writeln("Temp: \C | Hum: \% | Rain: ");
-        sb.writeln("Pump: ");
+        sb.writeln("Time: \${row['timestamp']}");
+        sb.writeln("Temp: \${row['temperature']}C | Hum: \${row['humidity']}% | Rain: \${row['rain_detected'] == 1}");
+        sb.writeln("Pump: \${row['pump_status']}");
         if (row['ai_diagnosis'] != null) {
-          sb.writeln("AI Diagnosis: ");
+          sb.writeln("AI Diagnosis: \${row['ai_diagnosis']}");
         }
         sb.writeln("---");
       }
 
       final directory = await getApplicationDocumentsDirectory();
-      final file = File('\/krishimitra_export.txt');
+      final file = File('\${directory.path}/krishimitra_export.txt');
       await file.writeAsString(sb.toString());
       
       return file.path;
     } catch (e) {
-      debugPrint("Export failed: ");
+      debugPrint("Export failed: \$e");
       return null;
     }
   }
