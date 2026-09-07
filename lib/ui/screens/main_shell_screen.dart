@@ -57,11 +57,11 @@ class MainShellScreen extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'HARDWARE BYPASS // PITCH SAFETY NET',
+                          provider.strings.safetyNetTitle,
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            letterSpacing: 0.6,
+                            letterSpacing: 0.5,
                             color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
                           ),
                         ),
@@ -267,7 +267,7 @@ class MainShellScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'KRISHIMITRA // AI',
+                      provider.strings.authTitle,
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w800,
