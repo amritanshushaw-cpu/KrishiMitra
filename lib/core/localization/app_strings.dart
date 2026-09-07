@@ -157,6 +157,9 @@ class AppStrings {
   String get authUsernameHint => isBengali ? 'উদাহরণ: কৃষক' : (isHindi ? 'उदाहरण: किसान' : 'e.g: farmer');
   String get authPasswordLabel => isBengali ? 'পাসওয়ার্ড' : (isHindi ? 'पासवर्ड' : 'PASSWORD');
   String get authSignInBtn => isBengali ? 'অ্যাপে প্রবেশ করুন' : (isHindi ? 'ऐप में साइन इन करें' : 'SIGN IN TO APP');
+  String get authRegisterBtn => isBengali ? 'নিবন্ধন করুন' : (isHindi ? 'पंजीकरण करें' : 'REGISTER & SYNC PROFILE');
+  String get authToggleToRegister => isBengali ? 'অ্যাকাউন্ট নেই? নিবন্ধন করুন' : (isHindi ? 'खाता नहीं है? पंजीकरण करें' : 'No account yet? Create one.');
+  String get authToggleToSignIn => isBengali ? 'অ্যাকাউন্ট আছে? লগ ইন করুন' : (isHindi ? 'खाता है? साइन इन करें' : 'Already have an account? Sign in.');
 
   // Settings & Profile
   String get languageSettings => isBengali ? 'অ্যাপ ও আঞ্চলিক ভয়েস ভাষা' : (isHindi ? 'ऐप और क्षेत्रीय आवाज भाषा' : 'APP & REGIONAL LANGUAGE');
