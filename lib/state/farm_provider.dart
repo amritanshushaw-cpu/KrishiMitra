@@ -167,6 +167,23 @@ class FarmProvider extends ChangeNotifier {
 
   FarmProvider() {
     _initServices();
+    _loadSavedLanguage();
+  }
+
+  Future<void> _loadSavedLanguage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedLang = prefs.getString('preferred_language');
+      if (savedLang == 'hindi') {
+        _ttsLanguage = TtsLanguage.hindi;
+      } else if (savedLang == 'english') {
+        _ttsLanguage = TtsLanguage.english;
+      } else {
+        _ttsLanguage = TtsLanguage.bengali; // Default
+      }
+      _ttsService.setLanguage(_ttsLanguage);
+      notifyListeners();
+    } catch (_) {}
   }
 
   Future<void> _initServices() async {
@@ -318,10 +335,17 @@ class FarmProvider extends ChangeNotifier {
   }
 
 
-  void setTtsLanguage(TtsLanguage lang) {
+  Future<void> setTtsLanguage(TtsLanguage lang) async {
     _ttsLanguage = lang;
     _ttsService.setLanguage(lang);
     notifyListeners();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String langStr = 'bengali';
+      if (lang == TtsLanguage.hindi) langStr = 'hindi';
+      if (lang == TtsLanguage.english) langStr = 'english';
+      await prefs.setString('preferred_language', langStr);
+    } catch (_) {}
   }
 
   void setTabIndex(int index) {
