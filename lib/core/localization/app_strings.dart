@@ -33,6 +33,7 @@ class AppStrings {
   String get authCreateHeader => isBengali ? 'নতুন অ্যাকাউন্ট তৈরি করুন' : (isHindi ? 'नया खाता बनाएँ' : 'Create Farmer Account');
   String get authNameLabel => isBengali ? 'আপনার পুরো নাম' : (isHindi ? 'आपका पूरा नाम' : 'FARMER FULL NAME');
   String get authUsernameLabel => isBengali ? 'ইউজারনেম' : (isHindi ? 'उपयोगकर्ता नाम' : 'USERNAME');
+  String get authUsernameHint => isBengali ? 'উদা: কৃষক' : (isHindi ? 'उदा: किसान' : 'e.g: farmer');
   String get authPasswordLabel => isBengali ? 'পাসওয়ার্ড' : (isHindi ? 'पासवर्ड' : 'PASSWORD');
   String get authSignInBtn => isBengali ? 'অ্যাপে প্রবেশ করুন' : (isHindi ? 'ऐप में साइन इन करें' : 'SIGN IN TO APP');
   String get authRegisterBtn => isBengali ? 'নিবন্ধন করুন' : (isHindi ? 'पंजीकरण करें' : 'REGISTER & SYNC PROFILE');

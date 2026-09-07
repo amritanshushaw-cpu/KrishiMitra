@@ -305,7 +305,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         controller: _usernameController,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.person_outline_rounded, size: 20, color: primaryColor),
-                          hintText: 'e.g. saptak_farmer',
+                          hintText: strings.authUsernameHint,
                           hintStyle: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
