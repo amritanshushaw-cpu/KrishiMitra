@@ -112,7 +112,7 @@ class HomeDashboardTab extends StatelessWidget {
 
               // Quick Actions Grid
               Text(
-                'QUICK ACTIONS',
+                provider.strings.quickActions,
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w700,
@@ -288,24 +288,34 @@ class HomeDashboardTab extends StatelessWidget {
                     color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
                   ),
                 ),
+                  border: Border.all(color: AppTheme.skyBlue.withAlpha(60)),
+                ),
+                child: Text(
+                  provider.strings.interactive,
+                  style: GoogleFonts.jetBrainsMono(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.skyBlue,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
-            'Interactive animated Soil Wave area graphs, ClimateIQ 180° rainbow arc gauge, & Sigmoid multi-stage crop phenology curves.',
+            provider.strings.cockpitDesc,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
+              fontSize: 13,
               height: 1.4,
-              color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+              color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           ElevatedButton.icon(
             onPressed: () => provider.toggleCockpitMode(true),
             icon: const Icon(Icons.arrow_outward, size: 14),
             label: Text(
-              'Open Cockpit & Research Hub',
+              provider.strings.openCockpit,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
@@ -370,7 +380,7 @@ class HomeDashboardTab extends StatelessWidget {
                   borderRadius: BorderRadius.circular(5),
                 ),
                 child: Text(
-                  isRainOverride ? 'WEATHER ALERT' : 'OPTIMAL CYCLE',
+                  isRainOverride ? provider.strings.weatherAlert : provider.strings.optimalCycle,
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 8.5,
                     fontWeight: FontWeight.w700,

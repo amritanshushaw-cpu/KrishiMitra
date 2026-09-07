@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../../state/farm_provider.dart';
 import '../../core/theme/app_theme.dart';
 import 'app_glass_container.dart';
 
@@ -22,6 +24,7 @@ class FarmHealthRingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<FarmProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = healthScore >= 80
         ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
@@ -61,7 +64,7 @@ class FarmHealthRingCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'CROP SCORE',
+                      provider.strings.cropScore,
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 8,
                         fontWeight: FontWeight.w700,
@@ -102,7 +105,7 @@ class FarmHealthRingCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'Overall Farm Health Index',
+                  provider.strings.overallHealth,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
