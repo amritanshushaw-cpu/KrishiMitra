@@ -7,6 +7,7 @@ class ParameterItem {
   final String title;
   final String value;
   final String bengaliValue;
+  final String hindiValue;
   final ParameterStatus status;
   final IconData icon;
 
@@ -14,6 +15,7 @@ class ParameterItem {
     required this.title,
     required this.value,
     required this.bengaliValue,
+    this.hindiValue = "",
     required this.status,
     required this.icon,
   });
@@ -192,38 +194,93 @@ class ParsedDiagnosis {
     );
   }
 
+
+  // ========================================================
+  // MASSIVE AGRONOMIC NLP DICTIONARY (BENGALI & HINDI)
+  // ========================================================
   static String _bengaliDiseaseName(String en) {
     final lower = en.toLowerCase();
-    if (lower.contains('late blight')) return 'নাবি ধসা রোগ (Late Blight)';
-    if (lower.contains('early blight')) return 'আগাম ধসা রোগ (Early Blight)';
-    if (lower.contains('leaf blast')) return 'ব্লাস্ট রোগ (Leaf Blast)';
-    if (lower.contains('brown spot')) return 'বাদামি দাগ রোগ (Brown Spot)';
-    if (lower.contains('leaf mold')) return 'পাতার ছত্রাক রোগ (Leaf Mold)';
-    if (lower.contains('curl virus')) return 'পাতা কোঁকড়ানো ভাইরাস (Yellow Leaf Curl)';
+    if (lower.contains('late blight')) return '???? ??? (Late Blight)';
+    if (lower.contains('early blight')) return '???? ??? (Early Blight)';
+    if (lower.contains('leaf blast')) return '???? ?????? ??? (Leaf Blast)';
+    if (lower.contains('brown spot')) return '?????? ??? ??? (Brown Spot)';
+    if (lower.contains('leaf mold')) return '???? ????? ??? (Leaf Mold)';
+    if (lower.contains('curl virus')) return '???? ????????? ?????? (Yellow Leaf Curl)';
+    if (lower.contains('mosaic')) return '?????? ?????? (Mosaic Virus)';
+    if (lower.contains('bacterial blight')) return '????????????? ?????? (Bacterial Blight)';
+    if (lower.contains('hispa')) return '????? ???? (Stem Hispa)';
+    return en;
+  }
+
+  static String _hindiDiseaseName(String en) {
+    final lower = en.toLowerCase();
+    if (lower.contains('late blight')) return '????? ????? (Late Blight)';
+    if (lower.contains('early blight')) return '????? ????? (Early Blight)';
+    if (lower.contains('leaf blast')) return '????? ????? (Leaf Blast)';
+    if (lower.contains('brown spot')) return '???? ????? (Brown Spot)';
+    if (lower.contains('leaf mold')) return '????? ?????? (Leaf Mold)';
+    if (lower.contains('curl virus')) return '????? ????? ????? (Leaf Curl)';
+    if (lower.contains('mosaic')) return '?????? ????? (Mosaic)';
+    if (lower.contains('bacterial blight')) return '?????? ????? (Bacterial Blight)';
+    if (lower.contains('hispa')) return '????? ??? (Hispa)';
     return en;
   }
 
   static String _bengaliPestName(String en) {
     final lower = en.toLowerCase();
-    if (lower.contains('aphid')) return 'জাব পোকা (এফিডস)';
-    if (lower.contains('stem borer')) return 'মাজরা পোকা (Stem Borer)';
-    if (lower.contains('whitefly')) return 'সাদা মাছি (Whitefly)';
+    if (lower.contains('aphid')) return '??? ???? (Aphids)';
+    if (lower.contains('stem borer')) return '????? ???? (Stem Borer)';
+    if (lower.contains('whitefly')) return '???? ???? (Whitefly)';
+    if (lower.contains('caterpillar')) return '????????? (Caterpillar)';
+    if (lower.contains('grasshopper')) return '???????? (Grasshopper)';
+    return en;
+  }
+
+  static String _hindiPestName(String en) {
+    final lower = en.toLowerCase();
+    if (lower.contains('aphid')) return '???? (Aphid)';
+    if (lower.contains('stem borer')) return '??? ???? (Stem Borer)';
+    if (lower.contains('whitefly')) return '????? ????? (Whitefly)';
+    if (lower.contains('caterpillar')) return '????? (Caterpillar)';
+    if (lower.contains('grasshopper')) return '?????? (Grasshopper)';
     return en;
   }
 
   static String _bengaliNutrientName(String en) {
     final lower = en.toLowerCase();
-    if (lower.contains('nitrogen')) return 'নাইট্রোজেনের অভাব (N)';
-    if (lower.contains('phosphorus')) return 'ফসফরাসের অভাব (P)';
-    if (lower.contains('potassium')) return 'পটাশিয়ামের অভাব (K)';
+    if (lower.contains('nitrogen')) return '???????????? ???? (N)';
+    if (lower.contains('phosphorus')) return '???????? ???? (P)';
+    if (lower.contains('potassium')) return '??????????? ???? (K)';
+    if (lower.contains('zinc')) return '?????? ???? (Zn)';
+    if (lower.contains('calcium')) return '????????????? ???? (Ca)';
+    return en;
+  }
+
+  static String _hindiNutrientName(String en) {
+    final lower = en.toLowerCase();
+    if (lower.contains('nitrogen')) return '????????? ?? ??? (N)';
+    if (lower.contains('phosphorus')) return '???????? ?? ??? (P)';
+    if (lower.contains('potassium')) return '???????? ?? ??? (K)';
+    if (lower.contains('zinc')) return '???? ?? ??? (Zn)';
+    if (lower.contains('calcium')) return '???????? ?? ??? (Ca)';
     return en;
   }
 
   static String _bengaliStageName(String en) {
     final lower = en.toLowerCase();
-    if (lower.contains('seedling')) return 'চারা পর্যায় (Seedling)';
-    if (lower.contains('vegetative')) return 'বৃদ্ধি পর্যায় (Vegetative)';
-    if (lower.contains('flowering')) return 'ফুল ও ফল ধারণ পর্যায় (Flowering/Fruiting)';
+    if (lower.contains('seedling')) return '???? ??????? (Seedling)';
+    if (lower.contains('vegetative')) return '????? ?????? ??????? (Vegetative)';
+    if (lower.contains('flowering')) return '???/?? ??????? (Flowering)';
+    if (lower.contains('maturity')) return '????????? (Maturity)';
+    return en;
+  }
+
+  static String _hindiStageName(String en) {
+    final lower = en.toLowerCase();
+    if (lower.contains('seedling')) return '????? ??? (Seedling)';
+    if (lower.contains('vegetative')) return '????????? ??? (Vegetative)';
+    if (lower.contains('flowering')) return '???/?? ??? (Flowering)';
+    if (lower.contains('maturity')) return '????????? (Maturity)';
     return en;
   }
 }
