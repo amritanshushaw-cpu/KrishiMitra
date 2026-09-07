@@ -132,6 +132,19 @@ class AppStrings {
   String get pumpLocked => isBengali ? 'লক করা (নিরাপদ)' : (isHindi ? 'लॉक (सुरक्षित)' : 'LOCKED (Safe)');
   String get pumpUnlocked => isBengali ? 'আনলক (সক্রিয়)' : (isHindi ? 'अनलॉक (सक्रिय)' : 'UNLOCKED (Active)');
 
+
+  // Missing Dashboard Strings
+  String get quickActions => isBengali ? 'দ্রুত পদক্ষেপ' : (isHindi ? 'त्वरित कार्रवाई' : 'QUICK ACTIONS');
+  String get cockpitTitle => isBengali ? 'ককপিট // ইন্টারেক্টিভ' : (isHindi ? 'कॉकपिट // इंटरैक्टिव' : 'DATA MEETS GROWTH // COCKPIT');
+  String get interactive => isBengali ? 'ইন্টারেক্টিভ' : (isHindi ? 'इंटरैक्टिव' : 'INTERACTIVE');
+  String get cockpitDesc => isBengali ? 'ইন্টারেক্টিভ মাটি ও ফসলের বিশ্লেষণ' : (isHindi ? 'इंटरैक्टिव मिट्टी और फसल विश्लेषण' : 'Interactive animated Soil Wave area graphs, ClimateIQ 180° rainbow arc gauge, & Sigmoid multi-stage crop phenology curves.');
+  String get openCockpit => isBengali ? 'ককপিট খুলুন' : (isHindi ? 'कॉकपिट खोलें' : 'Open Cockpit & Research Hub');
+  String get weatherAlert => isBengali ? 'আবহাওয়া সতর্কতা' : (isHindi ? 'मौसम चेतावनी' : 'WEATHER ALERT');
+  String get optimalCycle => isBengali ? 'অনুকূল চক্র' : (isHindi ? 'इष्टतम चक्र' : 'OPTIMAL CYCLE');
+  String get cropScore => isBengali ? 'ফসল স্কোর' : (isHindi ? 'फसल स्कोर' : 'CROP SCORE');
+  String get overallHealth => isBengali ? 'সামগ্রিক খামার স্বাস্থ্য' : (isHindi ? 'समग्र खेत स्वास्थ्य' : 'Overall Farm Health Index');
+  String get safetyNetSub => isBengali ? 'অফলাইন ডায়াগনস্টিক পরীক্ষা করতে নমুনা পাতা ব্যবহার করুন' : (isHindi ? 'ऑफ़लाइन निदान परीक्षण के लिए डेमो पत्ती का उपयोग करें' : 'Instantly inject high-res leaf assets to test offline neural diagnosis without requiring live ESP32 camera Wi-Fi.');
+
   // Settings & Profile
   String get languageSettings => isBengali ? 'অ্যাপ ও আঞ্চলিক ভয়েস ভাষা' : (isHindi ? 'ऐप और क्षेत्रीय आवाज भाषा' : 'APP & REGIONAL LANGUAGE');
   String get appearanceTheme => isBengali ? 'চেহারা ও থিম' : (isHindi ? 'दिखावट और थीम' : 'APPEARANCE & THEME');
