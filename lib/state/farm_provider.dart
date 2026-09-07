@@ -37,7 +37,7 @@ class FarmProvider extends ChangeNotifier {
   FusedAdvisoryResult? _fusedAdvisory;
 
   bool _isSafetyNetMode = false;
-  TtsLanguage _ttsLanguage = TtsLanguage.bengali;
+  TtsLanguage _ttsLanguage = TtsLanguage.english;
   int _activeTabIndex = 0;
   bool _isDarkMode = false;
   bool _isCockpitMode = false;
@@ -176,10 +176,10 @@ class FarmProvider extends ChangeNotifier {
       final savedLang = prefs.getString('preferred_language');
       if (savedLang == 'hindi') {
         _ttsLanguage = TtsLanguage.hindi;
-      } else if (savedLang == 'english') {
-        _ttsLanguage = TtsLanguage.english;
+      } else if (savedLang == 'bengali') {
+        _ttsLanguage = TtsLanguage.bengali;
       } else {
-        _ttsLanguage = TtsLanguage.bengali; // Default
+        _ttsLanguage = TtsLanguage.english; // Default
       }
       _ttsService.setLanguage(_ttsLanguage);
       notifyListeners();

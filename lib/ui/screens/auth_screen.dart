@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/secure_db_service.dart';
 import '../../state/farm_provider.dart';
+import '../../services/voice_tts_service.dart';
 import '../widgets/app_glass_container.dart';
 import 'main_shell_screen.dart';
 
@@ -139,6 +140,8 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark ? AppTheme.softSage : AppTheme.forestMoss;
+    final provider = context.watch<FarmProvider>();
+    final strings = provider.strings;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -161,16 +164,55 @@ class _AuthScreenState extends State<AuthScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Language Selector Dropdown
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: primaryColor.withAlpha(20),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: primaryColor.withAlpha(50)),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<TtsLanguage>(
+                              value: provider.ttsLanguage,
+                              dropdownColor: isDark ? AppTheme.darkCanvas : AppTheme.ivoryCanvas,
+                              icon: Icon(Icons.language_rounded, color: primaryColor),
+                              items: const [
+                                DropdownMenuItem(
+                                  value: TtsLanguage.english,
+                                  child: Text('English', style: TextStyle(fontWeight: FontWeight.w600)),
+                                ),
+                                DropdownMenuItem(
+                                  value: TtsLanguage.hindi,
+                                  child: Text('हिंदी (Hindi)', style: TextStyle(fontWeight: FontWeight.w600)),
+                                ),
+                                DropdownMenuItem(
+                                  value: TtsLanguage.bengali,
+                                  child: Text('বাংলা (Bengali)', style: TextStyle(fontWeight: FontWeight.w600)),
+                                ),
+                              ],
+                              onChanged: (TtsLanguage? newLang) {
+                                if (newLang != null) {
+                                  provider.setTtsLanguage(newLang);
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      
                       // Brand Emblem
                       Center(
                         child: Container(
                           width: 58,
                           height: 58,
                           decoration: BoxDecoration(
-                            color: primaryColor.withValues(alpha: 0.12),
+                            color: primaryColor.withAlpha(30),
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: primaryColor.withValues(alpha: 0.28),
+                              color: primaryColor.withAlpha(70),
                               width: 1.5,
                             ),
                           ),
@@ -185,7 +227,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                       // Brand Header
                       Text(
-                        'KRISHIMITRA // AI',
+                        strings.authTitle,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 12.5,
@@ -196,7 +238,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        isLogin ? 'Operator Sign In' : 'Create Farmer Account',
+                        isLogin ? strings.authSignInHeader : strings.authCreateHeader,
                         textAlign: TextAlign.center,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 22,
@@ -205,23 +247,12 @@ class _AuthScreenState extends State<AuthScreen> {
                           color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        isLogin
-                          ? 'Enter credentials to access edge telemetry & advisory'
-                          : 'Register farmer profile with local SQLCipher encryption',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12,
-                          color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                        ),
-                      ),
                       const SizedBox(height: 24),
 
                       // Name Field (Sign Up Only)
                       if (!isLogin) ...[
                         Text(
-                          'FARMER FULL NAME',
+                          strings.authNameLabel,
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
@@ -235,11 +266,6 @@ class _AuthScreenState extends State<AuthScreen> {
                           textCapitalization: TextCapitalization.words,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.badge_outlined, size: 20, color: primaryColor),
-                            hintText: 'e.g. Saptak Mukherjee',
-                            hintStyle: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                            ),
                             filled: true,
                             fillColor: isDark ? AppTheme.darkCanvas : AppTheme.ivoryCanvas,
                             contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -266,7 +292,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                       // Username Field
                       Text(
-                        'USERNAME / OPERATOR ID',
+                        strings.authUsernameLabel,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -309,7 +335,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                       // Password Field
                       Text(
-                        'PASSWORD',
+                        strings.authPasswordLabel,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -326,16 +352,12 @@ class _AuthScreenState extends State<AuthScreen> {
                           suffixIcon: IconButton(
                             icon: Icon(
                               _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-                              size: 19,
                               color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                              size: 20,
                             ),
                             onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                           ),
                           hintText: '••••••••',
-                          hintStyle: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
-                            color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                          ),
                           filled: true,
                           fillColor: isDark ? AppTheme.darkCanvas : AppTheme.ivoryCanvas,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -357,51 +379,46 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 22),
+                      const SizedBox(height: 32),
 
                       // Submit Button
-                      ElevatedButton(
-                        onPressed: _isLoading ? null : _submit,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
-                          foregroundColor: isDark ? Colors.black : Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                      SizedBox(
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _submit,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
-                          elevation: 0,
-                        ),
-                        child: _isLoading
-                            ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: isDark ? Colors.black : Colors.white,
-                                ),
-                              )
-                            : Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    isLogin ? Icons.login_rounded : Icons.person_add_alt_1_rounded,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    isLogin ? 'SIGN IN TO EDGE APP' : 'REGISTER & SYNC PROFILE',
-                                    style: GoogleFonts.jetBrainsMono(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0.5,
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(isLogin ? Icons.login_rounded : Icons.person_add_rounded, size: 20),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      isLogin ? strings.authSignInBtn : strings.authRegisterBtn,
+                                      style: GoogleFonts.jetBrainsMono(
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: 0.5,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
+                        ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 16),
 
-                      // Mode Toggle Button
+                      // Toggle Login/Register
                       TextButton(
                         onPressed: () {
                           setState(() {
@@ -410,15 +427,12 @@ class _AuthScreenState extends State<AuthScreen> {
                           });
                         },
                         style: TextButton.styleFrom(
-                          foregroundColor: primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          foregroundColor: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
                         ),
                         child: Text(
-                          isLogin
-                              ? "Don't have an account? Create one"
-                              : 'Already registered? Sign in here',
+                          isLogin ? strings.authToggleToRegister : strings.authToggleToSignIn,
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12.5,
+                            fontSize: 13,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
