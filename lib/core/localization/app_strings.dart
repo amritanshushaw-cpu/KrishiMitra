@@ -28,13 +28,13 @@ class AppStrings {
 
   
   // Auth Screen
-  String get authTitle => isBengali ? 'কৃষিমিত্র // এআই' : (isHindi ? 'कृषिमित्र // एआई' : 'KRISHIMITRA // AI');
-  String get authSignInHeader => isBengali ? 'লগ ইন করুন' : (isHindi ? 'साइन इन करें' : 'Operator Sign In');
+  String get authTitle => isBengali ? 'কৃষিমিত্র' : (isHindi ? 'कृषिमित्र' : 'KRISHIMITRA');
+  String get authSignInHeader => isBengali ? 'লগ ইন করুন' : (isHindi ? 'साइन इन करें' : 'Sign In');
   String get authCreateHeader => isBengali ? 'নতুন অ্যাকাউন্ট তৈরি করুন' : (isHindi ? 'नया खाता बनाएँ' : 'Create Farmer Account');
   String get authNameLabel => isBengali ? 'আপনার পুরো নাম' : (isHindi ? 'आपका पूरा नाम' : 'FARMER FULL NAME');
-  String get authUsernameLabel => isBengali ? 'ইউজারনেম / আইডি' : (isHindi ? 'उपयोगकर्ता नाम' : 'USERNAME / OPERATOR ID');
+  String get authUsernameLabel => isBengali ? 'ইউজারনেম' : (isHindi ? 'उपयोगकर्ता नाम' : 'USERNAME');
   String get authPasswordLabel => isBengali ? 'পাসওয়ার্ড' : (isHindi ? 'पासवर्ड' : 'PASSWORD');
-  String get authSignInBtn => isBengali ? 'প্রবেশ করুন' : (isHindi ? 'साइन इन करें' : 'SIGN IN TO EDGE APP');
+  String get authSignInBtn => isBengali ? 'অ্যাপে প্রবেশ করুন' : (isHindi ? 'ऐप में साइन इन करें' : 'SIGN IN TO APP');
   String get authRegisterBtn => isBengali ? 'নিবন্ধন করুন' : (isHindi ? 'पंजीकरण करें' : 'REGISTER & SYNC PROFILE');
   String get authToggleToRegister => isBengali ? 'অ্যাকাউন্ট নেই? নিবন্ধন করুন' : (isHindi ? 'खाता नहीं है? पंजीकरण करें' : 'No account yet? Create one.');
   String get authToggleToSignIn => isBengali ? 'অ্যাকাউন্ট আছে? লগ ইন করুন' : (isHindi ? 'खाता है? साइन इन करें' : 'Already have an account? Sign in.');
