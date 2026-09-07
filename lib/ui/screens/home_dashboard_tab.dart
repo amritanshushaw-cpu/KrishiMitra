@@ -260,7 +260,7 @@ class HomeDashboardTab extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'DATA MEETS GROWTH // COCKPIT',
+                        provider.strings.cockpitTitle,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
@@ -281,21 +281,11 @@ class HomeDashboardTab extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
-                  'INTERACTIVE',
+                  provider.strings.interactive,
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 8.5,
                     fontWeight: FontWeight.w700,
                     color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
-                  ),
-                ),
-                  border: Border.all(color: AppTheme.skyBlue.withAlpha(60)),
-                ),
-                child: Text(
-                  provider.strings.interactive,
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.bold,
-                    color: AppTheme.skyBlue,
                   ),
                 ),
               ),
@@ -305,12 +295,12 @@ class HomeDashboardTab extends StatelessWidget {
           Text(
             provider.strings.cockpitDesc,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 13,
+              fontSize: 12,
               height: 1.4,
-              color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+              color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 12),
           ElevatedButton.icon(
             onPressed: () => provider.toggleCockpitMode(true),
             icon: const Icon(Icons.arrow_outward, size: 14),
