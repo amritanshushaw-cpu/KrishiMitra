@@ -1,4 +1,4 @@
-import '../../services/voice_tts_service.dart';
+﻿import '../../services/voice_tts_service.dart';
 
 /// Central in-app localization & regional language translation system
 /// Covers Bengali (বাংলা), Hindi (हिन्दी), and English across all tabs and widgets.
@@ -26,7 +26,6 @@ class AppStrings {
       ? '১০০% অফলাইন // ফোন-অ্যাজ-ব্রেন'
       : (isHindi ? '100% ऑफलाइन // फोन-एज-ब्रेन' : '100% OFFLINE // PHONE-AS-BRAIN');
 
-  
   // Auth Screen
   String get authTitle => isBengali ? 'কৃষিমিত্র' : (isHindi ? 'कृषिमित्र' : 'KRISHIMITRA');
   String get authSignInHeader => isBengali ? 'লগ ইন করুন' : (isHindi ? 'साइन इन करें' : 'Sign In');
@@ -62,41 +61,12 @@ class AppStrings {
     } else {
       return isBengali
           ? 'শুভ রাত্রি, কৃষক বন্ধু'
-          : (isHindi ? 'শুভ रात्रि, किसान मित्र' : 'Good Night, Farmer');
+          : (isHindi ? 'शुभ रात्रि, किसान मित्र' : 'Good Night, Farmer');
     }
   }
 
   String getGreetingSubtitle([DateTime? time]) {
     final hour = (time ?? DateTime.now()).hour;
-    if (hour >= 4 && hour < 12) {
-      return isBengali
-          ? 'সকালের আবহাওয়া স্বাভাবিক। আজকের খামারের পরিস্থিতি দেখুন।'
-          : (isHindi
-              ? 'सुबह का मौसम अनुकूल है। आज का खेत विवरण देखें।'
-              : 'Morning conditions are optimal. Here is your daily farm overview.');
-    } else if (hour >= 12 && hour < 17) {
-      return isBengali
-          ? 'দুপুরের রোদ ও মাটির আর্দ্রতা নিরীক্ষণ করা হচ্ছে।'
-          : (isHindi
-              ? 'दोपहर की धूप और मिट्टी की नमी का विवरण सक्रिय है।'
-              : 'Midday solar & soil telemetry active. Review hydration levels.');
-    } else if (hour >= 17 && hour < 21) {
-      return isBengali
-          ? 'সন্ধ্যার শীতল বাতাস। রাতের সেচ সময়সূচী যাচাই করুন।'
-          : (isHindi
-              ? 'शाम की ठंडक शुरू। रात की सिंचाई और पंप स्थिति देखें।'
-              : 'Evening telemetry logged. Check nighttime pump & moisture schedule.');
-    } else {
-      return isBengali
-          ? 'রাত্রিকালীন পর্যবেক্ষণ সক্রিয়। ১০০% অফলাইন সুরক্ষা চলছে।'
-          : (isHindi
-              ? 'रात्रि निगरानी सक्रिय है। 100% ऑफलाइन सेंसर सुरक्षा चालू है।'
-              : 'Night telemetry active. Autonomous edge protection is running.');
-    }
-  }
-
-  String get timeOfDayPeriod {
-    final hour = DateTime.now().hour;
     if (hour >= 4 && hour < 12) {
       return isBengali ? 'সকাল' : (isHindi ? 'सुबह' : 'Morning');
     } else if (hour >= 12 && hour < 17) {
@@ -135,7 +105,7 @@ class AppStrings {
   String get awaitLeafScanSub => isBengali
       ? 'রোগ নির্ণয় ও প্রতিকার দেখতে "পাতা তুলুন" বা "নমুনা পাতা" চাপুন।'
       : (isHindi
-          ? 'रोग निदान और उपचार देखने के लिए "पत्ती कैप्चর करें" या "डेमो पत्ती" दबाएं।'
+          ? 'रोग निदान और उपचार देखने के लिए "पत्ती कैप्चर करें" या "डेमो पत्ती" दबाएं।'
           : 'Tap "CAPTURE LEAF" or "DEMO ASSET" to run local neural inference and generate disease remedies.');
   String get confidence => isBengali ? 'নিশ্চিততা' : (isHindi ? 'सटीकता' : 'CONFIDENCE');
 
