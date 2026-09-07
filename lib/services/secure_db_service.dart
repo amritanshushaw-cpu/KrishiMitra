@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class SecureDatabaseService {
   static const _databaseName = "KrishiMitraSecure.db";
@@ -187,6 +189,80 @@ class SecureDatabaseService {
     }
 
     await _logFarmEventInPrefs(data);
+  }
+
+  // ==========================================
+  // OFFLINE LOG EXPORT
+  // ==========================================
+  
+  /// Exports farm logs to a tiny, shareable .txt file for the given number of days.
+  Future<String?> exportLogsToText({int days = 7}) async {
+    if (kIsWeb) return null; // File export not supported on pure Web without download logic
+    
+    try {
+      final DateTime cutoff = DateTime.now().subtract(Duration(days: days));
+      List<Map<String, dynamic>> exportData = [];
+
+      final db = await database;
+      if (db != null) {
+        final List<Map<String, dynamic>> result = await db.query(tableLogs);
+        exportData = result.where((row) {
+          final timeStr = row['timestamp'] as String?;
+          if (timeStr == null) return false;
+          try {
+            final dt = DateTime.parse(timeStr);
+            return dt.isAfter(cutoff);
+          } catch (_) {
+            return false;
+          }
+        }).toList();
+      } else {
+        final prefs = await SharedPreferences.getInstance();
+        final logsRaw = prefs.getString(_prefsKeyLogs);
+        if (logsRaw != null && logsRaw.isNotEmpty) {
+          final List<dynamic> logs = List<dynamic>.from(jsonDecode(logsRaw) as List);
+          exportData = logs.map((e) => Map<String, dynamic>.from(e as Map)).where((row) {
+            final timeStr = row['timestamp'] as String?;
+            if (timeStr == null) return false;
+            try {
+              final dt = DateTime.parse(timeStr);
+              return dt.isAfter(cutoff);
+            } catch (_) {
+              return false;
+            }
+          }).toList();
+        }
+      }
+
+      if (exportData.isEmpty) {
+        return "No logs found for the past \ days.";
+      }
+
+      final StringBuffer sb = StringBuffer();
+      sb.writeln("=== KrishiMitra Farm Logs ===");
+      sb.writeln("Export period: Past \ days");
+      sb.writeln("Total records: ");
+      sb.writeln("-----------------------------");
+
+      for (var row in exportData) {
+        sb.writeln("Time: ");
+        sb.writeln("Temp: \C | Hum: \% | Rain: ");
+        sb.writeln("Pump: ");
+        if (row['ai_diagnosis'] != null) {
+          sb.writeln("AI Diagnosis: ");
+        }
+        sb.writeln("---");
+      }
+
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('\/krishimitra_export.txt');
+      await file.writeAsString(sb.toString());
+      
+      return file.path;
+    } catch (e) {
+      debugPrint("Export failed: ");
+      return null;
+    }
   }
 
   // ==========================================
