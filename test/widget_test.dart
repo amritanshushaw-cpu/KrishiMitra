@@ -14,7 +14,7 @@ void main() {
     await tester.pumpWidget(const SmartFarmEdgeApp());
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
-    expect(find.text('KRISHIMITRA // AI'), findsWidgets);
+    expect(find.text('KRISHIMITRA'), findsWidgets);
   });
 
   testWidgets('AuthScreen shows Name field on Sign Up toggle', (WidgetTester tester) async {
@@ -28,11 +28,11 @@ void main() {
     await tester.pump();
 
     // Initial state is Sign In - Name field shouldn't be present
-    expect(find.text('Operator Sign In'), findsOneWidget);
+    expect(find.text('Sign In'), findsOneWidget);
     expect(find.text('FARMER FULL NAME'), findsNothing);
 
     // Tap to switch to Create Account (Sign Up)
-    await tester.tap(find.text("Don't have an account? Create one"));
+    await tester.tap(find.text('No account yet? Create one.'));
     await tester.pump();
 
     // Now Sign Up state is active - Farmer Full Name field must appear
@@ -63,11 +63,11 @@ void main() {
     await tester.pump();
 
     // Verify synced farmer name is rendered in profile card
-    expect(find.text('Ramesh Kumar (Farmer / Operator)'), findsOneWidget);
+    expect(find.text('Ramesh Kumar'), findsOneWidget);
 
     // Verify Log Out buttons exist (both quick header icon and bottom card)
     expect(find.byIcon(Icons.logout_rounded), findsWidgets);
-    expect(find.text('LOG OUT // END SESSION (RAMESH KUMAR)'), findsOneWidget);
+    expect(find.text('LOG OUT SESSION'), findsOneWidget);
   });
 
   testWidgets('ProfileSettingsTab auto-fetches and updates location', (WidgetTester tester) async {
@@ -95,7 +95,7 @@ void main() {
     await tester.pump();
 
     // Verify synced farmer location is rendered in profile card
-    expect(find.text('Kolkata, West Bengal • 3.5 Acres Plot'), findsOneWidget);
+    expect(find.text('Kolkata, West Bengal'), findsOneWidget);
 
     // Verify geolocation section and auto-fetch button
     expect(find.text('FARM LOCATION & GPS SYNCHRONIZATION'), findsOneWidget);
