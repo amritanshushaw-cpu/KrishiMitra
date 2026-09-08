@@ -43,6 +43,7 @@ class FarmProvider extends ChangeNotifier {
   bool _isTtsEnabled = true;
   String _activeFieldZone = 'Area 1: Rice & Tomato Block';
   String _farmerName = 'Saptak';
+  String _farmerMobile = '';
   String _farmerLocation = 'Bardhaman, West Bengal';
   double? _latitude;
   double? _longitude;
@@ -69,6 +70,7 @@ class FarmProvider extends ChangeNotifier {
   bool get isCockpitMode => _isCockpitMode;
   String get activeFieldZone => _activeFieldZone;
   String get farmerName => _farmerName;
+  String get farmerMobile => _farmerMobile;
   String get farmerLocation => _farmerLocation;
   double? get latitude => _latitude;
   double? get longitude => _longitude;
@@ -380,6 +382,11 @@ class FarmProvider extends ChangeNotifier {
       final savedName = prefs.getString('farmer_name');
       if (savedName != null && savedName.trim().isNotEmpty) {
         _farmerName = savedName.trim();
+        notifyListeners();
+      }
+      final savedMobile = prefs.getString('current_username');
+      if (savedMobile != null && savedMobile.trim().isNotEmpty) {
+        _farmerMobile = savedMobile.trim();
         notifyListeners();
       }
     } catch (e) {

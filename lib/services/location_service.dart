@@ -52,73 +52,42 @@ class LocationService {
   static const String prefKeyLon = 'farmer_lon';
   static const String defaultLocation = 'Bardhaman, West Bengal';
 
-  /// Auto-fetches current location using secure high-speed endpoints with fallbacks.
-  Future<FarmLocation?> fetchCurrentLocation({Duration timeout = const Duration(seconds: 4)}) async {
-    // 1. Primary: FreeIPAPI (HTTPS)
+  Future<FarmLocation?> fetchCurrentLocation({Duration timeout = const Duration(seconds: 6)}) async {
     try {
-      final response = await http.get(
-        Uri.parse('https://freeipapi.com/api/json'),
-      ).timeout(timeout);
-
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final city = data['cityName']?.toString() ?? '';
-        final region = data['regionName']?.toString() ?? '';
-        final country = data['countryName']?.toString() ?? 'India';
-        final double? lat = (data['latitude'] is num) ? (data['latitude'] as num).toDouble() : null;
-        final double? lon = (data['longitude'] is num) ? (data['longitude'] as num).toDouble() : null;
-        final zip = data['zipCode']?.toString() ?? '';
-
-        if (city.isNotEmpty || region.isNotEmpty) {
-          final loc = FarmLocation(
-            city: city,
-            region: region,
-            country: country,
-            latitude: lat,
-            longitude: lon,
-            zip: zip,
-          );
-          await _cacheLocation(loc);
-          return loc;
-        }
-      }
-    } catch (e) {
-      debugPrint('FreeIPAPI lookup note: $e. Trying fallback endpoint...');
-    }
-
-    // 2. Secondary Fallback: ip-api
-    try {
-      final response = await http.get(
-        Uri.parse('http://ip-api.com/json'),
-      ).timeout(timeout);
-
+      // Fetching real location using IP Geolocation API
+      final response = await http.get(Uri.parse('http://ip-api.com/json')).timeout(timeout);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['status'] == 'success') {
-          final city = data['city']?.toString() ?? '';
-          final region = data['regionName']?.toString() ?? '';
-          final country = data['country']?.toString() ?? 'India';
-          final double? lat = (data['lat'] is num) ? (data['lat'] as num).toDouble() : null;
-          final double? lon = (data['lon'] is num) ? (data['lon'] as num).toDouble() : null;
-          final zip = data['zip']?.toString() ?? '';
-
           final loc = FarmLocation(
-            city: city,
-            region: region,
-            country: country,
-            latitude: lat,
-            longitude: lon,
-            zip: zip,
+            city: data['city'] ?? 'Unknown',
+            region: data['regionName'] ?? 'Unknown',
+            country: data['country'] ?? 'Unknown',
+            latitude: (data['lat'] as num?)?.toDouble(),
+            longitude: (data['lon'] as num?)?.toDouble(),
+            zip: data['zip'] ?? '',
           );
           await _cacheLocation(loc);
           return loc;
         }
       }
     } catch (e) {
-      debugPrint('Fallback geolocation note: $e');
+      if (kDebugMode) {
+        print('Error fetching actual location: $e');
+      }
     }
-
-    return null;
+    
+    // Fallback if offline
+    final fallback = const FarmLocation(
+      city: 'Bardhaman',
+      region: 'West Bengal',
+      country: 'India',
+      latitude: 23.2324,
+      longitude: 87.8615,
+      zip: '713101',
+    );
+    await _cacheLocation(fallback);
+    return fallback;
   }
 
   Future<void> _cacheLocation(FarmLocation location) async {

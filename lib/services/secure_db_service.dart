@@ -8,7 +8,7 @@ import 'dart:io';
 
 class SecureDatabaseService {
   static const _databaseName = "KrishiMitraSecure.db";
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 2;
   static const _encryptionKey = "KRISHIMITRA_HACKATHON_SECURE_KEY";
 
   static const tableAuth = 'auth_users';
@@ -48,7 +48,18 @@ class SecureDatabaseService {
         path,
         version: _databaseVersion,
         password: _encryptionKey,
-        onCreate: _onCreate,
+        
+      onCreate: _onCreate,
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          try {
+            await db.execute('ALTER TABLE farm_logs ADD COLUMN soil_moisture REAL');
+          } catch (e) {
+            debugPrint('Column might already exist: $e');
+          }
+        }
+      },
+
         onOpen: (db) async {
           try {
             final columns = await db.rawQuery("PRAGMA table_info($tableAuth)");
@@ -83,6 +94,7 @@ class SecureDatabaseService {
         temperature REAL,
         humidity REAL,
         rain_detected INTEGER,
+        soil_moisture REAL,
         pump_status TEXT,
         ai_diagnosis TEXT,
         advisory_output TEXT
@@ -363,6 +375,90 @@ class SecureDatabaseService {
       await prefs.setString(_prefsKeyLogs, jsonEncode(logs));
     } catch (e) {
       debugPrint("SecureDatabaseService fallback logFarmEvent error: $e");
+    }
+  }
+
+  Future<void> saveSensorAndAdvisoryData({
+    required double temperature,
+    required double humidity,
+    required double soilMoisture,
+    required String advisoryOutput,
+  }) async {
+    final timestamp = DateTime.now().toIso8601String();
+    
+    final db = await database;
+    if (db != null) {
+      await db.insert(tableLogs, {
+        'timestamp': timestamp,
+        'temperature': temperature,
+        'humidity': humidity,
+        'soil_moisture': soilMoisture,
+        'advisory_output': advisoryOutput,
+      });
+    } else {
+      // Fallback to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final logsStr = prefs.getString(_prefsKeyLogs) ?? '[]';
+      final logs = List<Map<String, dynamic>>.from(json.decode(logsStr));
+      logs.add({
+        'timestamp': timestamp,
+        'temperature': temperature,
+        'humidity': humidity,
+        'soil_moisture': soilMoisture,
+        'advisory_output': advisoryOutput,
+      });
+      await prefs.setString(_prefsKeyLogs, json.encode(logs));
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getHistoryLogs() async {
+    final db = await database;
+    if (db != null) {
+      // Return logs ordered by newest first
+      try {
+        final result = await db.query(tableLogs, orderBy: 'id DESC');
+        return result.map((e) => Map<String, dynamic>.from(e)).toList();
+      } catch (e) {
+        // If the column is missing because onUpgrade didn't fire, catch it.
+        debugPrint('DB Error: $e');
+        return [];
+      }
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      final logsStr = prefs.getString(_prefsKeyLogs) ?? '[]';
+      final logs = List<Map<String, dynamic>>.from(json.decode(logsStr));
+      return logs.reversed.toList();
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getLogsForLastDays(int days) async {
+    final db = await database;
+    final threshold = DateTime.now().subtract(Duration(days: days)).toIso8601String();
+    
+    if (db != null) {
+      try {
+        final result = await db.query(
+          tableLogs,
+          where: 'timestamp >= ?',
+          whereArgs: [threshold],
+          orderBy: 'id DESC',
+        );
+        return result.map((e) => Map<String, dynamic>.from(e)).toList();
+      } catch (e) {
+        debugPrint('DB Error: $e');
+        return [];
+      }
+    } else {
+      final prefs = await SharedPreferences.getInstance();
+      final logsStr = prefs.getString(_prefsKeyLogs) ?? '[]';
+      final logs = List<Map<String, dynamic>>.from(json.decode(logsStr));
+      return logs.where((log) {
+        final timestampStr = log['timestamp'] as String?;
+        if (timestampStr == null) return false;
+        final timestamp = DateTime.tryParse(timestampStr);
+        if (timestamp == null) return false;
+        return timestamp.isAfter(DateTime.now().subtract(Duration(days: days)));
+      }).toList().reversed.toList();
     }
   }
 }

@@ -6,7 +6,8 @@ import '../../core/theme/app_theme.dart';
 import '../../services/secure_db_service.dart';
 import '../../state/farm_provider.dart';
 import '../../services/voice_tts_service.dart';
-import '../widgets/app_glass_container.dart';
+import '../widgets/liquid_glass_container.dart';
+import '../widgets/liquid_glass_button.dart';
 import 'main_shell_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -41,7 +42,19 @@ class _AuthScreenState extends State<AuthScreen> {
 
     if (user.isEmpty || pass.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter both username and password')),
+        const SnackBar(content: Text('Please enter both mobile number and password')),
+      );
+      return;
+    }
+
+    // Basic Indian mobile number validation (10 digits)
+    final phoneRegex = RegExp(r'^\d{10}$');
+    if (!phoneRegex.hasMatch(user.replaceAll(RegExp(r'\D'), ''))) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid 10-digit mobile number'),
+          backgroundColor: Colors.orange,
+        ),
       );
       return;
     }
@@ -81,7 +94,7 @@ class _AuthScreenState extends State<AuthScreen> {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('Invalid credentials. Please check your username and password.'),
+                content: Text('Invalid credentials. Please check your mobile number and password.'),
                 backgroundColor: AppTheme.alertRose,
               ),
             );
@@ -143,21 +156,28 @@ class _AuthScreenState extends State<AuthScreen> {
     final provider = context.watch<FarmProvider>();
     final strings = provider.strings;
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: AppTheme.backgroundDecoration(isDark),
-        child: SafeArea(
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: AppTheme.backgroundDecoration(isDark),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 440),
-              child: AppGlassContainer(
+              child: LiquidGlassContainer(
                 radius: 26,
                 padding: const EdgeInsets.all(28.0),
+                liquidColors: isDark 
+                    ? [
+                        AppTheme.emeraldLight.withValues(alpha: 0.15),
+                        AppTheme.neonMint.withValues(alpha: 0.08),
+                        Colors.transparent,
+                      ]
+                    : null,
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -290,9 +310,9 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(height: 14),
                       ],
 
-                      // Username Field
+                      // Mobile Number Field
                       Text(
-                        strings.authUsernameLabel,
+                        strings.authMobileLabel,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -303,9 +323,10 @@ class _AuthScreenState extends State<AuthScreen> {
                       const SizedBox(height: 6),
                       TextFormField(
                         controller: _usernameController,
+                        keyboardType: TextInputType.phone,
                         decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person_outline_rounded, size: 20, color: primaryColor),
-                          hintText: strings.authUsernameHint,
+                          prefixIcon: Icon(Icons.phone_rounded, size: 20, color: primaryColor),
+                          hintText: strings.authMobileHint,
                           hintStyle: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
@@ -382,39 +403,20 @@ class _AuthScreenState extends State<AuthScreen> {
                       const SizedBox(height: 32),
 
                       // Submit Button
-                      SizedBox(
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _submit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primaryColor,
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(isLogin ? Icons.login_rounded : Icons.person_add_rounded, size: 20),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      isLogin ? strings.authSignInBtn : strings.authRegisterBtn,
-                                      style: GoogleFonts.jetBrainsMono(
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                        ),
+                      LiquidGlassButton(
+                        onPressed: _isLoading ? null : _submit,
+                        width: double.infinity,
+                        height: 52,
+                        text: _isLoading ? null : (isLogin ? strings.authSignInBtn : strings.authRegisterBtn),
+                        icon: _isLoading ? null : (isLogin ? Icons.login_rounded : Icons.person_add_rounded),
+                        variant: LiquidButtonVariant.primary,
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              )
+                            : null,
                       ),
                       const SizedBox(height: 16),
 

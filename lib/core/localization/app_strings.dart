@@ -14,17 +14,19 @@ class AppStrings {
   bool get isEnglish => language == TtsLanguage.english;
 
   // Bottom Navigation
-  String get navHome => isBengali ? 'বাড়ি' : (isHindi ? 'होम' : 'Home');
+  String get navHome => isBengali ? 'হোম' : (isHindi ? 'होम' : 'Home');
   String get navScan => isBengali ? 'স্ক্যান' : (isHindi ? 'स्कैन' : 'Scan');
   String get navSensors => isBengali ? 'সেন্সর' : (isHindi ? 'सेंसर' : 'Sensors');
   String get navAdvisory => isBengali ? 'পরামর্শ' : (isHindi ? 'सलाह' : 'Advisory');
-  String get navProfile => isBengali ? 'প্রোফাইল' : (isHindi ? 'प्रोफाइल' : 'Profile');
+  String get navHistory => isBengali ? 'ইতিহাস' : (isHindi ? 'इतिहास' : 'History');
+  String get historyTitle => isBengali ? 'ইতিহাস লগ' : (isHindi ? 'इतिहास लॉग' : 'HISTORY LOGS');
+  String get navProfile => isBengali ? 'প্রোফাইল' : (isHindi ? 'प्रोफ़ाइल' : 'Profile');
 
   // App Bar & Global
   String get appTitle => 'KrishiMitra AI';
   String get offlineTag => isBengali
-      ? '১০০% অফলাইন // ফোন-অ্যাজ-ব্রেন'
-      : (isHindi ? '100% ऑफलाइन // फोन-एज-ब्रेन' : '100% OFFLINE // PHONE-AS-BRAIN');
+      ? '১০০% অফলাইন'
+      : (isHindi ? '100% ऑफलाइन' : '100% OFFLINE');
 
   // Home Screen
   // Dynamic Time-Based Greeting (Morning, Afternoon, Evening, Night)
@@ -153,8 +155,8 @@ class AppStrings {
   String get authSignInHeader => isBengali ? 'লগ ইন করুন' : (isHindi ? 'साइन इन करें' : 'Sign In');
   String get authCreateHeader => isBengali ? 'নতুন অ্যাকাউন্ট তৈরি করুন' : (isHindi ? 'नया खाता बनाएँ' : 'Create Farmer Account');
   String get authNameLabel => isBengali ? 'আপনার পুরো নাম' : (isHindi ? 'आपका पूरा नाम' : 'FARMER FULL NAME');
-  String get authUsernameLabel => isBengali ? 'ইউজারনেম' : (isHindi ? 'उपयोगकर्ता नाम' : 'USERNAME');
-  String get authUsernameHint => isBengali ? 'উদাহরণ: কৃষক' : (isHindi ? 'उदाहरण: किसान' : 'e.g: farmer');
+  String get authMobileLabel => isBengali ? 'মোবাইল নম্বর' : (isHindi ? 'मोबाइल नंबर' : 'MOBILE NUMBER');
+  String get authMobileHint => isBengali ? 'উদাঃ 9876543210' : (isHindi ? 'उदा: 9876543210' : 'e.g: 9876543210');
   String get authPasswordLabel => isBengali ? 'পাসওয়ার্ড' : (isHindi ? 'पासवर्ड' : 'PASSWORD');
   String get authSignInBtn => isBengali ? 'অ্যাপে প্রবেশ করুন' : (isHindi ? 'ऐप में साइन इन करें' : 'SIGN IN TO APP');
   String get authRegisterBtn => isBengali ? 'নিবন্ধন করুন' : (isHindi ? 'पंजीकरण करें' : 'REGISTER & SYNC PROFILE');

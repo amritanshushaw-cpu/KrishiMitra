@@ -23,14 +23,13 @@ dependencies:
   intl: ^0.20.3
   sqflite_sqlcipher: ^3.4.1
   shared_preferences: ^2.5.5
+  fresnel: ^0.1.0
+  geolocator: ^14.0.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-
-dependency_overrides:
-  path_provider_foundation: 2.4.0
 
 flutter:
   uses-material-design: true
