@@ -7,12 +7,10 @@ import 'core/theme/app_theme.dart';
 import 'services/voice_tts_service.dart';
 import 'state/farm_provider.dart';
 import 'ui/screens/main_shell_screen.dart';
-import 'package:fresnel/fresnel.dart';
 import 'ui/screens/auth_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Fresnel.ensureInitialized();
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -58,6 +56,14 @@ class SmartFarmEdgeApp extends StatelessWidget {
               Locale('bn', 'IN'),
               Locale('hi', 'IN'),
             ],
+            builder: (context, child) {
+              return AnimatedTheme(
+                data: provider.isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme,
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.easeInOutCubic,
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
             home: const AuthGuard(),
           );
         },

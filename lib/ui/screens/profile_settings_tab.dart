@@ -5,12 +5,13 @@ import '../../core/theme/app_theme.dart';
 import '../../services/voice_tts_service.dart';
 import '../../state/farm_provider.dart';
 import '../widgets/app_glass_container.dart';
+import '../widgets/smooth_entrance_modal.dart';
 import 'auth_screen.dart';
 
 class ProfileSettingsTab extends StatelessWidget {
-  final VoidCallback onOpenSafetyNet;
+  final VoidCallback? onOpenSafetyNet;
 
-  const ProfileSettingsTab({super.key, required this.onOpenSafetyNet});
+  const ProfileSettingsTab({super.key, this.onOpenSafetyNet});
 
   @override
   Widget build(BuildContext context) {
@@ -401,72 +402,6 @@ class ProfileSettingsTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // Demonstration & Hardware Bypass Utility
-              Text(
-                'DEMONSTRATION & PITCH UTILITY',
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.6,
-                  color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                ),
-              ),
-              const SizedBox(height: 8),
-              AppGlassContainer(
-                radius: 16,
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.shield_outlined,
-                          color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'HARDWARE BYPASS // PITCH SAFETY NET',
-                            style: GoogleFonts.jetBrainsMono(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Instantly inject high-resolution sample leaf images (Tomato Late Blight, Potato Healthy, Rice Blast) to test offline edge inference and vernacular voice playback.',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12,
-                        color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: onOpenSafetyNet,
-                        icon: const Icon(Icons.play_arrow_outlined, size: 16),
-                        label: const Text('OPEN PITCH SAFETY NET MODAL'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
-                          foregroundColor: isDark ? Colors.black : Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
 
               // Security & Log Out Section
               AppGlassContainer(
@@ -540,15 +475,15 @@ class ProfileSettingsTab extends StatelessWidget {
 
   Future<void> _confirmLogout(BuildContext context, FarmProvider provider) async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final confirm = await showDialog<bool>(
+    final confirm = await showSmoothDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? AppTheme.deepPine : AppTheme.mintDew,
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.mintDew,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: isDark
-                ? AppTheme.softSage.withValues(alpha: 0.25)
+                ? AppTheme.darkBorder
                 : AppTheme.softSage.withValues(alpha: 0.40),
           ),
         ),
@@ -621,15 +556,15 @@ class ProfileSettingsTab extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark ? AppTheme.emeraldLight : AppTheme.forestGreen;
 
-    final updated = await showDialog<String>(
+    final updated = await showSmoothDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? AppTheme.deepPine : AppTheme.mintDew,
+        backgroundColor: isDark ? AppTheme.darkSurface : AppTheme.mintDew,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
           side: BorderSide(
             color: isDark
-                ? AppTheme.softSage.withValues(alpha: 0.25)
+                ? AppTheme.darkBorder
                 : AppTheme.softSage.withValues(alpha: 0.40),
           ),
         ),
@@ -701,28 +636,31 @@ class ProfileSettingsTab extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = isDark ? AppTheme.emeraldLight : AppTheme.forestGreen;
 
-    return ListTile(
-      onTap: onTap,
-      title: Text(
-        title,
-        style: GoogleFonts.plusJakartaSans(
-          fontSize: 13.5,
-          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-          color: isSelected
-              ? primaryColor
-              : (isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary),
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        onTap: onTap,
+        title: Text(
+          title,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 13.5,
+            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+            color: isSelected
+                ? primaryColor
+                : (isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary),
+          ),
         ),
-      ),
-      subtitle: Text(
-        subtitle,
-        style: GoogleFonts.plusJakartaSans(
-          fontSize: 11.5,
-          color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+        subtitle: Text(
+          subtitle,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 11.5,
+            color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+          ),
         ),
+        trailing: isSelected
+            ? Icon(Icons.check_circle, color: primaryColor, size: 20)
+            : null,
       ),
-      trailing: isSelected
-          ? Icon(Icons.check_circle, color: primaryColor, size: 20)
-          : null,
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/sensor_data.dart';
 import '../../services/ble_service.dart';
+import 'app_glass_container.dart';
 
 class TelemetryGauge extends StatelessWidget {
   final SensorData data;
@@ -20,113 +21,108 @@ class TelemetryGauge extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
-          width: 1.0,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.25)
-                : const Color(0xFF1B4D3E).withValues(alpha: 0.04),
-            blurRadius: 14,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+    return AppGlassContainer(
+      isLiquid: true,
+      radius: 22,
+      padding: const EdgeInsets.all(18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Container(
-                      width: 7,
-                      height: 7,
-                      decoration: BoxDecoration(
-                        color: bleState == BleConnectionState.connected
-                            ? AppTheme.emeraldLight
-                            : (bleState == BleConnectionState.simulated ? Colors.cyan : AppTheme.lightTextMuted),
-                        shape: BoxShape.circle,
-                      ),
+              Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: bleState == BleConnectionState.connected
+                          ? AppTheme.vibrantEmerald
+                          : (bleState == BleConnectionState.simulated ? const Color(0xFF0284C7) : AppTheme.lightTextMuted),
+                      shape: BoxShape.circle,
                     ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'TELEMETRY // ESP32_STREAM',
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.6,
-                          color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                        ),
-                      ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'LIVE SENSOR TELEMETRY',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.6,
+                      color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 6),
               _buildBleBadge(isDark),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
+          // Row 1: Air Temp & Air Humidity
           Row(
             children: [
-              // Temperature Metric Tile
               Expanded(
                 child: _buildMetricTile(
                   context,
-                  label: 'TEMP',
+                  label: 'Air Temp',
                   value: '${data.temperature.toStringAsFixed(1)}°C',
-                  subtext: data.temperature > 35 ? 'HIGH THERMAL' : 'NOMINAL',
-                  icon: Icons.thermostat_outlined,
-                  accentColor: data.temperature > 35
-                      ? AppTheme.amberWarning
-                      : (isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary),
+                  subtext: data.temperature > 35 ? 'High' : 'Optimal',
+                  icon: Icons.thermostat_rounded,
+                  bubbleColor: const Color(0xFFFFF3E0),
+                  iconColor: const Color(0xFFE65100),
                 ),
               ),
-              const SizedBox(width: 8),
-              // Soil Moisture Metric Tile
+              const SizedBox(width: 10),
               Expanded(
                 child: _buildMetricTile(
                   context,
-                  label: 'SOIL MOIST',
+                  label: 'Air Humidity',
+                  value: '${data.humidity.toStringAsFixed(1)}%',
+                  subtext: data.humidity > 80
+                      ? 'Humid'
+                      : (data.humidity < 40 ? 'Dry' : 'Optimal'),
+                  icon: Icons.water_drop_outlined,
+                  bubbleColor: const Color(0xFFE0F2F1),
+                  iconColor: const Color(0xFF00897B),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          // Row 2: Soil Moisture & Precipitation (Interactive)
+          Row(
+            children: [
+              Expanded(
+                child: _buildMetricTile(
+                  context,
+                  label: 'Soil Moisture',
                   value: '${data.soilMoisture}%',
                   subtext: data.isSoilCriticallyDry
-                      ? 'CRITICAL DRY'
-                      : (data.isSoilSaturated ? 'SATURATED' : 'OPTIMAL'),
-                  icon: Icons.water_drop_outlined,
-                  accentColor: data.isSoilCriticallyDry
-                      ? AppTheme.amberWarning
-                      : (data.isSoilSaturated ? AppTheme.skyBlue : (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)),
+                      ? 'Dry'
+                      : (data.isSoilSaturated ? 'High' : 'Optimal'),
+                  icon: Icons.grass_rounded,
+                  bubbleColor: const Color(0xFFE1F5FE),
+                  iconColor: const Color(0xFF0288D1),
                 ),
               ),
-              const SizedBox(width: 8),
-              // Rain State Metric Tile (Interactive Toggle)
+              const SizedBox(width: 10),
               Expanded(
-                child: InkWell(
-                  onTap: onToggleRainMock,
-                  borderRadius: BorderRadius.circular(10),
-                  child: _buildMetricTile(
-                    context,
-                    label: 'RAIN STATE',
-                    value: data.isRaining ? 'RAINING' : 'DRY',
-                    subtext: 'TAP TO TOGGLE',
-                    icon: data.isRaining ? Icons.thunderstorm_outlined : Icons.wb_sunny_outlined,
-                    accentColor: data.isRaining
-                        ? AppTheme.skyBlue
-                        : (isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary),
-                    isInteractive: true,
-                    isActive: data.isRaining,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: onToggleRainMock,
+                    borderRadius: BorderRadius.circular(16),
+                    child: _buildMetricTile(
+                      context,
+                      label: 'Precipitation',
+                      value: data.isRaining ? 'Rain' : 'Dry',
+                      subtext: data.isRaining ? 'Active (Tap)' : 'Clear (Tap)',
+                      icon: data.isRaining ? Icons.thunderstorm_rounded : Icons.wb_sunny_rounded,
+                      bubbleColor: data.isRaining ? const Color(0xFFEDE7F6) : const Color(0xFFE8F5E9),
+                      iconColor: data.isRaining ? const Color(0xFF5E35B1) : const Color(0xFF2E7D32),
+                      isInteractive: true,
+                    ),
                   ),
                 ),
               ),
@@ -143,11 +139,11 @@ class TelemetryGauge extends StatelessWidget {
 
     switch (bleState) {
       case BleConnectionState.connected:
-        badgeColor = isDark ? AppTheme.emeraldLight : AppTheme.forestGreen;
-        label = 'BLE ACTIVE';
+        badgeColor = isDark ? AppTheme.neonMint : const Color(0xFF1B4D3E);
+        label = 'BLE CONNECTED';
         break;
       case BleConnectionState.simulated:
-        badgeColor = Colors.cyan;
+        badgeColor = isDark ? AppTheme.skyBlue : const Color(0xFF0284C7);
         label = 'OFFLINE SIM';
         break;
       case BleConnectionState.scanning:
@@ -162,18 +158,16 @@ class TelemetryGauge extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
       decoration: BoxDecoration(
-        color: badgeColor.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(5),
-        border: Border.all(color: badgeColor.withValues(alpha: 0.3), width: 0.8),
+        color: badgeColor.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         label,
-        style: GoogleFonts.jetBrainsMono(
-          fontSize: 9,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 9.5,
           fontWeight: FontWeight.w700,
-          letterSpacing: 0.4,
           color: badgeColor,
         ),
       ),
@@ -186,22 +180,44 @@ class TelemetryGauge extends StatelessWidget {
     required String value,
     required String subtext,
     required IconData icon,
-    required Color accentColor,
+    required Color bubbleColor,
+    required Color iconColor,
     bool isInteractive = false,
-    bool isActive = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final bool isWarning = subtext.toLowerCase().contains('high') ||
+        subtext.toLowerCase().contains('dry') ||
+        subtext.toLowerCase().contains('active');
+
+    final Color badgeColor = isDark
+        ? (isWarning ? AppTheme.amberWarning : AppTheme.neonMint)
+        : (isWarning ? const Color(0xFFB45309) : const Color(0xFF193E32));
+
+    final Color badgeBg = isDark
+        ? (isWarning
+            ? AppTheme.amberWarning.withValues(alpha: 0.18)
+            : AppTheme.neonMint.withValues(alpha: 0.18))
+        : (isWarning ? const Color(0xFFFEF3C7) : const Color(0xFFE8F5EE));
+
+    final Color badgeBorder = isDark
+        ? (isWarning
+            ? AppTheme.amberWarning.withValues(alpha: 0.35)
+            : AppTheme.neonMint.withValues(alpha: 0.35))
+        : Colors.transparent;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0C140F) : const Color(0xFFF7FAF7),
-        borderRadius: BorderRadius.circular(10),
+        color: isDark
+            ? AppTheme.darkSurfaceElevated.withValues(alpha: 0.85)
+            : const Color(0xFFF9FBF9),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isActive
-              ? AppTheme.skyBlue
-              : (isDark ? AppTheme.darkBorder : AppTheme.sageBorder),
-          width: isActive ? 1.5 : 1.0,
+          color: isDark
+              ? const Color(0xFFFFFFFF).withValues(alpha: 0.10)
+              : const Color(0xFFE3EDE5),
+          width: 1.0,
         ),
       ),
       child: Column(
@@ -210,48 +226,64 @@ class TelemetryGauge extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
+              Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  color: isDark ? iconColor.withValues(alpha: 0.20) : bubbleColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: (isDark ? iconColor : bubbleColor).withValues(alpha: 0.35),
+                    width: 0.8,
+                  ),
+                ),
+                child: Icon(
+                  icon,
+                  size: 16,
+                  color: isDark ? (isWarning ? AppTheme.amberWarning : AppTheme.neonMint) : iconColor,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                decoration: BoxDecoration(
+                  color: badgeBg,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: badgeBorder,
+                    width: 0.8,
+                  ),
+                ),
                 child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: 8.5,
+                  subtext,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 9.0,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                    color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                    color: badgeColor,
+                    letterSpacing: 0.2,
                   ),
                 ),
               ),
-              const SizedBox(width: 4),
-              Icon(
-                icon,
-                size: 13,
-                color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-              ),
             ],
           ),
-          const SizedBox(height: 7),
+          const SizedBox(height: 10),
           Text(
             value,
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 15,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 16,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.4,
-              color: accentColor,
+              color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
             ),
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 2),
           Text(
-            subtext,
+            label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 8.5,
-              fontWeight: FontWeight.w600,
-              color: isInteractive
-                  ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
-                  : (isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted),
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w500,
+              color: isDark ? AppTheme.darkTextMuted : const Color(0xFF7A9E93),
             ),
           ),
         ],

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import '../core/constants/app_constants.dart';
 import '../models/sensor_data.dart';
 
 enum BleConnectionState { disconnected, scanning, connecting, connected, simulated }

@@ -126,14 +126,23 @@ class AnalyticsAlertsTab extends StatelessWidget {
 
               // Soil & Temperature Curves
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(22),
                   border: Border.all(
                     color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
                     width: 1.0,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark
+                          ? Colors.black.withValues(alpha: 0.2)
+                          : const Color(0x0C1A3E31),
+                      blurRadius: 20,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,39 +150,63 @@ class AnalyticsAlertsTab extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'FIELD INTELLIGENCE // 24H TRENDS',
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.6,
-                            color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                          ),
+                        Row(
+                          children: [
+                            Container(
+                              width: 32,
+                              height: 32,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFE8F5EE),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.insights_rounded,
+                                color: Color(0xFF193E32),
+                                size: 18,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Field Intelligence & Trends',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w700,
+                                color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                              ),
+                            ),
+                          ],
                         ),
-                        Text(
-                          'AREA 1 LOG',
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 9.5,
-                            fontWeight: FontWeight.w700,
-                            color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE8F5EE),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            '24H LOG',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF193E32),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 18),
                     _buildTrendBar(
                       context,
                       label: 'Soil Moisture 24h Trend',
                       values: [30, 32, 35, 38, 42, 40, 38],
-                      color: AppTheme.skyBlue,
+                      color: const Color(0xFF0288D1),
                       unit: '%',
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 16),
                     _buildTrendBar(
                       context,
                       label: 'Temperature Variation',
                       values: [22, 24, 28, 32, 34, 31, 28],
-                      color: AppTheme.amberWarning,
+                      color: const Color(0xFFE65100),
                       unit: '°C',
                     ),
                   ],
@@ -193,14 +226,23 @@ class AnalyticsAlertsTab extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: isRainOverride ? AppTheme.amberWarning : (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen),
-          width: 1.2,
+          color: isRainOverride ? const Color(0xFFFFCC80) : const Color(0xFFD4E5D8),
+          width: 1.0,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.25)
+                : const Color(0x0C1A3E31),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,119 +252,174 @@ class AnalyticsAlertsTab extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(
-                    isRainOverride ? Icons.umbrella_outlined : Icons.psychology_outlined,
-                    color: isRainOverride ? AppTheme.amberWarning : (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen),
-                    size: 20,
+                  Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: isRainOverride ? const Color(0xFFFFF3E0) : const Color(0xFFE8F5EE),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isRainOverride ? Icons.umbrella_rounded : Icons.eco_rounded,
+                      color: isRainOverride ? const Color(0xFFE65100) : const Color(0xFF193E32),
+                      size: 18,
+                    ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
                   Text(
-                    isRainOverride ? 'INTERLOCK ACTIVE // SPRAY SUSPENDED' : 'ICAR AGRONOMIC ADVISORY',
-                    style: GoogleFonts.jetBrainsMono(
-                      fontSize: 11,
+                    isRainOverride ? 'Spray Interlock Active' : 'ICAR Agronomic Guidance',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      letterSpacing: 0.6,
-                      color: isRainOverride ? AppTheme.amberWarning : (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen),
+                      color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
                     ),
                   ),
                 ],
               ),
               // Vernacular Audio Trigger
-              IconButton(
-                visualDensity: VisualDensity.compact,
-                icon: Icon(
-                  provider.isTtsPlaying ? Icons.stop_circle_outlined : Icons.volume_up_outlined,
-                  color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
-                  size: 22,
+              Container(
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE8F5EE),
+                  shape: BoxShape.circle,
                 ),
-                onPressed: () {
-                  if (provider.isTtsPlaying) {
-                    provider.stopVoiceAdvisory();
-                  } else {
-                    provider.playVoiceAdvisory();
-                  }
-                },
+                child: IconButton(
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(
+                    provider.isTtsPlaying ? Icons.stop_circle_rounded : Icons.volume_up_rounded,
+                    color: const Color(0xFF193E32),
+                    size: 20,
+                  ),
+                  onPressed: () {
+                    if (provider.isTtsPlaying) {
+                      provider.stopVoiceAdvisory();
+                    } else {
+                      provider.playVoiceAdvisory();
+                    }
+                  },
+                ),
               ),
             ],
           ),
 
           if (isRainOverride && fused.overrideReasonBn != null) ...[
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppTheme.amberWarningSoft,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppTheme.amberWarning.withValues(alpha: 0.3), width: 1.0),
+                color: const Color(0xFFFFF8E1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: const Color(0xFFFFE082), width: 1.0),
               ),
               child: Text(
                 fused.overrideReasonBn!,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0xFF795548),
                   height: 1.4,
                 ),
               ),
             ),
           ],
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Text(
             fused.advisory.nameBn,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 17,
+              fontSize: 18,
               fontWeight: FontWeight.w800,
-              color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+              letterSpacing: -0.4,
+              color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
             ),
           ),
+          const SizedBox(height: 2),
           Text(
             fused.advisory.nameEn,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 13,
-              color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Remedy Preview
-          Text(
-            'ORGANIC SOLUTION (জৈব প্রতিকার):',
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 9.5,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-              color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
-            ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            fused.advisory.organicTreatmentBn,
-            style: GoogleFonts.plusJakartaSans(
               fontSize: 12.5,
-              color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
-              height: 1.4,
+              fontWeight: FontWeight.w500,
+              color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
             ),
           ),
           const SizedBox(height: 14),
 
+          // Remedy Preview
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white10 : const Color(0xFFF7FAF8),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: const Color(0xFFE8F0EA)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.spa_rounded, size: 14, color: Color(0xFF2E7D32)),
+                    const SizedBox(width: 6),
+                    Text(
+                      'ORGANIC REMEDY (জৈব প্রতিকার)',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                        color: const Color(0xFF2E7D32),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  fused.advisory.organicTreatmentBn,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12.5,
+                    color: isDark ? AppTheme.darkTextSecondary : const Color(0xFF2C3E35),
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
           // View Full Treatment Plan Button
           SizedBox(
             width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const DiagnosisDetailScreen(),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const DiagnosisDetailScreen(),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF193E32),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                );
-              },
-              icon: const Icon(Icons.description_outlined, size: 14),
-              label: const Text('VIEW PRESCRIPTION // সম্পূর্ণ চিকিৎসা ও প্রেসক্রিপশন'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.description_rounded, size: 16, color: Colors.white),
+                      const SizedBox(width: 8),
+                      Text(
+                        'View Treatment Prescription',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -343,28 +440,37 @@ class AnalyticsAlertsTab extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
+          color: isDark ? AppTheme.darkBorder : const Color(0xFFE8F0EA),
           width: 1.0,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.15)
+                : const Color(0x0A1A3E31),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 36,
-            height: 36,
+            width: 38,
+            height: 38,
             decoration: BoxDecoration(
               color: severityColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(8),
+              shape: BoxShape.circle,
             ),
             child: Icon(icon, size: 18, color: severityColor),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,20 +485,21 @@ class AnalyticsAlertsTab extends StatelessWidget {
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                          color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
                         ),
                       ),
                     ),
+                    const SizedBox(width: 6),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                       decoration: BoxDecoration(
                         color: severityColor.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(4),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
                         severity,
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 8.5,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 9,
                           fontWeight: FontWeight.w700,
                           color: severityColor,
                         ),
@@ -400,12 +507,12 @@ class AnalyticsAlertsTab extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   action,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 11.5,
-                    color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                    color: isDark ? AppTheme.darkTextSecondary : const Color(0xFF52796F),
                     height: 1.35,
                   ),
                 ),

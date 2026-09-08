@@ -5,50 +5,73 @@ import 'package:google_fonts/google_fonts.dart';
 /// Calibrated Minimal Green Palette & Apple-Grade Glassmorphism Architecture
 class AppTheme {
   // ==========================================
-  // MINIMAL GREEN COLOR PALETTE (Exact Palette)
+  // HIGH-CONTRAST OLED DARK MODE PALETTE (Exact Spec)
   // ==========================================
-  static const Color midnightTeal = Color(0xFF051F20); // #051F20 - Deepest midnight forest / night canvas
-  static const Color deepPine = Color(0xFF0B2B26);     // #0B2B26 - Dark pine teal / glass card base
-  static const Color slatePine = Color(0xFF163832);    // #163832 - Slate pine / card elevation & hover
-  static const Color forestMoss = Color(0xFF235347);   // #235347 - Deep botanical moss / primary brand
-  static const Color softSage = Color(0xFF8EB69B);     // #8EB69B - Soft sage eucalyptus / secondary accent
-  static const Color mintDew = Color(0xFFDAF1DE);      // #DAF1DE - Luminous pale mint dew / light canvas & highlights
+  // --background: #0A0A0A (True Black)
+  // --surface: #1A1A1A (Card Background)
+  // --border: #333333 (Subtle Borders)
+  // --text: #FFFFFF (Pure White - 19.8:1 contrast on #0A0A0A, 17.4:1 on #1A1A1A)
+  // --text-secondary: #A3A3A3 (Grey)
+  // --accent: #3B82F6 (Blue) or #10B981 (Green)
+  static const Color darkBackground = Color(0xFF0A0A0A);  // #0A0A0A (True Black Canvas)
+  static const Color darkSurface = Color(0xFF1A1A1A);     // #1A1A1A (Card Background)
+  static const Color darkSurfaceElevated = Color(0xFF242424); // Card Hover / Elevation
+  static const Color darkBorder = Color(0xFF333333);      // #333333 (Subtle Borders)
+  static const Color darkBorderStrong = Color(0xFF4D4D4D); // Stronger Section Borders
+  static const Color darkText = Color(0xFFFFFFFF);        // #FFFFFF (Pure White)
+  static const Color darkTextSecondary = Color(0xFFA3A3A3);// #A3A3A3 (Grey)
+  static const Color darkTextMuted = Color(0xFFA3A3A3);    // High-contrast secondary grey
+  static const Color darkAccentGreen = Color(0xFF10B981);  // #10B981 (Vibrant Emerald Green)
+  static const Color darkAccentBlue = Color(0xFF3B82F6);   // #3B82F6 (Electric Tech Blue)
 
-  // Mockup Metallic & Functional Accents
-  static const Color goldAccent = Color(0xFFD4AF37);   // #D4AF37 - Brass / warm gold metallic ring accent
-  static const Color goldAccentSoft = Color(0x28D4AF37);// 16% Gold tint
-  static const Color alertRose = Color(0xFFE53935);    // Pathogen / Disease critical
-  static const Color alertRoseSoft = Color(0x1FE53935);// 12% Rose Tint
-  static const Color amberWarning = Color(0xFFFB8C00); // Pest / Nutrient alert
-  static const Color amberWarningSoft = Color(0x1FFB8C00);// 12% Amber Tint
-  static const Color skyBlue = Color(0xFF1976D2);      // Rain / Hydration telemetry
-  static const Color skyBlueSoft = Color(0x1F1976D2);  // 12% Sky Tint
+  // Light Mode Tokens (Preserved)
+  static const Color midnightTeal = Color(0xFF051F20); // Deepest botanical forest / text
+  static const Color deepPine = Color(0xFF0B2B26);     // Dark pine teal
+  static const Color slatePine = Color(0xFF163832);    // Slate pine
+  static const Color forestMoss = Color(0xFF235347);   // Deep botanical moss / light brand
+  static const Color softSage = Color(0xFF8EB69B);     // Soft sage eucalyptus / secondary accent
+  static const Color mintDew = Color(0xFFDAF1DE);      // Luminous pale mint dew
 
-  // Backwards-compatible design aliases mapped cleanly to the new palette
-  static const Color forestGreen = forestMoss;         // #235347
-  static const Color forestGreenDark = deepPine;       // #0B2B26
-  static const Color sproutGreen = softSage;           // #8EB69B
-  static const Color emeraldLight = softSage;          // #8EB69B
-  static const Color mintSoft = mintDew;               // #DAF1DE
-  static const Color ivoryCanvas = Color(0xFFF7FCF8);  // Crisp luminous canvas
+  // Functional Accents
+  static const Color goldAccent = Color(0xFFD4AF37);   // Brass / warm gold metallic ring accent
+  static const Color goldAccentSoft = Color(0x28D4AF37);
+  static const Color alertRose = Color(0xFFEF4444);    // High-contrast alert
+  static const Color alertRoseSoft = Color(0x1FEF4444);
+  static const Color amberWarning = Color(0xFFF59E0B); // Pest / Nutrient alert
+  static const Color amberWarningSoft = Color(0x1FF59E0B);
+  static const Color skyBlue = darkAccentBlue;         // Rain / Hydration telemetry
+  static const Color skyBlueSoft = Color(0x1F3B82F6);
+  static const Color neonMint = darkAccentGreen;       // Eye-catching bio-luminescent emerald
+  static const Color vibrantEmerald = darkAccentGreen; // Vibrant modern agricultural emerald
+  static const Color ambientSunlight = Color(0xFFF59E0B);
+
+  // Backward-compatible design aliases mapped to the new high-contrast dark system
+  static const Color forestGreen = forestMoss;
+  static const Color forestGreenDark = deepPine;
+  static const Color sproutGreen = softSage;
+  static const Color emeraldLight = darkAccentGreen;
+  static const Color mintSoft = mintDew;
+  static const Color ivoryCanvas = Color(0xFFF7FCF8);
   static const Color pureWhite = Color(0xFFFFFFFF);
-  static const Color sageBorder = Color(0x388EB69B);   // 22% Soft Sage hairline
+  static const Color sageBorder = Color(0x388EB69B);
   static const Color sageBorderHover = Color(0x808EB69B);
 
   // Text Tokens
-  static const Color lightTextPrimary = midnightTeal;  // #051F20
-  static const Color lightTextSecondary = slatePine;   // #163832
-  static const Color lightTextMuted = Color(0xB2235347);// #235347 with 70% opacity
+  static const Color lightTextPrimary = midnightTeal;
+  static const Color lightTextSecondary = slatePine;
+  static const Color lightTextMuted = Color(0xB2235347);
 
-  static const Color darkCanvas = midnightTeal;        // #051F20
-  static const Color darkCard = deepPine;              // #0B2B26
-  static const Color darkCardHover = slatePine;        // #163832
-  static const Color darkBorder = Color(0x388EB69B);   // 22% Soft Sage hairline
-  static const Color darkBorderStrong = Color(0x668EB69B);
-  static const Color cardBorderStrong = softSage;      // Reticle and strong borders
-  static const Color cardBorder = sageBorder;
-  static const Color accent = forestMoss;
-  static const Color accentSoft = Color(0x338EB69B);
+  // Dark Text Tokens - Ensuring 15:1+ contrast ratio on dark backgrounds
+  static const Color darkTextPrimary = darkText; // #FFFFFF (19.8:1 contrast on #0A0A0A)
+
+  // Surface & Canvas Aliases
+  static const Color darkCanvas = darkBackground; // #0A0A0A (True Black)
+  static const Color darkCard = darkSurface;       // #1A1A1A (Card Background)
+  static const Color darkCardHover = darkSurfaceElevated; // #242424
+  static const Color cardBorderStrong = darkBorderStrong;
+  static const Color cardBorder = darkBorder;
+  static const Color accent = darkAccentGreen;
+  static const Color accentSoft = Color(0x3310B981);
   static const Color textPrimary = lightTextPrimary;
   static const Color textSecondary = lightTextSecondary;
   static const Color textMuted = lightTextMuted;
@@ -56,11 +79,8 @@ class AppTheme {
   static const Color alertRedSoft = alertRoseSoft;
   static const Color warningAmber = amberWarning;
   static const Color warningAmberSoft = amberWarningSoft;
-  static const Color card = deepPine;
-  static const Color canvas = midnightTeal;
-  static const Color darkTextPrimary = mintDew;        // #DAF1DE
-  static const Color darkTextSecondary = softSage;     // #8EB69B
-  static const Color darkTextMuted = Color(0xB28EB69B);// 70% Soft Sage
+  static const Color card = darkSurface;
+  static const Color canvas = darkBackground;
 
   // ==========================================
   // AMBIENT BACKGROUND GRADIENTS
@@ -72,23 +92,23 @@ class AppTheme {
     end: Alignment.bottomRight,
     stops: [0.0, 0.40, 0.80, 1.0],
     colors: [
-      Color(0xFFF8FCF9), // Luminous Dew
-      mintDew,           // #DAF1DE Palette Canvas
-      Color(0xFFE4F6E7), // Soft mint transition
-      Color(0xFFCCE7D2), // Soft sage depth
+      Color(0xFFF8FCF9),
+      mintDew,
+      Color(0xFFE4F6E7),
+      Color(0xFFCCE7D2),
     ],
   );
 
-  /// Obsidian Night Mode Ambient Gradient (Deep Velvet with Slate Pine Glow)
+  /// True Black OLED Night Mode Gradient with Vibrant Ambient Backdrops (#0A0A0A Base)
   static const LinearGradient darkBackgroundGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     stops: [0.0, 0.35, 0.70, 1.0],
     colors: [
-      slatePine,         // #163832 Slate pine ambient lighting
-      deepPine,          // #0B2B26 Deep pine mid-tones
-      midnightTeal,      // #051F20 Deepest midnight forest base
-      Color(0xFF031415), // Deep velvet shadow
+      Color(0xFF0C1814), // Subtle deep bio-emerald ambient bloom
+      darkBackground,    // #0A0A0A True Black
+      Color(0xFF0C141E), // Subtle deep electric tech blue ambient bloom
+      darkBackground,    // #0A0A0A True Black
     ],
   );
 
@@ -102,7 +122,8 @@ class AppTheme {
   // APPLE-GRADE GLASSMORPHISM DECORATIONS
   // ==========================================
 
-  /// Generates the frosted glass card decoration matching Apple visionOS/iOS standards
+  /// Generates card decoration matching modern dark mode standards
+  /// Technical: backdrop-filter: blur(10px), rgba backgrounds, layered cards
   static BoxDecoration glassCardDecoration({
     required bool isDark,
     double radius = 24.0,
@@ -112,69 +133,51 @@ class AppTheme {
   }) {
     if (isDark) {
       return BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            isHovered
-                ? slatePine.withValues(alpha: 0.80)
-                : deepPine.withValues(alpha: 0.65),
-            isHovered
-                ? deepPine.withValues(alpha: 0.75)
-                : midnightTeal.withValues(alpha: 0.75),
-          ],
-        ),
+        color: isHovered
+            ? const Color(0xFF242424).withValues(alpha: 0.84) // Elevated frosted surface
+            : const Color(0xFF1A1A1A).withValues(alpha: 0.72), // Translucent rgba glass
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(
           color: customBorderColor ??
               (hasGoldGlow
-                  ? goldAccent.withValues(alpha: isHovered ? 0.65 : 0.40)
-                  : softSage.withValues(alpha: isHovered ? 0.40 : 0.20)),
-          width: 1.2,
+                  ? darkAccentGreen.withValues(alpha: isHovered ? 0.65 : 0.40)
+                  : const Color(0xFFFFFFFF).withValues(alpha: 0.12)), // Specular hairline border
+          width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
-            color: midnightTeal.withValues(alpha: 0.50),
-            blurRadius: 28,
+            color: Colors.black.withValues(alpha: 0.55),
+            blurRadius: 20,
             spreadRadius: 0,
-            offset: const Offset(0, 10),
+            offset: const Offset(0, 8),
           ),
           if (hasGoldGlow)
             BoxShadow(
-              color: goldAccent.withValues(alpha: 0.18),
-              blurRadius: 22,
+              color: darkAccentGreen.withValues(alpha: 0.20),
+              blurRadius: 18,
               offset: const Offset(0, 4),
             ),
         ],
       );
     } else {
       return BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            isHovered
-                ? Colors.white.withValues(alpha: 0.90)
-                : Colors.white.withValues(alpha: 0.78),
-            isHovered
-                ? mintDew.withValues(alpha: 0.70)
-                : mintDew.withValues(alpha: 0.55),
-          ],
-        ),
+        color: isHovered
+            ? Colors.white
+            : Colors.white.withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(radius),
         border: Border.all(
           color: customBorderColor ??
               (hasGoldGlow
                   ? goldAccent.withValues(alpha: isHovered ? 0.60 : 0.40)
-                  : Colors.white.withValues(alpha: isHovered ? 0.95 : 0.70)),
-          width: 1.2,
+                  : const Color(0x141A3E31)), // Soft organic hairline border
+          width: 1.0,
         ),
         boxShadow: [
           BoxShadow(
-            color: forestMoss.withValues(alpha: 0.08),
-            blurRadius: 24,
+            color: const Color(0x0C1A3E31), // Diffused organic botanical shadow
+            blurRadius: 22,
             spreadRadius: 0,
-            offset: const Offset(0, 8),
+            offset: const Offset(0, 6),
           ),
           if (hasGoldGlow)
             BoxShadow(
@@ -319,13 +322,13 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: midnightTeal,
+      scaffoldBackgroundColor: darkBackground,
       colorScheme: const ColorScheme.dark(
-        primary: softSage,
-        secondary: mintDew,
-        surface: deepPine,
+        primary: darkAccentGreen,
+        secondary: darkAccentBlue,
+        surface: darkSurface,
         error: alertRose,
-        onPrimary: midnightTeal,
+        onPrimary: Colors.white,
         onSurface: darkTextPrimary,
       ),
       textTheme: GoogleFonts.plusJakartaSansTextTheme(
@@ -359,7 +362,7 @@ class AppTheme {
         ),
       ),
       cardTheme: CardThemeData(
-        color: deepPine.withValues(alpha: 0.70),
+        color: darkSurface,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
@@ -375,8 +378,8 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: softSage,
-          foregroundColor: midnightTeal,
+          backgroundColor: darkAccentGreen,
+          foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
           shape: RoundedRectangleBorder(
@@ -391,7 +394,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: darkTextPrimary,
-          side: const BorderSide(color: darkBorderStrong, width: 1.2),
+          side: const BorderSide(color: darkBorder, width: 1.2),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),

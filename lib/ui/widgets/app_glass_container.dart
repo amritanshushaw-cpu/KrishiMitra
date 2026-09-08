@@ -1,10 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
+import 'liquid_glass_container.dart';
 
-/// Apple-Grade Glassmorphism Card Container
+/// Apple-Grade Glassmorphism & Liquid Glass Card Container
 /// Features frosted backdrop blur, specular hairline border, translucent gradient fill,
-/// and smooth organic shadow matching Apple design standards.
+/// and smooth organic shadow. Supports dynamic liquid glass mode.
 class AppGlassContainer extends StatelessWidget {
   final Widget child;
   final double radius;
@@ -13,6 +14,10 @@ class AppGlassContainer extends StatelessWidget {
   final double blur;
   final bool isHovered;
   final bool hasGoldGlow;
+  final bool isLiquid;
+  final List<Color>? liquidColors;
+  final bool hasShineBorder;
+  final List<Color>? shineColors;
   final double? width;
   final double? height;
   final VoidCallback? onTap;
@@ -23,9 +28,13 @@ class AppGlassContainer extends StatelessWidget {
     this.radius = 24.0,
     this.padding,
     this.margin,
-    this.blur = 16.0,
+    this.blur = 10.0,
     this.isHovered = false,
     this.hasGoldGlow = false,
+    this.isLiquid = false,
+    this.liquidColors,
+    this.hasShineBorder = false,
+    this.shineColors,
     this.width,
     this.height,
     this.onTap,
@@ -33,9 +42,25 @@ class AppGlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (isLiquid) {
+      return LiquidGlassContainer(
+        radius: radius,
+        padding: padding,
+        margin: margin,
+        blur: blur,
+        width: width,
+        height: height,
+        onTap: onTap,
+        liquidColors: liquidColors,
+        child: child,
+      );
+    }
+
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    Widget container = Container(
+    Widget container = AnimatedContainer(
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeInOutCubic,
       width: width,
       height: height,
       padding: padding,
@@ -45,7 +70,10 @@ class AppGlassContainer extends StatelessWidget {
         isHovered: isHovered,
         hasGoldGlow: hasGoldGlow,
       ),
-      child: child,
+      child: Material(
+        color: Colors.transparent,
+        child: child,
+      ),
     );
 
     Widget frosted = ClipRRect(

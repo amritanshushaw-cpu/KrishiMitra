@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/inference_result.dart';
 import '../../state/farm_provider.dart';
+import 'liquid_glass_button.dart';
 
 class LeafInspectionViewfinder extends StatefulWidget {
   final Uint8List? imageBytes;
@@ -85,41 +86,53 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
         children: [
           // Plant Anatomical Section Tabs: Leaf / Stem / Root / Twigs
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            color: isDark ? const Color(0xFF0F1A13) : const Color(0xFFF7FAF7),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            color: isDark ? const Color(0xFF0F1A13) : const Color(0xFFF9FBF9),
             child: Row(
               children: [
                 for (int i = 0; i < _plantSections.length; i++) ...[
                   Expanded(
                     child: GestureDetector(
                       onTap: () => setState(() => _selectedSectionIndex = i),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(vertical: 7),
                         decoration: BoxDecoration(
                           color: _selectedSectionIndex == i
-                              ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
-                              : Colors.transparent,
-                          borderRadius: BorderRadius.circular(8),
+                              ? (isDark ? AppTheme.neonMint : const Color(0xFF193E32))
+                              : (isDark ? Colors.white10 : const Color(0xFFE8F5EE)),
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: _selectedSectionIndex == i
+                              ? [
+                                  BoxShadow(
+                                    color: (isDark ? AppTheme.neonMint : const Color(0xFF193E32)).withValues(alpha: 0.25),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ]
+                              : null,
                         ),
                         child: Column(
                           children: [
                             Text(
                               _plantSections[i]['name']!,
                               style: GoogleFonts.plusJakartaSans(
-                                fontSize: 11.5,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: _selectedSectionIndex == i
-                                    ? (isDark ? Colors.black : Colors.white)
-                                    : (isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary),
+                                    ? (isDark ? const Color(0xFF0A120D) : Colors.white)
+                                    : (isDark ? AppTheme.darkTextPrimary : const Color(0xFF2D6A4F)),
                               ),
                             ),
+                            const SizedBox(height: 1),
                             Text(
                               _plantSections[i]['samples']!,
                               style: GoogleFonts.jetBrainsMono(
                                 fontSize: 8.5,
+                                fontWeight: FontWeight.w500,
                                 color: _selectedSectionIndex == i
-                                    ? (isDark ? Colors.black.withValues(alpha: 0.7) : Colors.white.withValues(alpha: 0.8))
-                                    : (isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted),
+                                    ? (isDark ? const Color(0xFF0A120D).withValues(alpha: 0.8) : Colors.white.withValues(alpha: 0.85))
+                                    : (isDark ? AppTheme.darkTextMuted : const Color(0xFF7A9E93)),
                               ),
                             ),
                           ],
@@ -165,7 +178,7 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Tap below to capture live foliage or inject demo asset',
+                              'Tap below to capture live foliage',
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 11,
                                 color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
@@ -308,34 +321,13 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
           // Action Toolbar
           Padding(
             padding: const EdgeInsets.all(12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: isScanning ? null : widget.onCapture,
-                    icon: const Icon(Icons.camera_alt_outlined, size: 16),
-                    label: Text(provider.strings.captureLeaf),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                  ),
-                ),
-                if (widget.onOpenDemoModal != null) ...[
-                  const SizedBox(width: 8),
-                  OutlinedButton.icon(
-                    onPressed: widget.onOpenDemoModal,
-                    icon: const Icon(Icons.shield_outlined, size: 16),
-                    label: Text(provider.strings.demoAsset),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    ),
-                  ),
-                ],
-              ],
+            child: LiquidGlassButton(
+              width: double.infinity,
+              onPressed: isScanning ? null : widget.onCapture,
+              icon: Icons.camera_alt_rounded,
+              text: provider.strings.captureLeaf,
+              variant: LiquidButtonVariant.primary,
+              borderRadius: 16,
             ),
           ),
         ],

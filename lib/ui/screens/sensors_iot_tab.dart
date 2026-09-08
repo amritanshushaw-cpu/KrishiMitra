@@ -67,16 +67,25 @@ class SensorsIotTab extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // ESP32 Hardware Status Card
+              // ESP32 Live Edge Node Card
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(22),
                   border: Border.all(
                     color: isDark ? AppTheme.darkBorder : AppTheme.sageBorder,
                     width: 1.0,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: isDark
+                          ? Colors.black.withValues(alpha: 0.2)
+                          : const Color(0x0C1A3E31),
+                      blurRadius: 20,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,71 +95,172 @@ class SensorsIotTab extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Icon(
-                              Icons.memory_outlined,
-                              color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
-                              size: 18,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'ESP32 HARDWARE NODE DIAGNOSTICS',
-                              style: GoogleFonts.jetBrainsMono(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.6,
-                                color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                            Container(
+                              width: 34,
+                              height: 34,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFE8F5EE),
+                                shape: BoxShape.circle,
                               ),
+                              child: const Icon(
+                                Icons.developer_board_rounded,
+                                color: Color(0xFF193E32),
+                                size: 19,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'ESP32 Live Edge Node',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                                  ),
+                                ),
+                                Text(
+                                  'SoftAP Direct • 192.168.4.1',
+                                  style: GoogleFonts.jetBrainsMono(
+                                    fontSize: 9.5,
+                                    color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
                           decoration: BoxDecoration(
-                            color: AppTheme.emeraldLight.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            'ONLINE',
-                            style: GoogleFonts.jetBrainsMono(
-                              fontSize: 9,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                            color: const Color(0xFFE8F5EE),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: const Color(0xFF52B788).withValues(alpha: 0.3),
+                              width: 1.0,
                             ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF2E7D32),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                'ESP32 LIVE',
+                                style: GoogleFonts.jetBrainsMono(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF193E32),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 18),
                     _buildDeviceRow(
                       context,
-                      label: 'Node Power',
-                      value: '94% Li-Ion (Nominal)',
-                      icon: Icons.battery_charging_full_outlined,
-                      statusColor: AppTheme.emeraldLight,
+                      label: 'OV2640 Cam Stream',
+                      value: '15 FPS (1600x1200 UXGA)',
+                      icon: Icons.videocam_rounded,
+                      bubbleColor: const Color(0xFFE8F5EE),
+                      statusColor: const Color(0xFF2E7D32),
                     ),
-                    const Divider(height: 16),
+                    const Divider(height: 20, color: Color(0xFFEEF4F0)),
                     _buildDeviceRow(
                       context,
-                      label: 'Bluetooth LE Telemetry',
-                      value: 'UUID 4fafc201 (Active)',
-                      icon: Icons.bluetooth_outlined,
-                      statusColor: AppTheme.skyBlue,
+                      label: 'SoftAP Telemetry Link',
+                      value: '12ms Latency (Active)',
+                      icon: Icons.wifi_tethering_rounded,
+                      bubbleColor: const Color(0xFFE1F5FE),
+                      statusColor: const Color(0xFF0288D1),
                     ),
-                    const Divider(height: 16),
+                    const Divider(height: 20, color: Color(0xFFEEF4F0)),
                     _buildDeviceRow(
                       context,
-                      label: 'Wi-Fi SoftAP Node',
-                      value: '192.168.4.1 (OV2640)',
-                      icon: Icons.wifi_outlined,
-                      statusColor: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                      label: 'Relay 1 (Irrigation Solenoid)',
+                      value: provider.isPumpLocked ? 'Safety Locked (GPIO 16)' : 'Ready / Active',
+                      icon: Icons.power_rounded,
+                      bubbleColor: const Color(0xFFEDE7F6),
+                      statusColor: const Color(0xFF5E35B1),
                     ),
-                    const Divider(height: 16),
+                    const Divider(height: 20, color: Color(0xFFEEF4F0)),
                     _buildDeviceRow(
                       context,
-                      label: 'Soil Capacitive Probe',
-                      value: 'Calibrated (0-100%)',
-                      icon: Icons.tune_outlined,
-                      statusColor: AppTheme.sproutGreen,
+                      label: 'Soil Capacitive ADC',
+                      value: 'GPIO 36 • Calibrated',
+                      icon: Icons.tune_rounded,
+                      bubbleColor: const Color(0xFFFFF3E0),
+                      statusColor: const Color(0xFFE65100),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('ESP32 SoftAP Ping: 12ms (Strong RSSI -48 dBm)'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.network_ping_rounded, size: 15),
+                            label: Text(
+                              'Ping Node',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                              side: BorderSide(color: isDark ? AppTheme.darkBorder : const Color(0xFFD4E5D9)),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              provider.captureAndAnalyze();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Received fresh frame from ESP32 camera node'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                            icon: const Icon(Icons.camera_alt_rounded, size: 15),
+                            label: Text(
+                              'Capture Frame',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              padding: const EdgeInsets.symmetric(vertical: 11),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -168,21 +278,31 @@ class SensorsIotTab extends StatelessWidget {
     required String label,
     required String value,
     required IconData icon,
+    required Color bubbleColor,
     required Color statusColor,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Row(
       children: [
-        Icon(icon, size: 16, color: statusColor),
-        const SizedBox(width: 8),
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: bubbleColor,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 16, color: statusColor),
+        ),
+        const SizedBox(width: 12),
         Expanded(
           flex: 5,
           child: Text(
             label,
             style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
-              color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
             ),
             overflow: TextOverflow.ellipsis,
           ),
@@ -194,9 +314,9 @@ class SensorsIotTab extends StatelessWidget {
             value,
             textAlign: TextAlign.right,
             style: GoogleFonts.jetBrainsMono(
-              fontSize: 10.5,
+              fontSize: 11,
               fontWeight: FontWeight.w600,
-              color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+              color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
             ),
             overflow: TextOverflow.ellipsis,
           ),

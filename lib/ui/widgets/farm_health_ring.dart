@@ -2,10 +2,12 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import '../../state/farm_provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../state/farm_provider.dart';
 import 'app_glass_container.dart';
 
+/// Plant Vitality & Health Score Card
+/// Organic, clean Plant Tracker UI design inspired by Viktoriia Push on Dribbble.
 class FarmHealthRingCard extends StatelessWidget {
   final int healthScore; // 0 - 100
   final String statusText;
@@ -26,28 +28,37 @@ class FarmHealthRingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<FarmProvider>(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final primaryColor = healthScore >= 80
-        ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
+    final isOptimal = healthScore >= 80;
+
+    final primaryColor = isOptimal
+        ? (isDark ? AppTheme.neonMint : const Color(0xFF2D6A4F))
         : (healthScore >= 60 ? AppTheme.amberWarning : AppTheme.alertRose);
 
+    final trackColor = isDark
+        ? const Color(0xFF262626)
+        : const Color(0xFFE8F5EE);
+
+    final friendlyStatus = isOptimal ? '🌿 Thriving & Healthy' : '⚠️ Attention Needed';
+
     return AppGlassContainer(
-      radius: 20,
+      radius: 24,
+      isLiquid: true,
       onTap: onTap,
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(20),
       child: Row(
         children: [
-          // Circular Gradient Gauge
+          // Circular Organic Vitality Gauge
           SizedBox(
-            width: 90,
-            height: 90,
+            width: 96,
+            height: 96,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 CustomPaint(
-                  size: const Size(90, 90),
+                  size: const Size(96, 96),
                   painter: _HealthScorePainter(
                     scorePercent: healthScore / 100.0,
-                    trackColor: isDark ? AppTheme.deepPine : AppTheme.mintDew.withValues(alpha: 0.6),
+                    trackColor: trackColor,
                     progressColor: primaryColor,
                   ),
                 ),
@@ -57,19 +68,19 @@ class FarmHealthRingCard extends StatelessWidget {
                     Text(
                       '$healthScore%',
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 20,
+                        fontSize: 22,
                         fontWeight: FontWeight.w800,
-                        color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
-                        letterSpacing: -0.5,
+                        color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF1B4332),
+                        letterSpacing: -0.6,
                       ),
                     ),
                     Text(
                       provider.strings.cropScore,
-                      style: GoogleFonts.jetBrainsMono(
-                        fontSize: 8,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 8.5,
                         fontWeight: FontWeight.w700,
-                        color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                        letterSpacing: 0.4,
+                        color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52B788),
+                        letterSpacing: 0.6,
                       ),
                     ),
                   ],
@@ -77,55 +88,54 @@ class FarmHealthRingCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(width: 18),
-          // Metrics & Status Information
+          const SizedBox(width: 20),
+
+          // Metrics & Friendly Plant Tracker Information
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: primaryColor.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        statusText.toUpperCase(),
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          color: primaryColor,
-                          letterSpacing: 0.4,
-                        ),
-                      ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: primaryColor.withValues(alpha: isDark ? 0.16 : 0.12),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    friendlyStatus,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: primaryColor,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  provider.strings.overallHealth,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
+                Text(
+                  provider.strings.overallHealth,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF1B4332),
+                    letterSpacing: -0.3,
+                  ),
+                ),
+                const SizedBox(height: 10),
                 Wrap(
                   spacing: 8,
-                  runSpacing: 4,
+                  runSpacing: 6,
                   children: [
-                    _buildMetricPill(
+                    _buildCarePill(
                       context,
-                      icon: Icons.eco_outlined,
+                      icon: Icons.eco_rounded,
                       label: 'Soil: $soilStatus',
+                      accentColor: isDark ? AppTheme.neonMint : const Color(0xFF40916C),
                     ),
-                    _buildMetricPill(
+                    _buildCarePill(
                       context,
-                      icon: Icons.water_drop_outlined,
+                      icon: Icons.water_drop_rounded,
                       label: 'Moist: $moistureStatus',
+                      accentColor: AppTheme.skyBlue,
                     ),
                   ],
                 ),
@@ -137,37 +147,37 @@ class FarmHealthRingCard extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricPill(
+  Widget _buildCarePill(
     BuildContext context, {
     required IconData icon,
     required String label,
+    required Color accentColor,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4.5),
       decoration: BoxDecoration(
-        color: isDark ? AppTheme.slatePine.withValues(alpha: 0.45) : AppTheme.mintDew.withValues(alpha: 0.70),
-        borderRadius: BorderRadius.circular(6),
+        color: isDark
+            ? const Color(0xFF242424)
+            : const Color(0xFFF0F7F2),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AppTheme.softSage.withValues(alpha: 0.20) : AppTheme.softSage.withValues(alpha: 0.35),
+          color: accentColor.withValues(alpha: 0.20),
           width: 0.8,
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 11,
-            color: isDark ? AppTheme.emeraldLight : AppTheme.sproutGreen,
-          ),
-          const SizedBox(width: 4),
+          Icon(icon, size: 12, color: accentColor),
+          const SizedBox(width: 5),
           Text(
             label,
-            style: GoogleFonts.jetBrainsMono(
-              fontSize: 9,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 10.5,
               fontWeight: FontWeight.w600,
-              color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+              color: isDark ? AppTheme.darkTextSecondary : const Color(0xFF2D6A4F),
             ),
           ),
         ],
@@ -190,8 +200,8 @@ class _HealthScorePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.width - 10) / 2;
-    const strokeWidth = 8.0;
+    final radius = (size.width - 12) / 2;
+    const strokeWidth = 8.5;
 
     final trackPaint = Paint()
       ..color = trackColor
@@ -205,10 +215,10 @@ class _HealthScorePainter extends CustomPainter {
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
-    // Background track arc (full circle)
+    // Draw track
     canvas.drawCircle(center, radius, trackPaint);
 
-    // Progress arc
+    // Draw progress arc
     const startAngle = -math.pi / 2;
     final sweepAngle = 2 * math.pi * scorePercent;
     canvas.drawArc(

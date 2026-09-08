@@ -21,6 +21,7 @@ class ParameterItem {
   });
 }
 
+/// Rich 5-Parameter Agronomic Diagnostic Result
 class ParsedDiagnosis {
   final String rawLabel;
   final ParameterItem crop;
@@ -51,7 +52,7 @@ class ParsedDiagnosis {
     final List<String> parts = label.split('___');
 
     String cropVal = 'Multi-Crop (Field)';
-    String cropBn = 'বহু-ফসল';
+    String cropBn = 'বহু-ফসল ক্ষেত্র';
     ParameterStatus cropStatus = ParameterStatus.optimal;
 
     String diseaseVal = 'None Detected';
@@ -62,44 +63,29 @@ class ParsedDiagnosis {
     String pestBn = 'কোনো পোকা নেই';
     ParameterStatus pestStatus = ParameterStatus.optimal;
 
-    String nutrientVal = 'Optimal / Balanced';
-    String nutrientBn = 'সুষম পুষ্টি';
+    String nutrientVal = 'Optimal (N-P-K Balanced)';
+    String nutrientBn = 'অনুকূল (N-P-K সুষম)';
     ParameterStatus nutrientStatus = ParameterStatus.optimal;
 
     String stageVal = 'Vegetative Phase';
-    String stageBn = 'বৃদ্ধি পর্যায়';
+    String stageBn = 'বৃদ্ধি পর্যায় (Vegetative)';
     ParameterStatus stageStatus = ParameterStatus.info;
 
-    if (label.startsWith('Tomato___')) {
-      cropVal = 'Tomato (Solanum lycopersicum)';
-      cropBn = 'টমেটো';
-      final String condition = parts.length > 1 ? parts[1].replaceAll('_', ' ') : '';
-      if (condition.toLowerCase() == 'healthy') {
-        diseaseVal = 'Healthy Foliage';
-        diseaseBn = 'সুস্থ পাতা';
-        diseaseStatus = ParameterStatus.optimal;
-      } else {
-        diseaseVal = condition;
-        diseaseBn = _bengaliDiseaseName(condition);
-        diseaseStatus = ParameterStatus.critical;
+    if (label.startsWith('Tomato___') || label.startsWith('Potato___') || label.startsWith('Rice___')) {
+      final String cropName = parts[0];
+      final String condition = parts.length > 1 ? parts[1].replaceAll('_', ' ') : 'Healthy';
+
+      if (cropName == 'Tomato') {
+        cropVal = 'Tomato (Solanum lycopersicum)';
+        cropBn = 'টমেটো';
+      } else if (cropName == 'Potato') {
+        cropVal = 'Potato (Solanum tuberosum)';
+        cropBn = 'আলু';
+      } else if (cropName == 'Rice') {
+        cropVal = 'Paddy Rice (Oryza sativa)';
+        cropBn = 'ধান';
       }
-    } else if (label.startsWith('Potato___')) {
-      cropVal = 'Potato (Solanum tuberosum)';
-      cropBn = 'আলু';
-      final String condition = parts.length > 1 ? parts[1].replaceAll('_', ' ') : '';
-      if (condition.toLowerCase() == 'healthy') {
-        diseaseVal = 'Healthy Foliage';
-        diseaseBn = 'সুস্থ পাতা';
-        diseaseStatus = ParameterStatus.optimal;
-      } else {
-        diseaseVal = condition;
-        diseaseBn = _bengaliDiseaseName(condition);
-        diseaseStatus = ParameterStatus.critical;
-      }
-    } else if (label.startsWith('Rice___')) {
-      cropVal = 'Paddy Rice (Oryza sativa)';
-      cropBn = 'ধান';
-      final String condition = parts.length > 1 ? parts[1].replaceAll('_', ' ') : '';
+
       if (condition.toLowerCase() == 'healthy') {
         diseaseVal = 'Healthy Foliage';
         diseaseBn = 'সুস্থ পাতা';
@@ -133,34 +119,114 @@ class ParsedDiagnosis {
       stageStatus = ParameterStatus.info;
     }
 
+    // Inspect secondary candidates to enrich cross-parameter detection
     for (final candidate in result.topCandidates.skip(1)) {
-      if (candidate.confidence > 0.15) {
+      if (candidate.confidence > 0.10) {
         if (candidate.label.startsWith('Stage___') && stageVal == 'Vegetative Phase') {
           final String s = candidate.label.split('___').last.replaceAll('_', ' ');
           stageVal = s;
           stageBn = _bengaliStageName(s);
         } else if (candidate.label.startsWith('Nutrient___') && nutrientStatus == ParameterStatus.optimal) {
           final String n = candidate.label.split('___').last.replaceAll('_', ' ');
-          nutrientVal = ' (Sub-clinical)';
-          nutrientBn = ' (প্রাথমিক)';
+          nutrientVal = '$n (Sub-clinical)';
+          nutrientBn = '${_bengaliNutrientName(n)} (প্রাথমিক)';
           nutrientStatus = ParameterStatus.warning;
+        }
+      }
+    }
+
+    // Comprehensive scan across all top candidates to resolve crop, disease, and pest
+    for (final candidate in result.topCandidates) {
+      final cLabel = candidate.label;
+      final cParts = cLabel.split('___');
+      if (cropVal == 'Multi-Crop (Field)') {
+        if (cLabel.startsWith('Tomato___')) {
+          cropVal = 'Tomato (Solanum lycopersicum)';
+          cropBn = 'টমেটো';
+        } else if (cLabel.startsWith('Potato___')) {
+          cropVal = 'Potato (Solanum tuberosum)';
+          cropBn = 'আলু';
+        } else if (cLabel.startsWith('Rice___')) {
+          cropVal = 'Paddy Rice (Oryza sativa)';
+          cropBn = 'ধান';
+        }
+      }
+      if (diseaseStatus == ParameterStatus.optimal && (diseaseVal == 'None Detected' || diseaseVal == 'Healthy Foliage')) {
+        if (cLabel.startsWith('Tomato___') || cLabel.startsWith('Potato___') || cLabel.startsWith('Rice___')) {
+          final cond = cParts.length > 1 ? cParts[1].replaceAll('_', ' ') : '';
+          if (cond.isNotEmpty && cond.toLowerCase() != 'healthy') {
+            diseaseVal = cond;
+            diseaseBn = _bengaliDiseaseName(cond);
+            diseaseStatus = ParameterStatus.critical;
+          }
+        }
+      }
+      if (pestStatus == ParameterStatus.optimal && pestVal == 'No Infestation') {
+        if (cLabel.startsWith('Pest___')) {
+          final pName = cParts.length > 1 ? cParts[1].replaceAll('_', ' ') : 'Unknown';
+          pestVal = pName;
+          pestBn = _bengaliPestName(pName);
+          pestStatus = ParameterStatus.critical;
         }
       }
     }
 
     return ParsedDiagnosis(
       rawLabel: label,
-      crop: ParameterItem(title: 'Crop Identity', value: cropVal, bengaliValue: cropBn, hindiValue: cropBn, status: cropStatus, icon: Icons.grass),
-      disease: ParameterItem(title: 'Pathogen / Disease', value: diseaseVal, bengaliValue: diseaseBn, hindiValue: _hindiDiseaseName(diseaseVal), status: diseaseStatus, icon: Icons.coronavirus_outlined),
-      pest: ParameterItem(title: 'Entomology / Pest', value: pestVal, bengaliValue: pestBn, hindiValue: _hindiPestName(pestVal), status: pestStatus, icon: Icons.pest_control_outlined),
-      nutrient: ParameterItem(title: 'Soil / Nutrient', value: nutrientVal, bengaliValue: nutrientBn, hindiValue: _hindiNutrientName(nutrientVal), status: nutrientStatus, icon: Icons.biotech_outlined),
-      growthStage: ParameterItem(title: 'Phenology / Stage', value: stageVal, bengaliValue: stageBn, hindiValue: _hindiStageName(stageVal), status: stageStatus, icon: Icons.timeline_outlined),
+      crop: ParameterItem(
+        title: 'Crop Identity',
+        value: cropVal,
+        bengaliValue: cropBn,
+        hindiValue: _hindiCropName(cropVal),
+        status: cropStatus,
+        icon: Icons.grass,
+      ),
+      disease: ParameterItem(
+        title: 'Pathogen / Disease',
+        value: diseaseVal,
+        bengaliValue: diseaseBn,
+        hindiValue: _hindiDiseaseName(diseaseVal),
+        status: diseaseStatus,
+        icon: Icons.coronavirus_outlined,
+      ),
+      pest: ParameterItem(
+        title: 'Entomology / Pest',
+        value: pestVal,
+        bengaliValue: pestBn,
+        hindiValue: _hindiPestName(pestVal),
+        status: pestStatus,
+        icon: Icons.pest_control_outlined,
+      ),
+      nutrient: ParameterItem(
+        title: 'Soil / Nutrient',
+        value: nutrientVal,
+        bengaliValue: nutrientBn,
+        hindiValue: _hindiNutrientName(nutrientVal),
+        status: nutrientStatus,
+        icon: Icons.biotech_outlined,
+      ),
+      growthStage: ParameterItem(
+        title: 'Phenology / Stage',
+        value: stageVal,
+        bengaliValue: stageBn,
+        hindiValue: _hindiStageName(stageVal),
+        status: stageStatus,
+        icon: Icons.timeline_outlined,
+      ),
     );
   }
 
   // ========================================================
   // MASSIVE AGRONOMIC NLP DICTIONARY (BENGALI & HINDI)
   // ========================================================
+  static String _hindiCropName(String en) {
+    final lower = en.toLowerCase();
+    if (lower.contains('tomato')) return 'टमाटर';
+    if (lower.contains('potato')) return 'आलू';
+    if (lower.contains('rice') || lower.contains('paddy')) return 'धान';
+    return 'बहु-फसल खेत';
+  }
+
   static String _bengaliDiseaseName(String en) {
     final lower = en.toLowerCase();
     if (lower.contains('late blight')) return 'নাবি ধসা (Late Blight)';

@@ -12,7 +12,6 @@ import '../services/tflite_service.dart';
 import '../services/voice_tts_service.dart';
 import '../services/wifi_camera_service.dart';
 import 'dart:async';
-import '../services/secure_db_service.dart';
 import '../services/location_service.dart';
 
 class FarmProvider extends ChangeNotifier {
@@ -37,9 +36,9 @@ class FarmProvider extends ChangeNotifier {
   FusedAdvisoryResult? _fusedAdvisory;
 
   bool _isSafetyNetMode = false;
-  TtsLanguage _ttsLanguage = TtsLanguage.english;
+  TtsLanguage _ttsLanguage = TtsLanguage.bengali;
   int _activeTabIndex = 0;
-  bool _isDarkMode = false;
+  bool _isDarkMode = true;
   bool _isCockpitMode = false;
   bool _isTtsEnabled = true;
   String _activeFieldZone = 'Area 1: Rice & Tomato Block';
@@ -356,6 +355,9 @@ class FarmProvider extends ChangeNotifier {
   void toggleTheme() {
     _isDarkMode = !_isDarkMode;
     notifyListeners();
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setBool('is_dark_mode', _isDarkMode);
+    }).catchError((_) {});
   }
 
   void setActiveFieldZone(String zone) {
@@ -370,6 +372,11 @@ class FarmProvider extends ChangeNotifier {
   Future<void> _loadFarmerProfile() async {
     try {
       final prefs = await SharedPreferences.getInstance();
+      final savedDark = prefs.getBool('is_dark_mode');
+      if (savedDark != null) {
+        _isDarkMode = savedDark;
+        notifyListeners();
+      }
       final savedName = prefs.getString('farmer_name');
       if (savedName != null && savedName.trim().isNotEmpty) {
         _farmerName = savedName.trim();
