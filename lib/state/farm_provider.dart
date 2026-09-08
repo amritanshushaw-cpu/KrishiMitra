@@ -38,6 +38,7 @@ class FarmProvider extends ChangeNotifier {
   bool _isSafetyNetMode = false;
   TtsLanguage _ttsLanguage = TtsLanguage.bengali;
   int _activeTabIndex = 0;
+  final List<int> _tabHistory = [0];
   bool _isDarkMode = true;
   bool _isCockpitMode = false;
   bool _isTtsEnabled = true;
@@ -350,8 +351,21 @@ class FarmProvider extends ChangeNotifier {
   }
 
   void setTabIndex(int index) {
-    _activeTabIndex = index;
-    notifyListeners();
+    if (_activeTabIndex != index) {
+      _tabHistory.add(index);
+      _activeTabIndex = index;
+      notifyListeners();
+    }
+  }
+
+  bool popTab() {
+    if (_tabHistory.length > 1) {
+      _tabHistory.removeLast();
+      _activeTabIndex = _tabHistory.last;
+      notifyListeners();
+      return true;
+    }
+    return false;
   }
 
   void toggleTheme() {

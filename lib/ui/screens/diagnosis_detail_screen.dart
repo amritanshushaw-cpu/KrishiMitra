@@ -17,7 +17,11 @@ class DiagnosisDetailScreen extends StatelessWidget {
 
     if (fused == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('DIAGNOSIS DETAILS')),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: isDark ? Colors.white : Colors.black, size: 20),
+            onPressed: () => Navigator.pop(context),
+          ),title: const Text('DIAGNOSIS DETAILS')),
         body: const Center(child: Text('No active diagnosis available.')),
       );
     }
@@ -30,6 +34,10 @@ class DiagnosisDetailScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new_rounded, color: isDark ? Colors.white : Colors.black, size: 20),
+            onPressed: () => Navigator.pop(context),
+          ),
           backgroundColor: Colors.transparent,
           elevation: 0,
           scrolledUnderElevation: 0,

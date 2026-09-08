@@ -6,6 +6,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 import '../../state/farm_provider.dart';
 import 'analytics_alerts_tab.dart';
+import 'auth_screen.dart';
 import 'home_dashboard_tab.dart';
 import 'profile_settings_tab.dart';
 import 'farm_tools_hub_screen.dart';
@@ -257,41 +258,44 @@ class MainShellScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      provider.strings.authTitle,
-                      style: GoogleFonts.jetBrainsMono(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.6,
-                        color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        provider.strings.authTitle,
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.6,
+                          color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Container(
-                          width: 5,
-                          height: 5,
-                          decoration: const BoxDecoration(
-                            color: AppTheme.emeraldLight,
-                            shape: BoxShape.circle,
+                      Row(
+                        children: [
+                          Container(
+                            width: 5,
+                            height: 5,
+                            decoration: const BoxDecoration(
+                              color: AppTheme.emeraldLight,
+                              shape: BoxShape.circle,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          provider.strings.offlineTag,
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 8.5,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.4,
-                            color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                          const SizedBox(width: 5),
+                          Text(
+                            provider.strings.offlineTag,
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 8.5,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.4,
+                              color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -316,15 +320,65 @@ class MainShellScreen extends StatelessWidget {
                 tooltip: 'Toggle Theme Mode',
                 onPressed: () => provider.toggleTheme(),
               ),
-              // Pitch Safety Net
+              // Logout
               IconButton(
                 icon: Icon(
-                  Icons.shield_outlined,
+                  Icons.logout_rounded,
                   size: 20,
                   color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
                 ),
-                tooltip: 'Pitch Safety Net (Hardware Bypass)',
-                onPressed: () => _showSafetyNetModal(context, provider),
+                tooltip: 'Logout',
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext ctx) {
+                      return AlertDialog(
+                        backgroundColor: isDark ? AppTheme.deepPine : AppTheme.mintDew,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        title: Text(
+                          'Confirm Logout',
+                          style: GoogleFonts.jetBrainsMono(
+                            color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 16,
+                          ),
+                        ),
+                        content: Text(
+                          'Are you sure you want to logout?',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                            fontSize: 14,
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: Text(
+                              'Cancel',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(ctx);
+                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const AuthScreen()));
+                            },
+                            child: Text(
+                              'Logout',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppTheme.amberWarning,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
               const SizedBox(width: 8),
             ],
