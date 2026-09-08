@@ -5,9 +5,11 @@ import 'package:fresnel/fresnel.dart';
 import '../../core/theme/app_theme.dart';
 import '../../state/farm_provider.dart';
 import '../widgets/app_glass_container.dart';
+import '../widgets/liquid_glass_container.dart';
 import '../widgets/farm_health_ring.dart';
 import '../widgets/field_zone_card.dart';
 import '../widgets/weather_status_bar.dart';
+import 'latest_scan_details_screen.dart';
 
 class HomeDashboardTab extends StatelessWidget {
   final VoidCallback onOpenSafetyNet;
@@ -109,6 +111,12 @@ class HomeDashboardTab extends StatelessWidget {
                 activeZone: provider.activeFieldZone,
               ),
               const SizedBox(height: 16),
+
+              // Latest Scan Advice Card
+              if (provider.fusedAdvisory != null) ...[
+                _buildLatestScanCard(context, provider),
+                const SizedBox(height: 16),
+              ],
 
               // Quick Actions Grid
               Text(
@@ -426,6 +434,61 @@ class HomeDashboardTab extends StatelessWidget {
     return Icons.bedtime_outlined;
   }
 
+    Widget _buildLatestScanCard(BuildContext context, FarmProvider provider) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LatestScanDetailsScreen()),
+        );
+      },
+      child: LiquidGlassContainer(
+        
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: AppTheme.darkAccentGreen.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.document_scanner, color: AppTheme.darkAccentGreen),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Latest Scan Advisory',
+                    style: GoogleFonts.bricolageGrotesque(
+                      color: AppTheme.darkTextSecondary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    provider.fusedAdvisory?.advisory.nameEn ?? 'Diagnosis Complete',
+                    style: GoogleFonts.bricolageGrotesque(
+                      color: AppTheme.darkText,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.arrow_forward_ios, size: 14, color: AppTheme.darkTextSecondary),
+          ],
+        ),
+      ),
+    );
+  }
   String _formatSystemTime() {
     final now = DateTime.now();
     final hour = now.hour;
