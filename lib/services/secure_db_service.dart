@@ -252,22 +252,22 @@ class SecureDatabaseService {
 
       final StringBuffer sb = StringBuffer();
       sb.writeln("=== KrishiMitra Farm Logs ===");
-      sb.writeln("Export period: Past \$days days");
-      sb.writeln("Total records: \${exportData.length}");
+      sb.writeln("Export period: Past $days days");
+      sb.writeln("Total records: ${exportData.length}");
       sb.writeln("-----------------------------");
 
       for (var row in exportData) {
-        sb.writeln("Time: \${row['timestamp']}");
-        sb.writeln("Temp: \${row['temperature']}C | Hum: \${row['humidity']}% | Rain: \${row['rain_detected'] == 1}");
-        sb.writeln("Pump: \${row['pump_status']}");
+        sb.writeln("Time: ${row['timestamp']}");
+        sb.writeln("Temp: ${row['temperature']}C | Hum: ${row['humidity']}% | Rain: ${row['rain_detected'] == 1}");
+        sb.writeln("Pump: ${row['pump_status']}");
         if (row['ai_diagnosis'] != null) {
-          sb.writeln("AI Diagnosis: \${row['ai_diagnosis']}");
+          sb.writeln("AI Diagnosis: ${row['ai_diagnosis']}");
         }
         sb.writeln("---");
       }
 
       final directory = await getApplicationDocumentsDirectory();
-      final file = File('\${directory.path}/krishimitra_export.txt');
+      final file = File('${directory.path}/krishimitra_export.txt');
       await file.writeAsString(sb.toString());
       
       return file.path;
@@ -381,7 +381,10 @@ class SecureDatabaseService {
   Future<void> saveSensorAndAdvisoryData({
     required double temperature,
     required double humidity,
+    required int rainDetected,
     required double soilMoisture,
+    required String pumpStatus,
+    required String aiDiagnosis,
     required String advisoryOutput,
   }) async {
     final timestamp = DateTime.now().toIso8601String();
@@ -392,7 +395,10 @@ class SecureDatabaseService {
         'timestamp': timestamp,
         'temperature': temperature,
         'humidity': humidity,
+        'rain_detected': rainDetected,
         'soil_moisture': soilMoisture,
+        'pump_status': pumpStatus,
+        'ai_diagnosis': aiDiagnosis,
         'advisory_output': advisoryOutput,
       });
     } else {
@@ -404,7 +410,10 @@ class SecureDatabaseService {
         'timestamp': timestamp,
         'temperature': temperature,
         'humidity': humidity,
+        'rain_detected': rainDetected,
         'soil_moisture': soilMoisture,
+        'pump_status': pumpStatus,
+        'ai_diagnosis': aiDiagnosis,
         'advisory_output': advisoryOutput,
       });
       await prefs.setString(_prefsKeyLogs, json.encode(logs));

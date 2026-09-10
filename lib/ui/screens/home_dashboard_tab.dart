@@ -117,6 +117,10 @@ class HomeDashboardTab extends StatelessWidget {
                 _buildLatestScanCard(context, provider),
                 const SizedBox(height: 16),
               ],
+              
+              // Pump Control Card
+              _buildPumpCard(context, provider),
+              const SizedBox(height: 16),
 
               // Quick Actions Grid
               Text(
@@ -434,7 +438,56 @@ class HomeDashboardTab extends StatelessWidget {
     return Icons.bedtime_outlined;
   }
 
-    Widget _buildLatestScanCard(BuildContext context, FarmProvider provider) {
+  
+  Widget _buildPumpCard(BuildContext context, FarmProvider provider) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return LiquidGlassContainer(
+      liquidColors: isDark ? [Colors.blueAccent.withValues(alpha: 0.1), Colors.cyan.withValues(alpha: 0.05)] : [Colors.blueAccent.withValues(alpha: 0.15), Colors.cyan.withValues(alpha: 0.05)],
+      radius: 18,
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Water Pump Control',
+                style: GoogleFonts.bricolageGrotesque(
+                  color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                provider.isPumpLocked ? 'Pump is ON' : 'Pump is OFF',
+                style: GoogleFonts.bricolageGrotesque(
+                  color: provider.isPumpLocked ? Colors.lightBlue : (isDark ? Colors.white : Colors.black),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          ElevatedButton(
+            onPressed: () => provider.togglePump(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: provider.isPumpLocked ? Colors.redAccent.withValues(alpha: 0.8) : Colors.blueAccent.withValues(alpha: 0.8),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            child: Text(provider.isPumpLocked ? 'TURN OFF' : 'TURN ON', style: GoogleFonts.jetBrainsMono(fontWeight: FontWeight.bold, fontSize: 13)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLatestScanCard(BuildContext context, FarmProvider provider) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -462,7 +515,7 @@ class HomeDashboardTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Latest Scan Advisory',
+                    'Latest Advice',
                     style: GoogleFonts.bricolageGrotesque(
                       color: AppTheme.darkTextSecondary,
                       fontSize: 12,

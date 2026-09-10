@@ -11,6 +11,7 @@ import '../services/sensor_fusion_service.dart';
 import '../services/tflite_service.dart';
 import '../services/voice_tts_service.dart';
 import '../services/wifi_camera_service.dart';
+import '../services/secure_db_service.dart';
 import 'dart:async';
 import '../services/location_service.dart';
 
@@ -35,6 +36,7 @@ class FarmProvider extends ChangeNotifier {
   final TfliteService _tfliteService = TfliteService();
   final SensorFusionService _fusionService = SensorFusionService();
   final VoiceTtsService _ttsService = VoiceTtsService();
+  final SecureDatabaseService _dbService = SecureDatabaseService.instance;
   Timer? _wifiPollingTimer;
 
   // State Variables
@@ -321,6 +323,18 @@ class FarmProvider extends ChangeNotifier {
       inference: result,
       sensor: _currentSensorData,
     );
+
+    if (_fusedAdvisory != null) {
+      await _dbService.saveSensorAndAdvisoryData(
+        temperature: _currentSensorData.temperature,
+        humidity: _currentSensorData.humidity,
+        rainDetected: _currentSensorData.rain ? 1 : 0,
+        soilMoisture: _currentSensorData.soilMoisture.toDouble(),
+        pumpStatus: _isPumpLocked ? 'LOCKED/ON' : 'OFF',
+        aiDiagnosis: _parsedDiagnosis?.diseaseNameEn ?? 'Healthy',
+        advisoryOutput: _fusedAdvisory!.advisory.nameEn,
+      );
+    }
 
     if (_fusedAdvisory!.recommendedPumpAction == 'LOCK' && !_isPumpLocked) {
       await _cameraService.setPumpState(true);
