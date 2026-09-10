@@ -3,6 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/sensor_data.dart';
 import 'app_glass_container.dart';
+import 'diagonal_rain_overlay.dart';
+import 'soil_hydration_overlay.dart';
+import 'humidity_vapor_overlay.dart';
+import 'extreme_heat_overlay.dart';
 
 /// Farm Environment Overview Widget
 /// High-aesthetic 2x2 Bento Grid presentation of real IoT environmental telemetry,
@@ -10,11 +14,19 @@ import 'app_glass_container.dart';
 class WeatherStatusBar extends StatelessWidget {
   final SensorData sensorData;
   final String activeZone;
+  final VoidCallback? onToggleRain;
+  final VoidCallback? onToggleTemp;
+  final VoidCallback? onToggleSoil;
+  final VoidCallback? onToggleHumidity;
 
   const WeatherStatusBar({
     super.key,
     required this.sensorData,
     this.activeZone = 'Area 1: Rice & Tomato Field',
+    this.onToggleRain,
+    this.onToggleTemp,
+    this.onToggleSoil,
+    this.onToggleHumidity,
   });
 
   @override
@@ -31,6 +43,17 @@ class WeatherStatusBar extends StatelessWidget {
 
     final rainColor = sensorData.isRaining ? AppTheme.skyBlue : AppTheme.sproutGreen;
     final rainStatus = sensorData.isRaining ? 'Precipitation' : 'Clear Sky';
+
+    final isOverheated = sensorData.temperature > 35.0;
+    final tempColor = isOverheated ? const Color(0xFFFF3B30) : AppTheme.ambientSunlight;
+    final tempStatus = isOverheated
+        ? 'Heat Stress'
+        : ((DateTime.now().hour >= 5 && DateTime.now().hour < 18) ? 'Daytime' : 'Night Cycle');
+    final tempIcon = isOverheated
+        ? Icons.local_fire_department_rounded
+        : ((DateTime.now().hour >= 5 && DateTime.now().hour < 18)
+            ? Icons.wb_sunny_rounded
+            : Icons.nightlight_round);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,6 +127,13 @@ class WeatherStatusBar extends StatelessWidget {
                 icon: Icons.water_drop_rounded,
                 accentColor: moistureColor,
                 progressPercent: (sensorData.soilMoisture / 100.0).clamp(0.0, 1.0),
+                backgroundOverlay: SoilHydrationOverlay(
+                  moisturePercent: (sensorData.soilMoisture / 100.0).clamp(0.0, 1.0),
+                  isCriticallyDry: sensorData.isSoilCriticallyDry,
+                  isSaturated: sensorData.isSoilSaturated,
+                  borderRadius: 18,
+                ),
+                onTap: onToggleSoil,
               ),
             ),
             const SizedBox(width: 10),
@@ -113,12 +143,12 @@ class WeatherStatusBar extends StatelessWidget {
                 context,
                 title: 'Air Temp',
                 value: '${sensorData.temperature.toStringAsFixed(1)}°C',
-                status: (DateTime.now().hour >= 5 && DateTime.now().hour < 18) ? 'Daytime' : 'Night Cycle',
-                icon: (DateTime.now().hour >= 5 && DateTime.now().hour < 18)
-                    ? Icons.wb_sunny_rounded
-                    : Icons.nightlight_round,
-                accentColor: AppTheme.ambientSunlight,
+                status: tempStatus,
+                icon: tempIcon,
+                accentColor: tempColor,
                 progressPercent: (sensorData.temperature / 45.0).clamp(0.0, 1.0),
+                isOverheated: isOverheated,
+                onTap: onToggleTemp,
               ),
             ),
           ],
@@ -136,6 +166,11 @@ class WeatherStatusBar extends StatelessWidget {
                 icon: Icons.air_rounded,
                 accentColor: AppTheme.vibrantEmerald,
                 progressPercent: (sensorData.humidity / 100.0).clamp(0.0, 1.0),
+                backgroundOverlay: HumidityVaporOverlay(
+                  humidityPercent: (sensorData.humidity / 100.0).clamp(0.0, 1.0),
+                  borderRadius: 18,
+                ),
+                onTap: onToggleHumidity,
               ),
             ),
             const SizedBox(width: 10),
@@ -149,6 +184,8 @@ class WeatherStatusBar extends StatelessWidget {
                 icon: sensorData.isRaining ? Icons.thunderstorm_rounded : Icons.cloud_outlined,
                 accentColor: rainColor,
                 progressPercent: sensorData.isRaining ? 0.90 : 0.05,
+                isRaining: sensorData.isRaining,
+                onTap: onToggleRain,
               ),
             ),
           ],
@@ -165,11 +202,14 @@ class WeatherStatusBar extends StatelessWidget {
     required IconData icon,
     required Color accentColor,
     required double progressPercent,
+    bool isRaining = false,
+    bool isOverheated = false,
+    Widget? backgroundOverlay,
+    VoidCallback? onTap,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return AppGlassContainer(
-      radius: 18,
+    final content = Padding(
       padding: const EdgeInsets.all(14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,13 +225,13 @@ class WeatherStatusBar extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      accentColor.withValues(alpha: 0.24),
-                      accentColor.withValues(alpha: 0.06),
+                      accentColor.withValues(alpha: (isRaining || isOverheated) ? 0.35 : 0.24),
+                      accentColor.withValues(alpha: (isRaining || isOverheated) ? 0.14 : 0.06),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: accentColor.withValues(alpha: 0.35),
+                    color: accentColor.withValues(alpha: (isRaining || isOverheated) ? 0.55 : 0.35),
                     width: 1.0,
                   ),
                 ),
@@ -200,16 +240,53 @@ class WeatherStatusBar extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                 decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.12),
+                  color: isRaining
+                      ? AppTheme.skyBlue.withValues(alpha: 0.22)
+                      : (isOverheated
+                          ? const Color(0xFFFF3B30).withValues(alpha: 0.22)
+                          : accentColor.withValues(alpha: 0.12)),
                   borderRadius: BorderRadius.circular(6),
+                  border: isRaining
+                      ? Border.all(
+                          color: AppTheme.skyBlue.withValues(alpha: 0.45),
+                          width: 0.8,
+                        )
+                      : (isOverheated
+                          ? Border.all(
+                              color: const Color(0xFFFF3B30).withValues(alpha: 0.50),
+                              width: 0.8,
+                            )
+                          : null),
                 ),
-                child: Text(
-                  status,
-                  style: GoogleFonts.jetBrainsMono(
-                    fontSize: 8.5,
-                    fontWeight: FontWeight.w700,
-                    color: accentColor,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isRaining) ...[
+                      const Icon(
+                        Icons.water_drop,
+                        size: 9,
+                        color: AppTheme.skyBlue,
+                      ),
+                      const SizedBox(width: 3),
+                    ] else if (isOverheated) ...[
+                      const Icon(
+                        Icons.local_fire_department,
+                        size: 9.5,
+                        color: Color(0xFFFF3B30),
+                      ),
+                      const SizedBox(width: 3),
+                    ],
+                    Text(
+                      status,
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 8.5,
+                        fontWeight: FontWeight.w700,
+                        color: isRaining
+                            ? AppTheme.skyBlue
+                            : (isOverheated ? const Color(0xFFFF3B30) : accentColor),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -266,5 +343,72 @@ class WeatherStatusBar extends StatelessWidget {
         ],
       ),
     );
+
+    Widget tileWidget = AppGlassContainer(
+      radius: 18,
+      padding: EdgeInsets.zero,
+      child: Stack(
+        children: [
+          // If raining, atmospheric rainy mood backdrop tint
+          if (isRaining)
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      const Color(0xFF0D253A).withValues(alpha: isDark ? 0.65 : 0.15),
+                      const Color(0xFF003865).withValues(alpha: isDark ? 0.45 : 0.08),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+          // If overheated, dynamic rising heat shimmer ribbons, convective ripples, and solar breathing aura
+          if (isOverheated)
+            const Positioned.fill(
+              child: IgnorePointer(
+                child: ExtremeHeatOverlay(
+                  borderRadius: 18,
+                ),
+              ),
+            ),
+
+          // Diagonal rain droplet animation layer
+          if (isRaining)
+            const Positioned.fill(
+              child: IgnorePointer(
+                child: DiagonalRainOverlay(
+                  isRaining: true,
+                  borderRadius: 18,
+                ),
+              ),
+            ),
+
+          // Custom ambient animation layer (Soil moisture waves, Humidity vapor breeze)
+          if (backgroundOverlay != null)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: backgroundOverlay,
+              ),
+            ),
+
+          content,
+        ],
+      ),
+    );
+
+    if (onTap != null) {
+      return GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: tileWidget,
+      );
+    }
+
+    return tileWidget;
   }
 }

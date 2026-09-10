@@ -4,6 +4,10 @@ import '../../core/theme/app_theme.dart';
 import '../../models/sensor_data.dart';
 import '../../services/ble_service.dart';
 import 'app_glass_container.dart';
+import 'diagonal_rain_overlay.dart';
+import 'soil_hydration_overlay.dart';
+import 'humidity_vapor_overlay.dart';
+import 'extreme_heat_overlay.dart';
 
 class TelemetryGauge extends StatelessWidget {
   final SensorData data;
@@ -71,6 +75,10 @@ class TelemetryGauge extends StatelessWidget {
                   icon: Icons.thermostat_rounded,
                   bubbleColor: const Color(0xFFFFF3E0),
                   iconColor: const Color(0xFFE65100),
+                  isOverheated: data.temperature > 35,
+                  backgroundOverlay: data.temperature > 35
+                      ? const ExtremeHeatOverlay(borderRadius: 16)
+                      : null,
                 ),
               ),
               const SizedBox(width: 10),
@@ -85,6 +93,10 @@ class TelemetryGauge extends StatelessWidget {
                   icon: Icons.water_drop_outlined,
                   bubbleColor: const Color(0xFFE0F2F1),
                   iconColor: const Color(0xFF00897B),
+                  backgroundOverlay: HumidityVaporOverlay(
+                    humidityPercent: (data.humidity / 100.0).clamp(0.0, 1.0),
+                    borderRadius: 16,
+                  ),
                 ),
               ),
             ],
@@ -104,6 +116,12 @@ class TelemetryGauge extends StatelessWidget {
                   icon: Icons.grass_rounded,
                   bubbleColor: const Color(0xFFE1F5FE),
                   iconColor: const Color(0xFF0288D1),
+                  backgroundOverlay: SoilHydrationOverlay(
+                    moisturePercent: (data.soilMoisture / 100.0).clamp(0.0, 1.0),
+                    isCriticallyDry: data.isSoilCriticallyDry,
+                    isSaturated: data.isSoilSaturated,
+                    borderRadius: 16,
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -122,6 +140,7 @@ class TelemetryGauge extends StatelessWidget {
                       bubbleColor: data.isRaining ? const Color(0xFFEDE7F6) : const Color(0xFFE8F5E9),
                       iconColor: data.isRaining ? const Color(0xFF5E35B1) : const Color(0xFF2E7D32),
                       isInteractive: true,
+                      isRaining: data.isRaining,
                     ),
                   ),
                 ),
@@ -183,40 +202,64 @@ class TelemetryGauge extends StatelessWidget {
     required Color bubbleColor,
     required Color iconColor,
     bool isInteractive = false,
+    bool isRaining = false,
+    bool isOverheated = false,
+    Widget? backgroundOverlay,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final bool isWarning = subtext.toLowerCase().contains('high') ||
         subtext.toLowerCase().contains('dry') ||
-        subtext.toLowerCase().contains('active');
+        subtext.toLowerCase().contains('active') ||
+        isOverheated;
 
     final Color badgeColor = isDark
-        ? (isWarning ? AppTheme.amberWarning : AppTheme.neonMint)
-        : (isWarning ? const Color(0xFFB45309) : const Color(0xFF193E32));
+        ? (isOverheated
+            ? const Color(0xFFFF3B30)
+            : (isWarning ? AppTheme.amberWarning : AppTheme.neonMint))
+        : (isOverheated
+            ? const Color(0xFFDC2626)
+            : (isWarning ? const Color(0xFFB45309) : const Color(0xFF193E32)));
 
     final Color badgeBg = isDark
-        ? (isWarning
-            ? AppTheme.amberWarning.withValues(alpha: 0.18)
-            : AppTheme.neonMint.withValues(alpha: 0.18))
-        : (isWarning ? const Color(0xFFFEF3C7) : const Color(0xFFE8F5EE));
+        ? (isOverheated
+            ? const Color(0xFFFF3B30).withValues(alpha: 0.22)
+            : (isWarning
+                ? AppTheme.amberWarning.withValues(alpha: 0.18)
+                : AppTheme.neonMint.withValues(alpha: 0.18)))
+        : (isOverheated
+            ? const Color(0xFFFEE2E2)
+            : (isWarning ? const Color(0xFFFEF3C7) : const Color(0xFFE8F5EE)));
 
     final Color badgeBorder = isDark
-        ? (isWarning
-            ? AppTheme.amberWarning.withValues(alpha: 0.35)
-            : AppTheme.neonMint.withValues(alpha: 0.35))
+        ? (isOverheated
+            ? const Color(0xFFFF3B30).withValues(alpha: 0.45)
+            : (isWarning
+                ? AppTheme.amberWarning.withValues(alpha: 0.35)
+                : AppTheme.neonMint.withValues(alpha: 0.35)))
         : Colors.transparent;
 
-    return Container(
+    final tile = Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark
-            ? AppTheme.darkSurfaceElevated.withValues(alpha: 0.85)
-            : const Color(0xFFF9FBF9),
+            ? (isRaining
+                ? const Color(0xFF0F263B).withValues(alpha: 0.90)
+                : (isOverheated
+                    ? const Color(0xFF2A0B0B).withValues(alpha: 0.90)
+                    : AppTheme.darkSurfaceElevated.withValues(alpha: 0.85)))
+            : (isRaining
+                ? const Color(0xFFEDF7FF)
+                : (isOverheated ? const Color(0xFFFFF1F2) : const Color(0xFFF9FBF9))),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? const Color(0xFFFFFFFF).withValues(alpha: 0.10)
-              : const Color(0xFFE3EDE5),
+          color: isRaining
+              ? AppTheme.skyBlue.withValues(alpha: 0.50)
+              : (isOverheated
+                  ? const Color(0xFFFF3B30).withValues(alpha: 0.55)
+                  : (isDark
+                      ? const Color(0xFFFFFFFF).withValues(alpha: 0.10)
+                      : const Color(0xFFE3EDE5))),
           width: 1.0,
         ),
       ),
@@ -240,16 +283,16 @@ class TelemetryGauge extends StatelessWidget {
                 child: Icon(
                   icon,
                   size: 16,
-                  color: isDark ? (isWarning ? AppTheme.amberWarning : AppTheme.neonMint) : iconColor,
+                  color: isDark ? (isWarning ? (isOverheated ? const Color(0xFFFF3B30) : AppTheme.amberWarning) : AppTheme.neonMint) : iconColor,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
                 decoration: BoxDecoration(
-                  color: badgeBg,
+                  color: isRaining ? AppTheme.skyBlue.withValues(alpha: 0.22) : badgeBg,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: badgeBorder,
+                    color: isRaining ? AppTheme.skyBlue.withValues(alpha: 0.45) : badgeBorder,
                     width: 0.8,
                   ),
                 ),
@@ -258,7 +301,7 @@ class TelemetryGauge extends StatelessWidget {
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 9.0,
                     fontWeight: FontWeight.w700,
-                    color: badgeColor,
+                    color: isRaining ? AppTheme.skyBlue : badgeColor,
                     letterSpacing: 0.2,
                   ),
                 ),
@@ -289,5 +332,33 @@ class TelemetryGauge extends StatelessWidget {
         ],
       ),
     );
+
+    if (isRaining || backgroundOverlay != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Stack(
+          children: [
+            tile,
+            if (isRaining)
+              const Positioned.fill(
+                child: IgnorePointer(
+                  child: DiagonalRainOverlay(
+                    isRaining: true,
+                    borderRadius: 16,
+                  ),
+                ),
+              ),
+            if (backgroundOverlay != null)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: backgroundOverlay,
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    return tile;
   }
 }

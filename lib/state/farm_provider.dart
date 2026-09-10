@@ -85,6 +85,7 @@ class FarmProvider extends ChangeNotifier {
   bool get isTtsPlaying => _ttsService.isPlaying;
   bool get isTtsEnabled => _isTtsEnabled;
   int get activeTabIndex => _activeTabIndex;
+  List<int> get tabHistory => List.unmodifiable(_tabHistory);
   bool get isDarkMode => _isDarkMode;
   bool get isCockpitMode => _isCockpitMode;
   String get activeFieldZone => _activeFieldZone;
@@ -188,8 +189,14 @@ class FarmProvider extends ChangeNotifier {
   }
 
   FarmProvider() {
-    _initServices();
-    _loadSavedLanguage();
+    Future.microtask(() => _deferredInit());
+  }
+
+  Future<void> _deferredInit() async {
+    await _loadSavedLanguage();
+    await _loadFarmerProfile();
+    await _loadFarmerLocation();
+    await _initServices();
   }
 
   Future<void> _loadSavedLanguage() async {
@@ -212,20 +219,47 @@ class FarmProvider extends ChangeNotifier {
     _statusMessage = 'Initializing Edge Pipeline...';
     notifyListeners();
 
-    await _tfliteService.initialize();
-    await _fusionService.initialize();
+    try {
+      await _tfliteService.initialize();
+    } catch (_) {}
+
+    try {
+      await _fusionService.initialize();
+    } catch (_) {}
+
     _ttsService.onPlayingStateChanged = (playing) {
       notifyListeners();
     };
-    await _ttsService.initialize();
+
+    try {
+      await _ttsService.initialize();
+    } catch (_) {}
 
     _bleService.stateStream.listen((state) {
       _bleState = state;
       notifyListeners();
     });
 
-    // Start Polling ESP32 Wi-Fi for Sensors instead of BLE
-    _wifiPollingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+    _bleService.sensorStream.listen((data) {
+      // Keep static values when offline or simulated.
+      // Values will only automatically update from the live stream when the real ESP32 is connected.
+      if (_bleState != BleConnectionState.connected) return;
+
+      _currentSensorData = data;
+      if (_lastInference != null) {
+        _fusedAdvisory = _fusionService.fuse(
+          inference: _lastInference!,
+          sensor: _currentSensorData,
+        );
+      }
+      notifyListeners();
+    });
+
+    // Start Polling ESP32 Wi-Fi for Sensors only with concurrency guard
+    bool isPollingWifi = false;
+    _wifiPollingTimer = Timer.periodic(const Duration(seconds: 4), (timer) async {
+      if (isPollingWifi) return;
+      isPollingWifi = true;
       try {
         final Map<String, dynamic>? data = await _cameraService.fetchSensorData();
         if (data != null) {
@@ -249,12 +283,12 @@ class FarmProvider extends ChangeNotifier {
           }
           notifyListeners();
         }
-      } catch (e) { }
+      } catch (e) { } finally {
+        isPollingWifi = false;
+      }
     });
 
-    await _bleService.connect();
-    await _loadFarmerProfile();
-    await _loadFarmerLocation();
+    _bleService.connect();
     autoFetchLocation();
     _statusMessage = 'System Ready (Offline)';
     notifyListeners();
@@ -328,10 +362,10 @@ class FarmProvider extends ChangeNotifier {
       await _dbService.saveSensorAndAdvisoryData(
         temperature: _currentSensorData.temperature,
         humidity: _currentSensorData.humidity,
-        rainDetected: _currentSensorData.rain ? 1 : 0,
+        rainDetected: _currentSensorData.isRaining ? 1 : 0,
         soilMoisture: _currentSensorData.soilMoisture.toDouble(),
         pumpStatus: _isPumpLocked ? 'LOCKED/ON' : 'OFF',
-        aiDiagnosis: _parsedDiagnosis?.diseaseNameEn ?? 'Healthy',
+        aiDiagnosis: _parsedDiagnosis?.disease.value ?? 'Healthy',
         advisoryOutput: _fusedAdvisory!.advisory.nameEn,
       );
     }
@@ -422,8 +456,21 @@ class FarmProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void injectTelemetry({required double temp, required int soil, required int rain}) {
+  void injectTelemetry({required double temp, required int soil, required int rain, double? humidity}) {
+    _currentSensorData = SensorData(
+      temperature: temp,
+      soilMoisture: soil,
+      rain: rain,
+      humidity: humidity ?? _currentSensorData.humidity,
+    );
     _bleService.injectTelemetry(temp: temp, soil: soil, rain: rain);
+    if (_lastInference != null) {
+      _fusedAdvisory = _fusionService.fuse(
+        inference: _lastInference!,
+        sensor: _currentSensorData,
+      );
+    }
+    notifyListeners();
   }
 
   Future<void> _loadFarmerProfile() async {

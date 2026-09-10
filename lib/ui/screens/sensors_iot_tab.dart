@@ -23,22 +23,34 @@ class SensorsIotTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Text(
-                provider.strings.sensorTelemetry,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
-                  letterSpacing: -0.6,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                provider.strings.smartIrrigation,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          provider.strings.sensorTelemetry,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                            letterSpacing: -0.6,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          provider.strings.smartIrrigation,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 14),
 

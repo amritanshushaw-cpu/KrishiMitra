@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../state/farm_provider.dart';
 import '../widgets/calculators/farming_economics_calculator_view.dart';
 import '../widgets/calculators/fertilizer_calculator_view.dart';
 import '../widgets/calculators/pesticide_calculator_view.dart';
 
 class FarmToolsHubScreen extends StatefulWidget {
   final int initialTabIndex;
+  final VoidCallback? onBack;
 
-  const FarmToolsHubScreen({super.key, this.initialTabIndex = 0});
+  const FarmToolsHubScreen({
+    super.key,
+    this.initialTabIndex = 0,
+    this.onBack,
+  });
 
   @override
   State<FarmToolsHubScreen> createState() => _FarmToolsHubScreenState();
@@ -42,26 +49,56 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
     super.dispose();
   }
 
+  void _handleBack(BuildContext context) {
+    if (widget.onBack != null) {
+      widget.onBack!();
+      return;
+    }
+
+    final provider = context.read<FarmProvider>();
+    if (provider.activeTabIndex == 6) {
+      if (!provider.popTab()) {
+        provider.setTabIndex(0);
+      }
+      return;
+    }
+
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    } else {
+      if (!provider.popTab()) {
+        provider.setTabIndex(0);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
-      decoration: AppTheme.backgroundDecoration(isDark),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _handleBack(context);
+      },
+      child: Container(
+        decoration: AppTheme.backgroundDecoration(isDark),
+        child: Scaffold(
           backgroundColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back_ios_new_rounded,
-              color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
-              size: 20,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                size: 20,
+              ),
+              tooltip: 'Back to Farm Dashboard',
+              onPressed: () => _handleBack(context),
             ),
-            onPressed: () => Navigator.pop(context),
-          ),
           titleSpacing: 0,
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,6 +201,7 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

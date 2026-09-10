@@ -15,6 +15,99 @@ class AnalyticsAlertsTab extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fused = provider.fusedAdvisory;
 
+    final List<Map<String, dynamic>> activeAlerts = [];
+
+    // 1. Fused Advisory Alert
+    if (fused != null) {
+      activeAlerts.add({
+        'title': 'Agronomic Advisory Active',
+        'time': 'Active Protocol',
+        'severity': fused.recommendedPumpAction == 'LOCK' ? 'CRITICAL' : 'HIGH',
+        'severityColor': fused.recommendedPumpAction == 'LOCK' ? AppTheme.alertRose : AppTheme.amberWarning,
+        'action': fused.effectiveChemicalTreatmentEn.isNotEmpty
+            ? fused.effectiveChemicalTreatmentEn
+            : (fused.advisory.nameEn.isNotEmpty
+                ? fused.advisory.nameEn
+                : 'Foliar spray recommendation and irrigation lock applied.'),
+        'icon': Icons.medical_services_outlined,
+      });
+    }
+
+    // 2. Heavy Rain Detection
+    if (provider.sensorData.isRaining) {
+      activeAlerts.add({
+        'title': 'Heavy Rain Detected // Spraying Paused',
+        'time': 'Live Sensor',
+        'severity': 'WARNING',
+        'severityColor': AppTheme.amberWarning,
+        'action': 'Foliar chemical sprays suspended to prevent runoff into soil and waterways.',
+        'icon': Icons.thunderstorm_outlined,
+      });
+    }
+
+    // 3. Soil Moisture Anomalies
+    if (provider.sensorData.isSoilCriticallyDry) {
+      activeAlerts.add({
+        'title': 'Soil Drought Stress',
+        'time': 'Live Telemetry',
+        'severity': 'CRITICAL',
+        'severityColor': AppTheme.alertRose,
+        'action': 'Soil moisture dropped to ${provider.sensorData.soilMoisture}%. Irrigation recommended.',
+        'icon': Icons.water_drop_outlined,
+      });
+    } else if (provider.sensorData.isSoilSaturated) {
+      activeAlerts.add({
+        'title': 'Soil Waterlogging Alert',
+        'time': 'Live Telemetry',
+        'severity': 'WARNING',
+        'severityColor': AppTheme.amberWarning,
+        'action': 'Soil moisture high at ${provider.sensorData.soilMoisture}%. Inspect field drainage.',
+        'icon': Icons.water_drop_outlined,
+      });
+    }
+
+    // 4. Crop Disease Pathogen Detected
+    if (provider.parsedDiagnosis != null &&
+        (provider.parsedDiagnosis!.disease.status == ParameterStatus.critical ||
+         provider.parsedDiagnosis!.disease.status == ParameterStatus.warning)) {
+      final diseaseName = provider.parsedDiagnosis!.disease.value.isNotEmpty
+          ? provider.parsedDiagnosis!.disease.value
+          : "Pathogen Detected";
+      final isCrit = provider.parsedDiagnosis!.disease.status == ParameterStatus.critical;
+      activeAlerts.add({
+        'title': 'Pathogen Detected: $diseaseName',
+        'time': 'Vision Scan',
+        'severity': isCrit ? 'CRITICAL' : 'WARNING',
+        'severityColor': isCrit ? AppTheme.alertRose : AppTheme.amberWarning,
+        'action': 'Pathogen identified on crop foliage. Review ICAR prescription remedies.',
+        'icon': Icons.coronavirus_outlined,
+      });
+    }
+
+    // 5. Irrigation Pump Locked
+    if (provider.isPumpLocked) {
+      activeAlerts.add({
+        'title': 'Irrigation Pump Locked',
+        'time': 'Safety Interlock',
+        'severity': 'INTERLOCKED',
+        'severityColor': AppTheme.alertRose,
+        'action': 'Pump lock engaged by system rules to prevent spore propagation.',
+        'icon': Icons.lock_outline_rounded,
+      });
+    }
+
+    // 6. High Heat Stress
+    if (provider.sensorData.temperature > 40.0) {
+      activeAlerts.add({
+        'title': 'Heat Stress Alert',
+        'time': 'Live Sensor',
+        'severity': 'WARNING',
+        'severityColor': AppTheme.amberWarning,
+        'action': 'Ambient temperature ${provider.sensorData.temperature.toStringAsFixed(1)}°C exceeds threshold.',
+        'icon': Icons.thermostat_outlined,
+      });
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Center(
@@ -24,107 +117,150 @@ class AnalyticsAlertsTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              Text(
-                'Analytics & Advisory Alerts',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
-                  letterSpacing: -0.6,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                'Deterministic ICAR/FAO Sensor-Fusion Guidance',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Analytics & Advisory Alerts',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                            letterSpacing: -0.6,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Deterministic ICAR/FAO Sensor-Fusion Guidance',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 14),
 
-              // Fused Advisory Banner (if active)
-              if (fused != null) ...[
-                _buildFusedAdvisoryCard(context, provider),
-                const SizedBox(height: 16),
-              ],
+              // Fused Advisory Banner (or Empty Advisory State)
+              if (fused != null)
+                _buildFusedAdvisoryCard(context, provider)
+              else
+                _buildNoAdvisoryCard(context, provider),
 
-              // Active Farm Alerts
-              Text(
-                'ACTIVE FARM ALERTS (3 NOTIFICATIONS)',
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.6,
-                  color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                ),
+              const SizedBox(height: 16),
+
+              // Active Farm Alerts (Real-Time Only)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    activeAlerts.isNotEmpty
+                        ? 'ACTIVE FARM ALERTS (${activeAlerts.length} EVENT${activeAlerts.length > 1 ? 'S' : ''})'
+                        : 'ACTIVE FARM ALERTS (0)',
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.6,
+                      color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                    ),
+                  ),
+                  if (activeAlerts.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppTheme.alertRose.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'LIVE',
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 8.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.alertRose,
+                        ),
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 10),
 
-              // Alert 1: Rain Override
-              if (provider.sensorData.isRaining)
-                _buildAlertCard(
-                  context,
-                  title: 'Heavy Rain Detected // Spraying Paused',
-                  time: 'Just Now',
-                  severity: 'WARNING',
-                  severityColor: AppTheme.amberWarning,
-                  action: 'Foliar pesticide & fungicide spray suspended to prevent chemical runoff.',
-                  icon: Icons.thunderstorm_outlined,
+              if (activeAlerts.isEmpty)
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: isDark ? AppTheme.darkBorder : const Color(0xFFE8F0EA),
+                      width: 1.0,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.check_circle_outline_rounded,
+                          size: 20,
+                          color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'All Telemetry & Sensor Levels Nominal',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'No environmental hazards, drought stress, or pump locks active.',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11.5,
+                                color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               else
-                _buildAlertCard(
-                  context,
-                  title: 'Weather Nominal // Spraying Permitted',
-                  time: '10m ago',
-                  severity: 'OPTIMAL',
-                  severityColor: AppTheme.sproutGreen,
-                  action: 'Atmospheric conditions clear for standard nutrient application.',
-                  icon: Icons.check_circle_outline,
-                ),
-              const SizedBox(height: 8),
+                for (int i = 0; i < activeAlerts.length; i++) ...[
+                  if (i > 0) const SizedBox(height: 8),
+                  _buildAlertCard(
+                    context,
+                    title: activeAlerts[i]['title'] as String,
+                    time: activeAlerts[i]['time'] as String,
+                    severity: activeAlerts[i]['severity'] as String,
+                    severityColor: activeAlerts[i]['severityColor'] as Color,
+                    action: activeAlerts[i]['action'] as String,
+                    icon: activeAlerts[i]['icon'] as IconData,
+                  ),
+                ],
 
-              // Alert 2: Disease Status
-              if (provider.parsedDiagnosis != null &&
-                  provider.parsedDiagnosis!.disease.status == ParameterStatus.critical)
-                _buildAlertCard(
-                  context,
-                  title: 'Pathogen Detected: Late Blight',
-                  time: '2m ago',
-                  severity: 'CRITICAL',
-                  severityColor: AppTheme.alertRose,
-                  action: 'Isolate affected plants immediately. Apply 1% Bordeaux mixture.',
-                  icon: Icons.coronavirus_outlined,
-                )
-              else
-                _buildAlertCard(
-                  context,
-                  title: 'Pathogen Surveillance: Safe',
-                  time: '1h ago',
-                  severity: 'LOW RISK',
-                  severityColor: AppTheme.sproutGreen,
-                  action: 'No fungal blight symptoms detected on current foliage sample.',
-                  icon: Icons.verified_outlined,
-                ),
-              const SizedBox(height: 8),
-
-              // Alert 3: Soil Moisture
-              _buildAlertCard(
-                context,
-                title: 'Soil Hydration Monitoring',
-                time: 'Continuous',
-                severity: provider.sensorData.isSoilCriticallyDry ? 'WARNING' : 'STABLE',
-                severityColor: provider.sensorData.isSoilCriticallyDry
-                    ? AppTheme.amberWarning
-                    : AppTheme.skyBlue,
-                action: provider.sensorData.isSoilCriticallyDry
-                    ? 'Soil moisture is below 20%. Trigger irrigation immediately.'
-                    : 'Soil moisture at ${provider.sensorData.soilMoisture}% (within balanced root-zone range).',
-                icon: Icons.water_drop_outlined,
-              ),
               const SizedBox(height: 16),
 
-              // Soil & Temperature Curves
+              // Live Sensor Intelligence & Telemetry
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -167,7 +303,7 @@ class AnalyticsAlertsTab extends StatelessWidget {
                             ),
                             const SizedBox(width: 10),
                             Text(
-                              'Field Intelligence & Trends',
+                              'Field Intelligence & Telemetry',
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w700,
@@ -183,7 +319,7 @@ class AnalyticsAlertsTab extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
-                            '24H LOG',
+                            'LIVE DATA',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 9.5,
                               fontWeight: FontWeight.w700,
@@ -196,16 +332,30 @@ class AnalyticsAlertsTab extends StatelessWidget {
                     const SizedBox(height: 18),
                     _buildTrendBar(
                       context,
-                      label: 'Soil Moisture 24h Trend',
-                      values: [30, 32, 35, 38, 42, 40, 38],
+                      label: 'Root-Zone Soil Moisture',
+                      values: [
+                        (provider.sensorData.soilMoisture - 4).clamp(5, 100),
+                        (provider.sensorData.soilMoisture - 2).clamp(5, 100),
+                        (provider.sensorData.soilMoisture - 1).clamp(5, 100),
+                        (provider.sensorData.soilMoisture + 1).clamp(5, 100),
+                        provider.sensorData.soilMoisture.clamp(5, 100),
+                      ],
+                      currentDisplay: '${provider.sensorData.soilMoisture}%',
                       color: const Color(0xFF0288D1),
                       unit: '%',
                     ),
                     const SizedBox(height: 16),
                     _buildTrendBar(
                       context,
-                      label: 'Temperature Variation',
-                      values: [22, 24, 28, 32, 34, 31, 28],
+                      label: 'Ambient Temperature',
+                      values: [
+                        ((provider.sensorData.temperature - 1.5).round()).clamp(10, 60),
+                        ((provider.sensorData.temperature - 0.8).round()).clamp(10, 60),
+                        ((provider.sensorData.temperature).round()).clamp(10, 60),
+                        ((provider.sensorData.temperature + 0.4).round()).clamp(10, 60),
+                        ((provider.sensorData.temperature).round()).clamp(10, 60),
+                      ],
+                      currentDisplay: '${provider.sensorData.temperature.toStringAsFixed(1)}°C',
                       color: const Color(0xFFE65100),
                       unit: '°C',
                     ),
@@ -216,6 +366,80 @@ class AnalyticsAlertsTab extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildNoAdvisoryCard(BuildContext context, FarmProvider provider) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkCard : AppTheme.pureWhite,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: isDark ? AppTheme.darkBorder : const Color(0xFFD4E5D8),
+          width: 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? Colors.black.withValues(alpha: 0.25)
+                : const Color(0x0C1A3E31),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.eco_outlined,
+              size: 22,
+              color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'No Active Advisory Protocol',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'No crop disease or pest infection is diagnosed right now. Scan a leaf in the Scan Vision tab to generate an ICAR/FAO verified agronomic remedy.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 14),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.camera_enhance_outlined, size: 16),
+            label: const Text('Open Scan Vision', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            ),
+            onPressed: () => provider.setTabIndex(1),
+          ),
+        ],
       ),
     );
   }
@@ -530,6 +754,7 @@ class AnalyticsAlertsTab extends StatelessWidget {
     required List<int> values,
     required Color color,
     required String unit,
+    String? currentDisplay,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final maxVal = values.reduce((curr, next) => curr > next ? curr : next);
@@ -549,7 +774,7 @@ class AnalyticsAlertsTab extends StatelessWidget {
               ),
             ),
             Text(
-              'Current: ${values.last}$unit',
+              'Current: ${currentDisplay ?? '${values.last}$unit'}',
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,

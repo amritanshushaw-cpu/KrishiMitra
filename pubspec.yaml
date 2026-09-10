@@ -25,6 +25,7 @@ dependencies:
   shared_preferences: ^2.5.5
   fresnel: ^0.1.0
   geolocator: ^14.0.3
+  path_provider_foundation: 2.4.0
 
 dev_dependencies:
   flutter_test:

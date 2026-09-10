@@ -109,6 +109,45 @@ class HomeDashboardTab extends StatelessWidget {
               WeatherStatusBar(
                 sensorData: provider.sensorData,
                 activeZone: provider.activeFieldZone,
+                onToggleRain: () {
+                  final currentRain = provider.sensorData.rain;
+                  provider.injectTelemetry(
+                    temp: provider.sensorData.temperature,
+                    soil: provider.sensorData.soilMoisture,
+                    rain: currentRain == 1 ? 0 : 1,
+                  );
+                },
+                onToggleTemp: () {
+                  final currentTemp = provider.sensorData.temperature;
+                  provider.injectTelemetry(
+                    temp: currentTemp > 35.0 ? 28.5 : 38.5,
+                    soil: provider.sensorData.soilMoisture,
+                    rain: provider.sensorData.rain,
+                  );
+                },
+                onToggleSoil: () {
+                  final currentSoil = provider.sensorData.soilMoisture;
+                  // Cycle: 45% (Optimal) -> 15% (Dry alert) -> 82% (Saturated) -> 45%
+                  final nextSoil = currentSoil == 45 ? 15 : (currentSoil == 15 ? 82 : 45);
+                  provider.injectTelemetry(
+                    temp: provider.sensorData.temperature,
+                    soil: nextSoil,
+                    rain: provider.sensorData.rain,
+                  );
+                },
+                onToggleHumidity: () {
+                  final currentHum = provider.sensorData.humidity;
+                  // Cycle: 65% (Optimal) -> 92% (High humid) -> 35% (Dry air) -> 65%
+                  final nextHum = (currentHum - 65.0).abs() < 1.0
+                      ? 92.0
+                      : ((currentHum - 92.0).abs() < 1.0 ? 35.0 : 65.0);
+                  provider.injectTelemetry(
+                    temp: provider.sensorData.temperature,
+                    soil: provider.sensorData.soilMoisture,
+                    rain: provider.sensorData.rain,
+                    humidity: nextHum,
+                  );
+                },
               ),
               const SizedBox(height: 16),
 
@@ -184,34 +223,43 @@ class HomeDashboardTab extends StatelessWidget {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return AppGlassContainer(
-      radius: 24,
-      onTap: onTap,
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 16),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(18),
+    return AspectRatio(
+      aspectRatio: 1.0,
+      child: AppGlassContainer(
+        radius: 20,
+        onTap: onTap,
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(13),
+                border: Border.all(
+                  color: color.withValues(alpha: 0.22),
+                  width: 1,
+                ),
+              ),
+              child: Icon(icon, color: color, size: 24),
             ),
-            child: Icon(icon, color: color, size: 40),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+            const SizedBox(height: 8),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
