@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -24,9 +25,9 @@ class FarmToolsHubScreen extends StatefulWidget {
 class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  final List<Map<String, dynamic>> _tabs = [
-    {'title': 'Fertilizer', 'icon': Icons.spa_rounded},
-    {'title': 'Spray Tank', 'icon': Icons.sanitizer_rounded},
+  static const List<Map<String, dynamic>> _tabs = [
+    {'title': 'Fertilizer', 'icon': Icons.spa_outlined},
+    {'title': 'Spray Tank', 'icon': Icons.sanitizer_outlined},
     {'title': 'Economics', 'icon': Icons.trending_up_rounded},
   ];
 
@@ -38,9 +39,6 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
       vsync: this,
       initialIndex: widget.initialTabIndex.clamp(0, _tabs.length - 1),
     );
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) setState(() {});
-    });
   }
 
   @override
@@ -54,18 +52,10 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
       widget.onBack!();
       return;
     }
-
-    final provider = context.read<FarmProvider>();
-    if (provider.activeTabIndex == 6) {
-      if (!provider.popTab()) {
-        provider.setTabIndex(0);
-      }
-      return;
-    }
-
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     } else {
+      final provider = context.read<FarmProvider>();
       if (!provider.popTab()) {
         provider.setTabIndex(0);
       }
@@ -83,7 +73,7 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
         _handleBack(context);
       },
       child: Container(
-        decoration: AppTheme.backgroundDecoration(isDark),
+        color: Colors.transparent,
         child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
@@ -99,94 +89,102 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
               tooltip: 'Back to Farm Dashboard',
               onPressed: () => _handleBack(context),
             ),
-          titleSpacing: 0,
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Agronomic Calculators',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
-                  letterSpacing: -0.4,
-                ),
-              ),
-              Text(
-                'ICAR & FAO Standard Advisory Engine',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 11,
-                  color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
-                ),
-              ),
-            ],
-          ),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(56),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: (isDark ? AppTheme.darkCard : Colors.white).withValues(alpha: 0.9),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0x0A1A3E31),
-                    blurRadius: 10,
-                    offset: const Offset(0, 3),
+            titleSpacing: 0,
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Agronomic Calculators',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                    letterSpacing: -0.4,
                   ),
-                ],
-              ),
-              child: TabBar(
-                controller: _tabController,
-                indicatorSize: TabBarIndicatorSize.tab,
-                dividerColor: Colors.transparent,
-                labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-                indicator: BoxDecoration(
-                  color: const Color(0xFF193E32),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF193E32).withValues(alpha: 0.25),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
-                labelColor: Colors.white,
-                unselectedLabelColor: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
-                labelStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w700,
+                Text(
+                  'ICAR & FAO Standard Advisory Engine',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 11,
+                    color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+                  ),
                 ),
-                unselectedLabelStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                ),
-                tabs: _tabs.map((tab) {
-                  return Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(tab['icon'] as IconData, size: 14),
-                        const SizedBox(width: 5),
-                        Flexible(
-                          child: Text(
-                            tab['title'] as String,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+              ],
+            ),
+            bottom: PreferredSize(
+              preferredSize: const Size.fromHeight(56),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.68 : 0.78),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isDark ? AppTheme.darkBorder : const Color(0x331A3E31),
                         ),
-                      ],
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x0A1A3E31),
+                            blurRadius: 10,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: TabBar(
+                        controller: _tabController,
+                        indicatorSize: TabBarIndicatorSize.tab,
+                        dividerColor: Colors.transparent,
+                        labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                        indicator: BoxDecoration(
+                          color: isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32)).withValues(alpha: 0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        labelColor: isDark ? const Color(0xFF03120E) : Colors.white,
+                        unselectedLabelColor: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+                        labelStyle: GoogleFonts.plusJakartaSans(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        unselectedLabelStyle: GoogleFonts.plusJakartaSans(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        tabs: _tabs.map((tab) {
+                          return Tab(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(tab['icon'] as IconData, size: 14),
+                                const SizedBox(width: 5),
+                                Flexible(
+                                  child: Text(
+                                    tab['title'] as String,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  );
-                }).toList(),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
         body: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 880),

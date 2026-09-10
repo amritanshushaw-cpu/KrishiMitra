@@ -61,12 +61,12 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                         decoration: BoxDecoration(
                           color: isSelected
                               ? (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32))
-                              : (isDark ? AppTheme.darkCard : Colors.white),
+                              : (isDark ? const Color(0xFF16201B).withValues(alpha: 0.65) : Colors.white.withValues(alpha: 0.78)),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isSelected
                                 ? (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32))
-                                : (isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5)),
+                                : (isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
                             width: 1.0,
                           ),
                           boxShadow: isSelected
@@ -125,10 +125,10 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: isDark ? AppTheme.darkCard : Colors.white,
+              color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5),
+                color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
               ),
               boxShadow: [
                 BoxShadow(
@@ -262,11 +262,11 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                       decoration: BoxDecoration(
                         color: isCombo
-                            ? const Color(0xFFE8F5EE)
-                            : (isDark ? AppTheme.darkCard : Colors.white),
+                            ? (isDark ? AppTheme.darkAccentGreen.withValues(alpha: 0.18) : const Color(0xFFE8F5EE))
+                            : (isDark ? const Color(0xFF16201B).withValues(alpha: 0.65) : Colors.white.withValues(alpha: 0.78)),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isCombo ? const Color(0xFF193E32) : const Color(0xFFE3EDE5),
+                          color: isCombo ? (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32)) : (isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
                           width: isCombo ? 1.5 : 1.0,
                         ),
                       ),
@@ -374,9 +374,9 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFE8F5EE),
+              color: (isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFE8F5EE)).withValues(alpha: isDark ? 0.72 : 0.85),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: isDark ? AppTheme.darkBorder : Colors.transparent),
+              border: Border.all(color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -427,10 +427,10 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: isDark ? AppTheme.darkCard : Colors.white,
+              color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5),
+                color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
               ),
               boxShadow: [
                 BoxShadow(
@@ -490,10 +490,10 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkCard : Colors.white,
+        color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5),
+          color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
         ),
         boxShadow: [
           BoxShadow(
