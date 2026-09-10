@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 
@@ -69,16 +70,24 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
       );
     }
 
+    if (kIsWeb) {
+      // In Web mode: Pass through to the plain WebGL1 canvas mounted in web/index.html
+      return Container(
+        color: Colors.transparent,
+        child: widget.child,
+      );
+    }
+
     return Stack(
       children: [
-        // Base canvas: Deepest Midnight Teal
+        // Base canvas: #03120E
         Positioned.fill(
           child: Container(
-            color: const Color(0xFF041213),
+            color: const Color(0xFF03120E),
           ),
         ),
 
-        // Animated Mesh Drift canvas
+        // Animated Mesh Drift canvas (calibrated to exact colors: #03120E, #0E7C5A, #7CE577, #F4FFC7)
         Positioned.fill(
           child: RepaintBoundary(
             child: AnimatedBuilder(
@@ -95,29 +104,9 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
         // Frosted atmospheric diffusion layer (melds nodes into continuous liquid mesh)
         Positioned.fill(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 42, sigmaY: 42),
+            filter: ImageFilter.blur(sigmaX: 38, sigmaY: 38),
             child: Container(
               color: Colors.transparent,
-            ),
-          ),
-        ),
-
-        // Subtle organic vignette & noise tint overlay
-        Positioned.fill(
-          child: IgnorePointer(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.center,
-                  radius: 1.3,
-                  colors: [
-                    Colors.transparent,
-                    const Color(0xFF02090A).withValues(alpha: 0.42),
-                    const Color(0xFF010607).withValues(alpha: 0.72),
-                  ],
-                  stops: const [0.45, 0.82, 1.0],
-                ),
-              ),
             ),
           ),
         ),
@@ -129,7 +118,8 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
   }
 }
 
-/// Custom painter for the 5-node harmonic drifting gradient mesh
+/// Custom painter for the 4-color drifting gradient mesh
+/// Exact colours: #03120E, #0E7C5A, #7CE577, #F4FFC7
 class _MeshDriftPainter extends CustomPainter {
   final double progress;
 
@@ -144,67 +134,54 @@ class _MeshDriftPainter extends CustomPainter {
     final double t = progress;
     final Paint paint = Paint()..blendMode = BlendMode.screen;
 
-    // Node 0: Forest Moss & Emerald Glow (Upper Left / Center-left drift)
+    // Node 0: #0E7C5A (Deep Emerald Moss)
     _drawDriftingNode(
       canvas: canvas,
       center: Offset(
         w * (0.32 + 0.20 * math.sin(t * 2 * math.pi * 0.7 + 0.2)),
-        h * (0.26 + 0.16 * math.cos(t * 2 * math.pi * 0.5 + 1.1)),
+        h * (0.28 + 0.16 * math.cos(t * 2 * math.pi * 0.5 + 1.1)),
       ),
-      radius: w * (0.58 + 0.08 * math.sin(t * 2 * math.pi * 0.3)),
-      color: const Color(0xFF10B981),
+      radius: w * (0.60 + 0.08 * math.sin(t * 2 * math.pi * 0.3)),
+      color: const Color(0xFF0E7C5A),
+      maxAlpha: 0.34,
+      paint: paint,
+    );
+
+    // Node 1: #7CE577 (Vibrant Botanical Lime)
+    _drawDriftingNode(
+      canvas: canvas,
+      center: Offset(
+        w * (0.74 + 0.18 * math.cos(t * 2 * math.pi * 0.6 + 2.3)),
+        h * (0.32 + 0.20 * math.sin(t * 2 * math.pi * 0.8 + 0.7)),
+      ),
+      radius: w * (0.54 + 0.08 * math.cos(t * 2 * math.pi * 0.4)),
+      color: const Color(0xFF7CE577),
+      maxAlpha: 0.28,
+      paint: paint,
+    );
+
+    // Node 2: #F4FFC7 (Pale Sunlight Bloom)
+    _drawDriftingNode(
+      canvas: canvas,
+      center: Offset(
+        w * (0.28 + 0.22 * math.sin(t * 2 * math.pi * 0.4 + 3.4)),
+        h * (0.64 + 0.16 * math.cos(t * 2 * math.pi * 0.7 + 2.1)),
+      ),
+      radius: w * (0.46 + 0.07 * math.sin(t * 2 * math.pi * 0.5)),
+      color: const Color(0xFFF4FFC7),
       maxAlpha: 0.22,
       paint: paint,
     );
 
-    // Node 1: Deep Pine & Ocean Slate (Lower Right / Mid-right drift)
+    // Node 3: Secondary #0E7C5A (Lower Depth Anchor)
     _drawDriftingNode(
       canvas: canvas,
       center: Offset(
-        w * (0.76 + 0.18 * math.cos(t * 2 * math.pi * 0.6 + 2.3)),
-        h * (0.58 + 0.20 * math.sin(t * 2 * math.pi * 0.8 + 0.7)),
+        w * (0.68 + 0.18 * math.cos(t * 2 * math.pi * 0.3 + 4.5)),
+        h * (0.78 + 0.14 * math.sin(t * 2 * math.pi * 0.4 + 1.8)),
       ),
-      radius: w * (0.64 + 0.10 * math.cos(t * 2 * math.pi * 0.4)),
-      color: const Color(0xFF164E43),
-      maxAlpha: 0.30,
-      paint: paint,
-    );
-
-    // Node 2: Luminous Soft Sage / Mint Dew (Top Right / Top Center drift)
-    _drawDriftingNode(
-      canvas: canvas,
-      center: Offset(
-        w * (0.68 + 0.22 * math.sin(t * 2 * math.pi * 0.4 + 3.4)),
-        h * (0.16 + 0.14 * math.cos(t * 2 * math.pi * 0.7 + 2.1)),
-      ),
-      radius: w * (0.48 + 0.07 * math.sin(t * 2 * math.pi * 0.5)),
-      color: const Color(0xFF8EB69B),
-      maxAlpha: 0.18,
-      paint: paint,
-    );
-
-    // Node 3: Warm Botanical Amber / Gold Glow (Bottom Left drift for chromatic depth)
-    _drawDriftingNode(
-      canvas: canvas,
-      center: Offset(
-        w * (0.20 + 0.16 * math.cos(t * 2 * math.pi * 0.3 + 4.5)),
-        h * (0.82 + 0.12 * math.sin(t * 2 * math.pi * 0.4 + 1.8)),
-      ),
-      radius: w * (0.44 + 0.06 * math.cos(t * 2 * math.pi * 0.6)),
-      color: const Color(0xFFD4AF37),
-      maxAlpha: 0.11,
-      paint: paint,
-    );
-
-    // Node 4: Midnight Teal Deep Pulse (Mid-screen anchor)
-    _drawDriftingNode(
-      canvas: canvas,
-      center: Offset(
-        w * (0.48 + 0.22 * math.sin(t * 2 * math.pi * 0.5 + 5.2)),
-        h * (0.46 + 0.18 * math.cos(t * 2 * math.pi * 0.3 + 3.9)),
-      ),
-      radius: w * (0.56 + 0.08 * math.sin(t * 2 * math.pi * 0.4)),
-      color: const Color(0xFF0F3E36),
+      radius: w * (0.52 + 0.06 * math.cos(t * 2 * math.pi * 0.6)),
+      color: const Color(0xFF0E7C5A),
       maxAlpha: 0.26,
       paint: paint,
     );
