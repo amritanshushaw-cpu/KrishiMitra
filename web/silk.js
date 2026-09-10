@@ -1,7 +1,6 @@
-// "Mesh drift" (Dark Mode) & "Silk" (Light Mode) WebGL1 Background Renderer
-// Exact shaders & parameters generated via 21st.dev Shader Builder
+// "Silk" (Flow Shader) — 21st.dev Shader Builder WebGL1 Renderer
 (function () {
-  const canvas = document.getElementById("mesh-drift-canvas");
+  const canvas = document.getElementById("mesh-drift-canvas") || document.getElementById("silk-canvas");
   if (!canvas) return;
 
   const gl = canvas.getContext("webgl", {
@@ -18,7 +17,7 @@
     return;
   }
 
-  // Fullscreen triangle vertex shader (covers NDC [-1, 1] with 3 vertices)
+  // Fullscreen single-triangle vertex shader
   const vsSource = `
     attribute vec2 a_position;
     void main() {
@@ -26,8 +25,8 @@
     }
   `;
 
-  // Exact Fragment Shader for "Silk" (Flow Shader - Light Mode)
-  const fsSilkSource = `
+  // Exact Silk fragment shader
+  const fsSource = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -275,183 +274,95 @@ void main() {
 }
   `;
 
-  // Exact Fragment Shader for "Mesh Drift" (Blobs Shader - Dark Mode)
-  const fsMeshDriftSource = fsSilkSource.replace(
-    /vec3 shade\(vec2 uv, vec2 p, float t\) \{[\s\S]*?\n\}/,
-    `vec3 shade(vec2 uv, vec2 p, float t) {
-  vec3 acc = u_colors[0] * 0.15;
-  float total = 0.15;
-  for (int i = 0; i < 8; i++) {
-    if (float(i) >= u_colorCount) break;
-    float fi = float(i);
-    vec2 c = vec2(
-      sin(t * (0.21 + fi * 0.071) + fi * 2.4 + u_seed),
-      cos(t * (0.17 + fi * 0.093) + fi * 1.7)) * (0.45 + u_intensity * 0.35);
-    float w = exp(-dot(p - c, p - c) * 6.0);
-    acc += u_colors[i] * w;
-    total += w;
-  }
-  return acc / total;
-}`
-  );
-
   function createShader(type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.error(gl.getShaderInfoLog(shader));
-      gl.deleteShader(shader);
+    const s = gl.createShader(type);
+    gl.shaderSource(s, source);
+    gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(s));
+      gl.deleteShader(s);
       return null;
     }
-    return shader;
+    return s;
   }
 
-  function createProgram(fsSource) {
-    const vs = createShader(gl.VERTEX_SHADER, vsSource);
-    const fs = createShader(gl.FRAGMENT_SHADER, fsSource);
-    if (!vs || !fs) return null;
+  const vs = createShader(gl.VERTEX_SHADER, vsSource);
+  const fs = createShader(gl.FRAGMENT_SHADER, fsSource);
+  if (!vs || !fs) return;
 
-    const prog = gl.createProgram();
-    gl.attachShader(prog, vs);
-    gl.attachShader(prog, fs);
-    gl.linkProgram(prog);
+  const program = gl.createProgram();
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
 
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.error(gl.getProgramInfoLog(prog));
-      return null;
-    }
-
-    return {
-      program: prog,
-      aPosition: gl.getAttribLocation(prog, "a_position"),
-      uColors: gl.getUniformLocation(prog, "u_colors"),
-      uScene: gl.getUniformLocation(prog, "u_scene"),
-      uShape: gl.getUniformLocation(prog, "u_shape"),
-      uSurface: gl.getUniformLocation(prog, "u_surface"),
-      uFinish: gl.getUniformLocation(prog, "u_finish"),
-      uTransform: gl.getUniformLocation(prog, "u_transform"),
-      uSpace: gl.getUniformLocation(prog, "u_space"),
-      uCursor: gl.getUniformLocation(prog, "u_cursor"),
-    };
-  }
-
-  const progSilk = createProgram(fsSilkSource);
-  const progMeshDrift = createProgram(fsMeshDriftSource);
-
-  if (!progSilk || !progMeshDrift) {
-    console.error("Failed to compile WebGL shaders.");
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+    console.error(gl.getProgramInfoLog(program));
     return;
   }
 
-  // Fullscreen single-triangle geometry buffer
-  const positionBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.useProgram(program);
+
+  // Fullscreen triangle buffer
+  const posBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
   gl.bufferData(
     gl.ARRAY_BUFFER,
-    new Float32Array([
-      -1.0, -1.0,
-       3.0, -1.0,
-      -1.0,  3.0
-    ]),
+    new Float32Array([-1.0, -1.0, 3.0, -1.0, -1.0, 3.0]),
     gl.STATIC_DRAW
   );
 
-  // Colours (low -> high): #03120E, #0E7C5A, #7CE577, #F4FFC7
+  const aPosLoc = gl.getAttribLocation(program, "a_position");
+  gl.enableVertexAttribArray(aPosLoc);
+  gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
+
+  // Uniform locations
+  const uColorsLoc = gl.getUniformLocation(program, "u_colors");
+  const uSceneLoc = gl.getUniformLocation(program, "u_scene");
+  const uShapeLoc = gl.getUniformLocation(program, "u_shape");
+  const uSurfaceLoc = gl.getUniformLocation(program, "u_surface");
+  const uFinishLoc = gl.getUniformLocation(program, "u_finish");
+  const uTransformLoc = gl.getUniformLocation(program, "u_transform");
+  const uSpaceLoc = gl.getUniformLocation(program, "u_space");
+  const uCursorLoc = gl.getUniformLocation(program, "u_cursor");
+
+  // Colors: #03120E, #0E7C5A, #7CE577, #F4FFC7
   const colorsData = new Float32Array([
-    0.012, 0.071, 0.055, // #03120E
-    0.055, 0.486, 0.353, // #0E7C5A
-    0.486, 0.898, 0.467, // #7CE577
-    0.957, 1.000, 0.780, // #F4FFC7
+    0.012, 0.071, 0.055,
+    0.055, 0.486, 0.353,
+    0.486, 0.898, 0.467,
+    0.957, 1.000, 0.780,
     0.0, 0.0, 0.0,
     0.0, 0.0, 0.0,
     0.0, 0.0, 0.0,
     0.0, 0.0, 0.0,
   ]);
+  gl.uniform3fv(uColorsLoc, colorsData);
 
-  // Preset Configurations
-  const presets = {
-    silk: {
-      // Light Mode: "Silk" (flow shader)
-      // speed 39/100 (0.84), zoom 4/100 (0.58), intensity 20/100 (0.20),
-      // contrast 23/100 (0.81), grain 4/100 (0.01)
-      progObj: progSilk,
-      speedMult: 0.84,
-      shape: new Float32Array([0.58, 0.20, 0.50, 0.00]),
-      surface: new Float32Array([2.40, 0.81, 0.00, 1.00]),
-      finish: new Float32Array([0.00, 0.00, 0.000, 0.01]),
-      transform: new Float32Array([707.0, 2.51, 0.00, 0.0]),
-      space: [0.06, 0.60],
-      cursor: new Float32Array([0.0, 2.0, 0.65, 0.46]),
-    },
-    mesh_drift: {
-      // Dark Mode: "Mesh drift" (blobs shader)
-      // speed 33/100 (0.73), zoom 33/100 (1.16), intensity 34/100 (0.34),
-      // contrast 62/100 (1.16), grain 26/100 (0.09)
-      progObj: progMeshDrift,
-      speedMult: 0.73,
-      shape: new Float32Array([1.16, 0.34, 0.50, 0.00]),
-      surface: new Float32Array([2.40, 1.16, 0.00, 1.00]),
-      finish: new Float32Array([0.00, 0.00, 0.000, 0.09]),
-      transform: new Float32Array([1453.0, 0.00, 0.00, 0.0]),
-      space: [0.00, 0.00],
-      cursor: new Float32Array([0.0, 2.0, 0.65, 0.46]),
-    },
-  };
+  // Feel: zoom 4/100 (0.58), intensity 20/100 (0.20), warp 0/100
+  gl.uniform4f(uShapeLoc, 0.58, 0.20, 0.50, 0.00);
 
-  let activeMode = "mesh_drift";
-  let activePreset = presets.mesh_drift;
+  // detail 2.40, contrast 23/100 (0.81), brightness 50/100 (0.00), saturation 50/100 (1.00)
+  gl.uniform4f(uSurfaceLoc, 2.40, 0.81, 0.00, 1.00);
 
-  function setShaderMode(mode) {
-    const targetMode = mode === "silk" ? "silk" : "mesh_drift";
-    activeMode = targetMode;
-    activePreset = presets[activeMode];
-  }
+  // hue 0, vignette 0, blur 0, grain 4/100 (0.01)
+  gl.uniform4f(uFinishLoc, 0.00, 0.00, 0.000, 0.01);
 
-  // Public APIs for Flutter Web & external interop
-  window.setShaderMode = setShaderMode;
-  window.setShaderTheme = function (isDark) {
-    setShaderMode(isDark ? "mesh_drift" : "silk");
-  };
+  // seed 707, rotation 2.51 rad (144 deg), drift 0, oklab 0
+  gl.uniform4f(uTransformLoc, 707.0, 2.51, 0.00, 0.0);
 
-  // Check initial theme from DOM attribute or storage
-  const initialThemeAttr = document.documentElement.getAttribute("data-theme") || document.body.getAttribute("data-theme");
-  if (initialThemeAttr === "light") {
-    setShaderMode("silk");
-  } else {
-    try {
-      const savedTheme = localStorage.getItem("flutter.is_dark_mode");
-      if (savedTheme === "false") {
-        setShaderMode("silk");
-      } else {
-        setShaderMode("mesh_drift");
-      }
-    } catch (_) {
-      setShaderMode("mesh_drift");
-    }
-  }
+  // offset (0.06, 0.60)
+  let pointerX = 0.0, pointerY = 0.0;
+  gl.uniform4f(uSpaceLoc, 0.06, 0.60, pointerX, pointerY);
 
-  // Pointer tracking for u_space
-  let pointerX = 0.0;
-  let pointerY = 0.0;
+  // cursor off (presence = 0.0)
+  gl.uniform4f(uCursorLoc, 0.0, 2.0, 0.65, 0.46);
+
   window.addEventListener("pointermove", (e) => {
     pointerX = (e.clientX / window.innerWidth) * 2.0 - 1.0;
     pointerY = 1.0 - (e.clientY / window.innerHeight) * 2.0;
+    gl.uniform4f(uSpaceLoc, 0.06, 0.60, pointerX, pointerY);
   }, { passive: true });
 
-  // Observe DOM attributes for dynamic theme sync
-  const themeObserver = new MutationObserver(function () {
-    const themeAttr = document.documentElement.getAttribute("data-theme") || document.body.getAttribute("data-theme");
-    if (themeAttr === "light") {
-      setShaderMode("silk");
-    } else if (themeAttr === "dark") {
-      setShaderMode("mesh_drift");
-    }
-  });
-  themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "class"] });
-  themeObserver.observe(document.body, { attributes: true, attributeFilter: ["data-theme", "class"] });
-
-  // Resize handler capping devicePixelRatio at 2
   function resize() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const width = Math.floor(window.innerWidth * dpr);
@@ -467,7 +378,6 @@ void main() {
   window.addEventListener("resize", resize, { passive: true });
   resize();
 
-  // Animation RAF Loop with visibility pause
   let rafId = null;
   const startTime = performance.now();
 
@@ -477,31 +387,9 @@ void main() {
       return;
     }
 
-    const elapsedSeconds = (time - startTime) * 0.001;
-    const p = activePreset.progObj;
-
-    gl.useProgram(p.program);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.enableVertexAttribArray(p.aPosition);
-    gl.vertexAttribPointer(p.aPosition, 2, gl.FLOAT, false, 0, 0);
-
-    gl.uniform3fv(p.uColors, colorsData);
-    gl.uniform4fv(p.uShape, activePreset.shape);
-    gl.uniform4fv(p.uSurface, activePreset.surface);
-    gl.uniform4fv(p.uFinish, activePreset.finish);
-    gl.uniform4fv(p.uTransform, activePreset.transform);
-    gl.uniform4f(p.uSpace, activePreset.space[0], activePreset.space[1], pointerX, pointerY);
-    gl.uniform4fv(p.uCursor, activePreset.cursor);
-
-    // Uniform u_scene: vec4(width, height, seconds * speedMult, 4.0)
-    gl.uniform4f(
-      p.uScene,
-      canvas.width,
-      canvas.height,
-      elapsedSeconds * activePreset.speedMult,
-      4.0
-    );
+    const elapsed = (time - startTime) * 0.001;
+    // speed 39/100 -> seconds * 0.84
+    gl.uniform4f(uSceneLoc, canvas.width, canvas.height, elapsed * 0.84, 4.0);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     rafId = requestAnimationFrame(render);

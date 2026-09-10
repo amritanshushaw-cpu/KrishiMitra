@@ -4,11 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'web_shader_bridge.dart';
 
-/// An animated fluid WebGL-style shader background.
+/// An animated fluid WebGL-style shader background for KrishiMitra.
+///
 /// Features:
-/// - Dark Mode: "Mesh Drift" organic blob shader (#03120E, #0E7C5A, #7CE577, #F4FFC7).
-/// - Light Mode: "Silk" harmonic flow shader (#03120E, #0E7C5A, #7CE577, #F4FFC7).
-/// - WebGL1 Hardware Pass-through on Web via index.html background canvas.
+/// - Light Mode: "Silk" harmonic flow shader (#03120E, #0E7C5A, #7CE577, #F4FFC7)
+///   Faithful 4-octave harmonic flow rotated at 2.51 rad (144°) with pale sunlight bloom.
+/// - Dark Mode: "Mesh Drift" organic blob shader (#03120E, #0E7C5A, #7CE577, #F4FFC7)
+///   Multi-node Gaussian drifting botanic orbs with screen blend.
+/// - WebGL1 Hardware interop on Flutter Web via index.html background canvas.
 class MeshDriftBackground extends StatefulWidget {
   final Widget child;
   final bool isDark;
@@ -41,7 +44,9 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
       _controller.repeat();
     }
 
-    syncWebShaderMode(widget.isDark);
+    if (kIsWeb) {
+      syncWebShaderMode(widget.isDark);
+    }
   }
 
   @override
@@ -57,7 +62,7 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
       }
     }
 
-    if (oldWidget.isDark != widget.isDark) {
+    if (oldWidget.isDark != widget.isDark && kIsWeb) {
       syncWebShaderMode(widget.isDark);
     }
   }
@@ -71,27 +76,19 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
   @override
   Widget build(BuildContext context) {
     if (kIsWeb) {
-      // In Web mode: Pass through to the plain WebGL1 canvas mounted in web/index.html
-      // Synchronize shader mode (Mesh Drift for dark, Silk for light)
       syncWebShaderMode(widget.isDark);
-      return Container(
-        color: Colors.transparent,
-        child: widget.child,
-      );
     }
 
     return Stack(
       children: [
-        // Base canvas: #03120E
+        // 1. Solid base foundation
         Positioned.fill(
           child: Container(
-            color: const Color(0xFF03120E),
+            color: widget.isDark ? const Color(0xFF03120E) : const Color(0xFFF4FFC7),
           ),
         ),
 
-        // Animated Canvas:
-        // Dark Mode: Mesh Drift (blob shader)
-        // Light Mode: Silk (flow shader)
+        // 2. Animated CustomPaint Shader (Silk in Light Mode, Mesh Drift in Dark Mode)
         Positioned.fill(
           child: RepaintBoundary(
             child: AnimatedBuilder(
@@ -107,17 +104,17 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
           ),
         ),
 
-        // Frosted atmospheric diffusion layer
+        // 3. Frosted atmospheric diffusion layer (melds waves into liquid silk/mesh)
         Positioned.fill(
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 38, sigmaY: 38),
+            filter: ImageFilter.blur(sigmaX: 36, sigmaY: 36),
             child: Container(
               color: Colors.transparent,
             ),
           ),
         ),
 
-        // Foreground application content (Scaffold, tabs, cards)
+        // 4. Foreground application content (Scaffold, tabs, cards)
         widget.child,
       ],
     );
@@ -222,12 +219,15 @@ class _MeshDriftPainter extends CustomPainter {
   }
 }
 
-/// Custom painter for Light Mode: Silk flow shader recreation
-/// Faithful to the 4-octave harmonic cosine/sine flow algorithm:
-/// amp = 0.25 + intensity * 0.85 (0.42)
-/// q.x += amp / i * cos(i * 2.4 * q.y + t * 0.8 + seed)
-/// q.y += amp / i * cos(i * 1.7 * q.x + t * 0.6)
-/// Palette: #03120E, #0E7C5A, #7CE577, #F4FFC7
+/// Custom painter for Light Mode: "Silk" Flow Shader in Dart
+/// Exact visual reproduction of the 21st.dev Silk shader:
+/// - 4 Colors: #03120E, #0E7C5A, #7CE577, #F4FFC7
+/// - Diagonal rotation: u_rotate = 2.51 rad (~143.8°)
+/// - Speed: 39/100 (time * 0.84)
+/// - Flow harmonics:
+///   for i = 1..4:
+///     q.x += amp / i * cos(i * 2.4 * q.y + t * 0.8 + seed)
+///     q.y += amp / i * cos(i * 1.7 * q.x + t * 0.6)
 class _SilkPainter extends CustomPainter {
   final double progress;
 
@@ -241,57 +241,107 @@ class _SilkPainter extends CustomPainter {
 
     final double t = progress * 2 * math.pi;
 
-    // Base background: #03120E
-    final Paint bgPaint = Paint()..color = const Color(0xFF03120E);
+    // 1. Base luminous sunlight canvas: #F4FFC7
+    final Paint bgPaint = Paint()..color = const Color(0xFFF4FFC7);
     canvas.drawRect(Rect.fromLTWH(0, 0, w, h), bgPaint);
 
-    final List<Color> silkPalette = [
-      const Color(0xFF0E7C5A),
-      const Color(0xFF7CE577),
-      const Color(0xFFF4FFC7),
-      const Color(0xFF7CE577),
-      const Color(0xFF0E7C5A),
+    // 2. Radiant ambient lime wash (#7CE577) across middle & bottom-left
+    final Paint limeWash = Paint()
+      ..shader = RadialGradient(
+        center: const Alignment(-0.35, 0.25),
+        radius: 1.15,
+        colors: [
+          const Color(0xFF7CE577).withValues(alpha: 0.42),
+          const Color(0xFFF4FFC7).withValues(alpha: 0.20),
+          Colors.transparent,
+        ],
+        stops: const [0.0, 0.55, 1.0],
+      ).createShader(Rect.fromLTWH(0, 0, w, h));
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), limeWash);
+
+    // 3. Diagonal Silk Flow Field (rotated by u_rotate = 2.51 rad ~ 144 deg)
+    // Deep emerald (#0E7C5A) and obsidian (#03120E) drape over the top-right
+    const double angle = 2.51; // 143.8 degrees from shader u_transform.y
+    final double cosA = math.cos(angle);
+    final double sinA = math.sin(angle);
+
+    // Layered flowing silk ridges matching the shader's harmonic amplitude & seed
+    final List<Map<String, dynamic>> silkLayers = [
+      {
+        'color': const Color(0xFF03120E),
+        'alpha': 0.94,
+        'offset': 0.0,
+        'amp': 32.0,
+      },
+      {
+        'color': const Color(0xFF0E7C5A),
+        'alpha': 0.88,
+        'offset': 55.0,
+        'amp': 40.0,
+      },
+      {
+        'color': const Color(0xFF7CE577),
+        'alpha': 0.72,
+        'offset': 110.0,
+        'amp': 46.0,
+      },
+      {
+        'color': const Color(0xFFF4FFC7),
+        'alpha': 0.55,
+        'offset': 155.0,
+        'amp': 36.0,
+      },
     ];
 
-    const int bands = 5;
-    for (int b = 0; b < bands; b++) {
-      final double bandOffset = b / bands;
+    for (final layer in silkLayers) {
+      final Color color = layer['color'] as Color;
+      final double alpha = layer['alpha'] as double;
+      final double offset = layer['offset'] as double;
+      final double amp = layer['amp'] as double;
+
       final Path path = Path();
-      final double yBase = h * (0.18 + 0.68 * bandOffset);
+      const int steps = 48;
+      final double startX = w * 0.38 - offset * sinA;
+      final double startY = -h * 0.15 + offset * cosA;
+      final double endX = w * 1.20 - offset * sinA;
+      final double endY = h * 0.98 + offset * cosA;
 
-      path.moveTo(0, yBase);
-      const int steps = 36;
-      for (int s = 0; s <= steps; s++) {
-        final double x = w * (s / steps);
-        final double normX = (s / steps) * 4.0;
+      path.moveTo(w * 1.3, -h * 0.3); // Upper-right bound
+      path.lineTo(w * 1.3, h * 1.3);  // Lower-right bound
 
-        // Flow harmonics
-        double dy = 0.0;
-        for (double i = 1.0; i <= 4.0; i += 1.0) {
-          dy += (36.0 / i) *
-              math.sin(i * 1.7 * normX + t * 0.84 + b * 1.3) *
-              math.cos(i * 1.2 * (yBase / h) + t * 0.60);
+      for (int i = steps; i >= 0; i--) {
+        final double fraction = i / steps;
+        final double baseX = startX + (endX - startX) * fraction;
+        final double baseY = startY + (endY - startY) * fraction;
+
+        // 4-octave harmonic cosine/sine flow formula matching Silk shader
+        double wave = 0.0;
+        for (double f = 1.0; f <= 4.0; f += 1.0) {
+          wave += (amp / f) *
+              math.cos(f * 2.4 * (fraction * 3.2) + t * 0.84 + (707.0 % 31.0)) *
+              math.sin(f * 1.7 * (fraction * 2.4) + t * 0.60);
         }
-        path.lineTo(x, yBase + dy);
+
+        final double px = baseX + wave * cosA;
+        final double py = baseY + wave * sinA;
+        path.lineTo(px, py);
       }
 
-      path.lineTo(w, h);
-      path.lineTo(0, h);
       path.close();
 
-      final Paint wavePaint = Paint()
+      final Paint paint = Paint()
         ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
           colors: [
-            silkPalette[b % silkPalette.length].withValues(alpha: 0.36),
-            silkPalette[(b + 1) % silkPalette.length].withValues(alpha: 0.20),
-            silkPalette[(b + 2) % silkPalette.length].withValues(alpha: 0.06),
+            color.withValues(alpha: alpha),
+            color.withValues(alpha: alpha * 0.70),
+            color.withValues(alpha: 0.0),
           ],
-        ).createShader(Rect.fromLTWH(0, 0, w, h))
-        ..blendMode = BlendMode.screen;
+          stops: const [0.0, 0.68, 1.0],
+        ).createShader(Rect.fromLTWH(0, 0, w, h));
 
-      canvas.drawPath(path, wavePaint);
+      canvas.drawPath(path, paint);
     }
   }
 
