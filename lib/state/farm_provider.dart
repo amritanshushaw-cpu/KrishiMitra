@@ -552,6 +552,18 @@ class FarmProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<bool> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final user = _farmerMobile.isNotEmpty
+        ? _farmerMobile
+        : (prefs.getString('current_username') ?? 'farmer');
+
+    return await _dbService.changePassword(user, currentPassword, newPassword);
+  }
+
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', false);

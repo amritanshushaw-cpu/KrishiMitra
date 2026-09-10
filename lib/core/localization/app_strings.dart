@@ -169,6 +169,12 @@ class AppStrings {
   String get darkMode => isBengali ? 'ডার্ক মোড' : (isHindi ? 'डार्क मोड' : 'Dark Mode');
   String get lightMode => isBengali ? 'অর্গানিক লাইট মোড' : (isHindi ? 'ऑर्गेनिक लाइट मोड' : 'Organic Light Mode');
   String get safetyNetTitle => isBengali ? 'হার্ডওয়্যার বাইপাস ও ডেমো নেট' : (isHindi ? 'हार्डवेयर बाईपास और डेमो नेट' : 'HARDWARE BYPASS // PITCH SAFETY NET');
+  String get securitySettings => isBengali ? 'নিরাপত্তা ও শংসাপত্র' : (isHindi ? 'सुरक्षा और क्रेडेंशियल' : 'SECURITY & CREDENTIALS');
+  String get changePassword => isBengali ? 'পাসওয়ার্ড পরিবর্তন' : (isHindi ? 'पासवर्ड बदलें' : 'Change Password');
+  String get currentPassword => isBengali ? 'বর্তমান পাসওয়ার্ড' : (isHindi ? 'वर्तमान पासवर्ड' : 'Current Password');
+  String get newPassword => isBengali ? 'নতুন পাসওয়ার্ড' : (isHindi ? 'नया पासवर्ड' : 'New Password');
+  String get confirmNewPassword => isBengali ? 'নতুন পাসওয়ার্ড নিশ্চিত করুন' : (isHindi ? 'नए पासवर्ड की पुष्टि करें' : 'Confirm New Password');
+  String get updatePasswordBtn => isBengali ? 'পাসওয়ার্ড আপডেট করুন' : (isHindi ? 'पासवर्ड अपडेट करें' : 'UPDATE PASSWORD');
 
   // Missing Dashboard Strings
   String get quickActions => isBengali ? 'দ্রুত পদক্ষেপ' : (isHindi ? 'त्वरित कार्रवाई' : 'QUICK ACTIONS');

@@ -167,6 +167,38 @@ class SecureDatabaseService {
     return await _loginUserInPrefs(cleanUser, cleanPass);
   }
 
+  Future<bool> changePassword(String username, String currentPassword, String newPassword) async {
+    final cleanUser = username.trim();
+    final cleanOldPass = currentPassword.trim();
+    final cleanNewPass = newPassword.trim();
+
+    if (cleanUser.isEmpty || cleanOldPass.isEmpty || cleanNewPass.isEmpty) return false;
+
+    final db = await database;
+    if (db != null) {
+      try {
+        final List<Map<String, dynamic>> check = await db.query(
+          tableAuth,
+          where: 'username = ? AND password = ?',
+          whereArgs: [cleanUser, cleanOldPass],
+        );
+        if (check.isEmpty) return false;
+
+        final count = await db.update(
+          tableAuth,
+          {'password': cleanNewPass},
+          where: 'username = ?',
+          whereArgs: [cleanUser],
+        );
+        return count > 0;
+      } catch (e) {
+        debugPrint("SecureDatabaseService changePassword db error: $e");
+      }
+    }
+
+    return await _changePasswordInPrefs(cleanUser, cleanOldPass, cleanNewPass);
+  }
+
   Future<String?> getUserName(String username) async {
     final cleanUser = username.trim();
     if (cleanUser.isEmpty) return null;
@@ -342,6 +374,28 @@ class SecureDatabaseService {
       return false;
     } catch (e) {
       debugPrint("SecureDatabaseService fallback login error: $e");
+      return false;
+    }
+  }
+
+  Future<bool> _changePasswordInPrefs(String username, String oldPassword, String newPassword) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final users = await _getUsersFromPrefs();
+      if (!users.containsKey(username)) return false;
+
+      final userRecord = users[username];
+      if (userRecord is Map && userRecord['password'] == oldPassword) {
+        users[username] = {
+          ...Map<String, dynamic>.from(userRecord),
+          'password': newPassword,
+        };
+        await prefs.setString(_prefsKeyUsers, jsonEncode(users));
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("SecureDatabaseService fallback changePassword error: $e");
       return false;
     }
   }
