@@ -15,6 +15,7 @@ import 'history_log_tab.dart';
 import 'scan_vision_tab.dart';
 import 'sensors_iot_tab.dart';
 import '../../models/parsed_diagnosis.dart';
+import '../widgets/mesh_drift_background.dart';
 
 class MainShellScreen extends StatelessWidget {
   const MainShellScreen({super.key});
@@ -778,8 +779,8 @@ class MainShellScreen extends StatelessWidget {
       },
       child: LayoutBuilder(
       builder: (context, constraints) {
-        return Container(
-          decoration: AppTheme.backgroundDecoration(isDark),
+        return MeshDriftBackground(
+          isDark: isDark,
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
