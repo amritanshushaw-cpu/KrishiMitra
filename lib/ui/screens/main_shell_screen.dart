@@ -17,6 +17,73 @@ import 'sensors_iot_tab.dart';
 class MainShellScreen extends StatelessWidget {
   const MainShellScreen({super.key});
 
+  void _showNotificationsModal(BuildContext context, FarmProvider provider) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.5,
+              decoration: BoxDecoration(
+                color: (isDark ? AppTheme.deepPine : AppTheme.mintDew).withValues(alpha: isDark ? 0.90 : 0.94),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+              ),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.grey.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(2))),
+                    const SizedBox(height: 16),
+                    Text('Action Center', style: GoogleFonts.jetBrainsMono(fontSize: 16, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: provider.notifications.isEmpty
+                          ? Center(child: Text('No active notifications.', style: GoogleFonts.plusJakartaSans(color: Colors.grey)))
+                          : ListView.builder(
+                              itemCount: provider.notifications.length,
+                              itemBuilder: (ctx, i) {
+                                final n = provider.notifications[i];
+                                return Card(
+                                  color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.2),
+                                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                  child: ListTile(
+                                    title: Text(n.message, style: GoogleFonts.plusJakartaSans(color: isDark ? Colors.white : Colors.black, fontSize: 14)),
+                                    subtitle: Text('Requires Action', style: GoogleFonts.jetBrainsMono(color: AppTheme.amberWarning, fontSize: 11)),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.check_circle_outline, color: AppTheme.emeraldLight),
+                                          onPressed: () { provider.respondToNotification(n.id, true); Navigator.pop(ctx); },
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.cancel_outlined, color: Colors.redAccent),
+                                          onPressed: () { provider.respondToNotification(n.id, false); Navigator.pop(ctx); },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
   void _showSafetyNetModal(BuildContext context, FarmProvider provider) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -300,15 +367,20 @@ class MainShellScreen extends StatelessWidget {
               ],
             ),
             actions: [
-              // Data Meets Growth Cockpit Trigger
+              // Notification Trigger
               IconButton(
-                icon: Icon(
-                  Icons.auto_graph,
-                  size: 20,
-                  color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                icon: Badge(
+                  isLabelVisible: provider.unreadNotificationCount > 0,
+                  label: Text('${provider.unreadNotificationCount}', style: const TextStyle(fontSize: 10)),
+                  backgroundColor: AppTheme.amberWarning,
+                  child: Icon(
+                    Icons.notifications_none_rounded,
+                    size: 22,
+                    color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                  ),
                 ),
-                tooltip: 'Research Hub / Cockpit Mode',
-                onPressed: () => provider.toggleCockpitMode(true),
+                tooltip: 'Notifications',
+                onPressed: () => _showNotificationsModal(context, provider),
               ),
               // Theme switch
               IconButton(

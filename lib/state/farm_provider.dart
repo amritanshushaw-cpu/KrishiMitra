@@ -14,6 +14,21 @@ import '../services/wifi_camera_service.dart';
 import 'dart:async';
 import '../services/location_service.dart';
 
+
+class FarmNotification {
+  final String id;
+  final String message;
+  final DateTime timestamp;
+  bool isResponded;
+
+  FarmNotification({
+    required this.id,
+    required this.message,
+    required this.timestamp,
+    this.isResponded = false,
+  });
+}
+
 class FarmProvider extends ChangeNotifier {
   final BleService _bleService = BleService();
   final WifiCameraService _cameraService = WifiCameraService();
@@ -39,6 +54,7 @@ class FarmProvider extends ChangeNotifier {
   TtsLanguage _ttsLanguage = TtsLanguage.bengali;
   int _activeTabIndex = 0;
   final List<int> _tabHistory = [0];
+  final List<FarmNotification> _notifications = [];
   bool _isDarkMode = true;
   bool _isCockpitMode = false;
   bool _isTtsEnabled = true;
@@ -72,6 +88,8 @@ class FarmProvider extends ChangeNotifier {
   String get activeFieldZone => _activeFieldZone;
   String get farmerName => _farmerName;
   String get farmerMobile => _farmerMobile;
+  List<FarmNotification> get notifications => _notifications;
+  int get unreadNotificationCount => _notifications.where((n) => !n.isResponded).length;
   String get farmerLocation => _farmerLocation;
   double? get latitude => _latitude;
   double? get longitude => _longitude;
@@ -350,6 +368,15 @@ class FarmProvider extends ChangeNotifier {
     } catch (_) {}
   }
 
+
+  void respondToNotification(String id, bool accepted) {
+    final index = _notifications.indexWhere((n) => n.id == id);
+    if (index != -1) {
+      _notifications[index].isResponded = true;
+      _notifications.removeAt(index);
+      notifyListeners();
+    }
+  }
   void setTabIndex(int index) {
     if (_activeTabIndex != index) {
       _tabHistory.add(index);
