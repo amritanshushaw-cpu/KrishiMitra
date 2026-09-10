@@ -17,7 +17,7 @@ class FarmHealthRingCard extends StatefulWidget {
 
   const FarmHealthRingCard({
     super.key,
-    this.healthScore = 100,
+    required this.healthScore,
     required this.statusText,
     required this.soilStatus,
     required this.moistureStatus,

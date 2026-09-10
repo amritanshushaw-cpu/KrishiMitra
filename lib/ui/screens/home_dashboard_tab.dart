@@ -94,8 +94,8 @@ class HomeDashboardTab extends StatelessWidget {
 
               // Farm Health Score Card
               FarmHealthRingCard(
-                healthScore: 100,
-                statusText: 'Healthy Farm',
+                healthScore: provider.farmHealthScore,
+                statusText: provider.farmHealthScore >= 80 ? 'Healthy Farm' : 'Attention Required',
                 soilStatus: provider.sensorData.isSoilCriticallyDry
                     ? 'Dry'
                     : (provider.sensorData.isSoilSaturated ? 'Saturated' : 'Good'),
