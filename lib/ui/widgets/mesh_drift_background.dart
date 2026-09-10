@@ -2,11 +2,13 @@ import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../../core/theme/app_theme.dart';
+import 'web_shader_bridge.dart';
 
-/// An animated fluid WebGL-style "Mesh Drift" shader background.
-/// Features floating, morphing organic botanical gradient orbs in dark mode
-/// calibrated with KrishiMitra's Minimal Green palette (#051F20, #0B2B26, #163832, #235347, #8EB69B, #DAF1DE).
+/// An animated fluid WebGL-style shader background.
+/// Features:
+/// - Dark Mode: "Mesh Drift" organic blob shader (#03120E, #0E7C5A, #7CE577, #F4FFC7).
+/// - Light Mode: "Silk" harmonic flow shader (#03120E, #0E7C5A, #7CE577, #F4FFC7).
+/// - WebGL1 Hardware Pass-through on Web via index.html background canvas.
 class MeshDriftBackground extends StatefulWidget {
   final Widget child;
   final bool isDark;
@@ -35,15 +37,17 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
       duration: const Duration(seconds: 22),
     );
 
-    if (widget.animated && widget.isDark) {
+    if (widget.animated) {
       _controller.repeat();
     }
+
+    syncWebShaderMode(widget.isDark);
   }
 
   @override
   void didUpdateWidget(covariant MeshDriftBackground oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.animated && widget.isDark) {
+    if (widget.animated) {
       if (!_controller.isAnimating) {
         _controller.repeat();
       }
@@ -51,6 +55,10 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
       if (_controller.isAnimating) {
         _controller.stop();
       }
+    }
+
+    if (oldWidget.isDark != widget.isDark) {
+      syncWebShaderMode(widget.isDark);
     }
   }
 
@@ -62,16 +70,10 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.isDark) {
-      // Light mode: Clean organic Mint Dew background
-      return Container(
-        decoration: AppTheme.backgroundDecoration(false),
-        child: widget.child,
-      );
-    }
-
     if (kIsWeb) {
       // In Web mode: Pass through to the plain WebGL1 canvas mounted in web/index.html
+      // Synchronize shader mode (Mesh Drift for dark, Silk for light)
+      syncWebShaderMode(widget.isDark);
       return Container(
         color: Colors.transparent,
         child: widget.child,
@@ -87,21 +89,25 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
           ),
         ),
 
-        // Animated Mesh Drift canvas (calibrated to exact colors: #03120E, #0E7C5A, #7CE577, #F4FFC7)
+        // Animated Canvas:
+        // Dark Mode: Mesh Drift (blob shader)
+        // Light Mode: Silk (flow shader)
         Positioned.fill(
           child: RepaintBoundary(
             child: AnimatedBuilder(
               animation: _controller,
               builder: (context, _) {
                 return CustomPaint(
-                  painter: _MeshDriftPainter(progress: _controller.value),
+                  painter: widget.isDark
+                      ? _MeshDriftPainter(progress: _controller.value)
+                      : _SilkPainter(progress: _controller.value),
                 );
               },
             ),
           ),
         ),
 
-        // Frosted atmospheric diffusion layer (melds nodes into continuous liquid mesh)
+        // Frosted atmospheric diffusion layer
         Positioned.fill(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 38, sigmaY: 38),
@@ -118,7 +124,7 @@ class _MeshDriftBackgroundState extends State<MeshDriftBackground>
   }
 }
 
-/// Custom painter for the 4-color drifting gradient mesh
+/// Custom painter for Dark Mode: 4-color drifting gradient mesh (Mesh Drift)
 /// Exact colours: #03120E, #0E7C5A, #7CE577, #F4FFC7
 class _MeshDriftPainter extends CustomPainter {
   final double progress;
@@ -212,6 +218,85 @@ class _MeshDriftPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _MeshDriftPainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
+}
+
+/// Custom painter for Light Mode: Silk flow shader recreation
+/// Faithful to the 4-octave harmonic cosine/sine flow algorithm:
+/// amp = 0.25 + intensity * 0.85 (0.42)
+/// q.x += amp / i * cos(i * 2.4 * q.y + t * 0.8 + seed)
+/// q.y += amp / i * cos(i * 1.7 * q.x + t * 0.6)
+/// Palette: #03120E, #0E7C5A, #7CE577, #F4FFC7
+class _SilkPainter extends CustomPainter {
+  final double progress;
+
+  _SilkPainter({required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double w = size.width;
+    final double h = size.height;
+    if (w <= 0 || h <= 0) return;
+
+    final double t = progress * 2 * math.pi;
+
+    // Base background: #03120E
+    final Paint bgPaint = Paint()..color = const Color(0xFF03120E);
+    canvas.drawRect(Rect.fromLTWH(0, 0, w, h), bgPaint);
+
+    final List<Color> silkPalette = [
+      const Color(0xFF0E7C5A),
+      const Color(0xFF7CE577),
+      const Color(0xFFF4FFC7),
+      const Color(0xFF7CE577),
+      const Color(0xFF0E7C5A),
+    ];
+
+    const int bands = 5;
+    for (int b = 0; b < bands; b++) {
+      final double bandOffset = b / bands;
+      final Path path = Path();
+      final double yBase = h * (0.18 + 0.68 * bandOffset);
+
+      path.moveTo(0, yBase);
+      const int steps = 36;
+      for (int s = 0; s <= steps; s++) {
+        final double x = w * (s / steps);
+        final double normX = (s / steps) * 4.0;
+
+        // Flow harmonics
+        double dy = 0.0;
+        for (double i = 1.0; i <= 4.0; i += 1.0) {
+          dy += (36.0 / i) *
+              math.sin(i * 1.7 * normX + t * 0.84 + b * 1.3) *
+              math.cos(i * 1.2 * (yBase / h) + t * 0.60);
+        }
+        path.lineTo(x, yBase + dy);
+      }
+
+      path.lineTo(w, h);
+      path.lineTo(0, h);
+      path.close();
+
+      final Paint wavePaint = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            silkPalette[b % silkPalette.length].withValues(alpha: 0.36),
+            silkPalette[(b + 1) % silkPalette.length].withValues(alpha: 0.20),
+            silkPalette[(b + 2) % silkPalette.length].withValues(alpha: 0.06),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h))
+        ..blendMode = BlendMode.screen;
+
+      canvas.drawPath(path, wavePaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _SilkPainter oldDelegate) {
     return oldDelegate.progress != progress;
   }
 }
