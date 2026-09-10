@@ -7,7 +7,6 @@ import '../../state/farm_provider.dart';
 import '../widgets/app_glass_container.dart';
 import '../widgets/liquid_glass_container.dart';
 import '../widgets/farm_health_ring.dart';
-import '../widgets/field_zone_card.dart';
 import '../widgets/weather_status_bar.dart';
 import 'latest_scan_details_screen.dart';
 
@@ -95,8 +94,8 @@ class HomeDashboardTab extends StatelessWidget {
 
               // Farm Health Score Card
               FarmHealthRingCard(
-                healthScore: provider.farmHealthScore,
-                statusText: provider.farmHealthScore >= 80 ? 'Healthy Farm' : 'Attention Required',
+                healthScore: 100,
+                statusText: 'Healthy Farm',
                 soilStatus: provider.sensorData.isSoilCriticallyDry
                     ? 'Dry'
                     : (provider.sensorData.isSoilSaturated ? 'Saturated' : 'Good'),
