@@ -68,17 +68,17 @@ class SensorFusionService {
     final AdvisoryModel advisory = base ?? AdvisoryModel(
       label: label,
       nameEn: label.replaceAll('___', ' - ').replaceAll('_', ' '),
-      nameBn: 'অজ্ঞাত অবস্থা ($label)',
+      nameBn: 'অজানা রোগ ($label)',
       category: 'General',
       crop: 'General',
       severity: 'Low',
       symptomsEn: 'Symptoms under evaluation.',
-      symptomsBn: 'লক্ষণ বিশ্লেষণ করা হচ্ছে।',
+      symptomsBn: 'লক্ষণগুলি মূল্যায়ন করা হচ্ছে।',
       organicTreatmentEn: 'Maintain normal organic farm practices.',
-      organicTreatmentBn: 'সাধারণ জৈব পদ্ধতি বজায় রাখুন।',
+      organicTreatmentBn: 'স্বাভাবিক জৈব খামার অনুশীলন বজায় রাখুন।',
       chemicalTreatmentEn: 'No chemical intervention advised.',
-      chemicalTreatmentBn: 'রাসায়নিক ব্যবহারের প্রয়োজন নেই।',
-      ttsPromptBn: 'ফসলের বর্তমান অবস্থা নিরীক্ষণ করা হচ্ছে।',
+      chemicalTreatmentBn: 'রাসায়নিক হস্তক্ষেপের পরামর্শ দেওয়া হচ্ছে না।',
+      ttsPromptBn: 'আপনার গাছে অজানা রোগ ধরা পড়েছে।',
       pumpRule: 'NORMAL',
     );
 
@@ -103,12 +103,12 @@ class SensorFusionService {
     // Rain washes away foliar contact chemicals, wasting inputs & polluting runoff
     if (sensor.isRaining && isDiseaseOrPest) {
       isSprayOverridden = true;
-      overrideEn = '⚠️ RAIN OVERRIDE: Active precipitation detected. Chemical spraying is temporarily HALTED to prevent fungicide/pesticide runoff.';
-      overrideBn = '⚠️ বৃষ্টির সতর্কতা: বর্তমানে বৃষ্টি হচ্ছে। কীটনাশক বা ছত্রাকনাশক স্প্রে করা স্থগিত রাখুন, অন্যথায় বৃষ্টির জলে তা ধুয়ে নষ্ট হয়ে যাবে।';
-      overrideHi = '⚠️ बारिश की चेतावनी: वर्तमान में बारिश हो रही है। कीटनाशक या फफूंदनाशक का छिड़काव तुरंत रोक दें, अन्यथा दवा बह जाएगी।';
+      overrideEn = '🌧️ RAIN OVERRIDE: Active precipitation detected. Chemical spraying is temporarily HALTED to prevent fungicide/pesticide runoff.';
+      overrideBn = '🌧️ বৃষ্টি সতর্কতা: সক্রিয় বৃষ্টিপাত শনাক্ত করা হয়েছে। কীটনাশক ধুয়ে যাওয়া রোধ করতে রাসায়নিক স্প্রে করা সাময়িকভাবে বন্ধ করা হয়েছে।';
+      overrideHi = '🌧️ बारिश अलर्ट: सक्रिय वर्षा का पता चला है। कीटनाशक के बहने से रोकने के लिए रासायनिक छिड़काव अस्थायी रूप से रोक दिया गया है।';
       effChemEn = '[SUSPENDED DUE TO RAIN] Postpone spray until 24 hours after rain ceases. In the meantime, ensure drainage channels are open.';
-      effChemBn = '[বৃষ্টির কারণে স্থগিত] বৃষ্টি থামার পর রোদ ওঠা পর্যন্ত অপেক্ষা করুন। আপাতত জমির জল নিষ্কাশন ব্যবস্থা সচল রাখুন।';
-      effChemHi = '[बारिश के कारण स्थगित] बारिश रुकने तक प्रतीक्षा करें। खेत में जल निकासी की व्यवस्था दुरुस्त रखें।';
+      effChemBn = '[বৃষ্টির কারণে স্থগিত] বৃষ্টি থামার ২৪ ঘন্টা পর স্প্রে করুন। এর মধ্যে জল নিষ্কাশন ব্যবস্থা নিশ্চিত করুন।';
+      effChemHi = '[बारिश के कारण स्थगित] बारिश रुकने के 24 घंटे बाद स्प्रे करें। इस बीच जल निकासी सुनिश्चित करें।';
     }
 
     // RULE 2: Soil Moisture vs Disease / Pump Interlock

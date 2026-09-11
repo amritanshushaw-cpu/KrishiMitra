@@ -163,8 +163,8 @@ class LatestScanDetailsScreen extends StatelessWidget {
                               ),
                               label: Text(
                                 provider.isTtsPlaying 
-                                    ? (provider.ttsLanguage == TtsLanguage.bengali ? 'অডিও থামান' : 'Stop Audio Advisory') 
-                                    : (provider.ttsLanguage == TtsLanguage.bengali ? 'অডিও শুনুন' : 'Play Audio Advisory'),
+                                    ? (provider.ttsLanguage == TtsLanguage.bengali ? 'অডিও থামান' : (provider.ttsLanguage == TtsLanguage.hindi ? 'ऑडियो रोकें' : 'Stop Audio Advisory')) 
+                                    : (provider.ttsLanguage == TtsLanguage.bengali ? 'অডিও শুনুন' : (provider.ttsLanguage == TtsLanguage.hindi ? 'ऑडियो सुनें' : 'Play Audio Advisory')),
                                 style: GoogleFonts.plusJakartaSans(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -181,14 +181,14 @@ class LatestScanDetailsScreen extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'লক্ষণ' : 'Symptoms', _getLocalizedSymptoms(provider, advisory.advisory)),
+                          _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'লক্ষণ' : (provider.ttsLanguage == TtsLanguage.hindi ? 'लक्षण' : 'Symptoms'), _getLocalizedSymptoms(provider, advisory.advisory)),
                           const SizedBox(height: 12),
-                          _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'জৈব প্রতিকার' : 'Organic Treatment', _getLocalizedOrganic(provider, advisory.advisory)),
+                          _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'জৈব প্রতিকার' : (provider.ttsLanguage == TtsLanguage.hindi ? 'जैविक उपचार' : 'Organic Treatment'), _getLocalizedOrganic(provider, advisory.advisory)),
                           const SizedBox(height: 12),
-                          _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'রাসায়নিক চিকিৎসা' : 'Chemical Strategy', _getLocalizedChemical(provider, advisory), highlight: advisory.isSprayOverrideActive,),
+                          _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'রাসায়নিক চিকিৎসা' : (provider.ttsLanguage == TtsLanguage.hindi ? 'रासायनिक रणनीति' : 'Chemical Strategy'), _getLocalizedChemical(provider, advisory), highlight: advisory.isSprayOverrideActive,),
                           if (advisory.overrideReasonEn != null) ...[
                             const SizedBox(height: 12),
-                            _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'সেন্সর সতর্কতা' : 'Sensor Override', _getLocalizedOverride(provider, advisory), highlight: true,),
+                            _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'সেন্সর সতর্কতা' : (provider.ttsLanguage == TtsLanguage.hindi ? 'सेंसर चेतावनी' : 'Sensor Override'), _getLocalizedOverride(provider, advisory), highlight: true,),
                           ],
                         ],
                       ),

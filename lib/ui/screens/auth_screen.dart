@@ -26,6 +26,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool isLogin = true;
   bool _obscurePassword = true;
   bool _isLoading = false;
+  String _selectedLanguage = 'english';
 
   @override
   void dispose() {
@@ -81,7 +82,14 @@ class _AuthScreenState extends State<AuthScreen> {
               ? storedName.trim()
               : (prefs.getString('farmer_name') ?? user);
 
-          await prefs.setString('farmer_name', finalName);
+                    await prefs.setString('farmer_name', finalName);
+          
+          // Save and apply Language
+          await prefs.setString('preferred_language', _selectedLanguage);
+          final langEnum = _selectedLanguage == 'bengali' ? TtsLanguage.bengali : (_selectedLanguage == 'hindi' ? TtsLanguage.hindi : TtsLanguage.english);
+          if (mounted) {
+            context.read<FarmProvider>().setTtsLanguage(langEnum);
+          }
 
           if (mounted) {
             context.read<FarmProvider>().setFarmerName(finalName);
