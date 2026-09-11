@@ -23,6 +23,7 @@ class LiquidGlassContainer extends StatefulWidget {
   final List<Color>? liquidColors;
   final double glossIntensity;
   final bool animate;
+  final bool enableBackdropFilter;
 
   const LiquidGlassContainer({
     super.key,
@@ -37,6 +38,7 @@ class LiquidGlassContainer extends StatefulWidget {
     this.liquidColors,
     this.glossIntensity = 0.85,
     this.animate = true,
+    this.enableBackdropFilter = false,
   });
 
   @override
@@ -117,24 +119,35 @@ class _LiquidGlassContainerState extends State<LiquidGlassContainer>
             ),
           ),
 
-          // 2. Real-time Blurred Transparency Glass Layer (BackdropFilter)
+          // 2. Real-time Translucent Glass Surface Layer (Hardware accelerated)
           Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: widget.blur,
-                sigmaY: widget.blur,
-              ),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 350),
-                curve: Curves.easeInOutCubic,
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF141414).withValues(alpha: 0.60)
-                      : Colors.white.withValues(alpha: 0.55),
-                  borderRadius: BorderRadius.circular(widget.radius),
-                ),
-              ),
-            ),
+            child: widget.enableBackdropFilter && widget.blur > 0
+                ? BackdropFilter(
+                    filter: ImageFilter.blur(
+                      sigmaX: widget.blur,
+                      sigmaY: widget.blur,
+                    ),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 350),
+                      curve: Curves.easeInOutCubic,
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF141414).withValues(alpha: 0.60)
+                            : Colors.white.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(widget.radius),
+                      ),
+                    ),
+                  )
+                : AnimatedContainer(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeInOutCubic,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF141414).withValues(alpha: 0.60)
+                          : Colors.white.withValues(alpha: 0.55),
+                      borderRadius: BorderRadius.circular(widget.radius),
+                    ),
+                  ),
           ),
 
           // 3. Static Diagonal Specular Sheen & Glass Refraction Gradients
