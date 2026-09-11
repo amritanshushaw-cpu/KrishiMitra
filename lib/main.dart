@@ -9,6 +9,8 @@ import 'state/farm_provider.dart';
 import 'ui/screens/main_shell_screen.dart';
 import 'ui/screens/auth_screen.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -36,7 +38,8 @@ class SmartFarmEdgeApp extends StatelessWidget {
       child: Consumer<FarmProvider>(
         builder: (context, provider, _) {
           return MaterialApp(
-            title: 'KrishiMitra AI // AgriSense Pro',
+            navigatorKey: navigatorKey,
+            title: 'KRISHIMITRA',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,

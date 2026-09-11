@@ -62,6 +62,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<FarmProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final provider = context.watch<FarmProvider>();
 
@@ -127,7 +128,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        'Standard Nutrition',
+                        provider.strings.translate('Standard Nutrition'),
                         textAlign: TextAlign.center,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
@@ -172,7 +173,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            'Disease Recovery Plan',
+                            provider.strings.calcRecoveryPlan,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
@@ -194,7 +195,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
 
           // 1. Crop Selection
           Text(
-            'SELECT TARGET CROP',
+            provider.strings.calcSelectCrop,
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -284,7 +285,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
           // In Recovery Mode: Disease Selector
           if (_isRecoveryMode) ...[
             Text(
-              'DIAGNOSED DISEASE TARGET',
+              provider.strings.translate('DIAGNOSED DISEASE TARGET'),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -387,7 +388,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          'Plot Surface Area',
+                          provider.strings.translate('Plot Surface Area'),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 13.5,
                             fontWeight: FontWeight.w700,
@@ -438,7 +439,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Area: ${_area.toStringAsFixed(1)} ${_selectedUnit.label}',
+                      '''${provider.strings.calcAreaLabel} ${_area.toStringAsFixed(1)} ${_selectedUnit.label}''',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
@@ -448,7 +449,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                     Text(
                       _isRecoveryMode
                           ? 'Water: ${recoveryResult.totalWaterLiters.toStringAsFixed(0)}L (${recoveryResult.totalKnapsackTanks} Tanks)'
-                          : 'ICAR NPK: ${_selectedCrop.defaultN.toInt()}-${_selectedCrop.defaultP.toInt()}-${_selectedCrop.defaultK.toInt()} kg/ac',
+                          : '''${provider.strings.calcIcarNpk} ${_selectedCrop.defaultN.toInt()}-${_selectedCrop.defaultP.toInt()}-${_selectedCrop.defaultK.toInt()} kg/ac''',
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
@@ -506,7 +507,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                         child: Column(
                           children: [
                             Text(
-                              combo == FertilizerCombination.ureaDapMop ? 'DAP + Urea + MOP' : 'SSP + Urea + MOP',
+                              combo == FertilizerCombination.ureaDapMop ? provider.strings.calcDapUreaMop : provider.strings.calcSspUreaMop,
                               textAlign: TextAlign.center,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 11.5,
@@ -516,7 +517,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              combo == FertilizerCombination.ureaDapMop ? 'Common Standard' : 'Sulfur Fortified',
+                              combo == FertilizerCombination.ureaDapMop ? provider.strings.calcCommonStd : provider.strings.calcSulfurFort,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 9.5,
                                 color: isDark ? AppTheme.darkTextSecondary : const Color(0xFF52796F),
@@ -534,7 +535,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
 
             // 4. Standard Results Section
             Text(
-              'TOTAL FERTILIZER REQUIRED',
+              provider.strings.translate('TOTAL FERTILIZER REQUIRED'),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -548,7 +549,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
               children: [
                 Expanded(
                   child: _buildFertilizerTile(
-                    label: 'Urea (46% N)',
+                    label: provider.strings.calcUreaL,
                     kg: standardResult.ureaKg,
                     bags: standardResult.ureaBags,
                     bagWeight: 45,
@@ -562,7 +563,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                 Expanded(
                   child: _selectedCombo == FertilizerCombination.ureaDapMop
                       ? _buildFertilizerTile(
-                          label: 'DAP (P+N)',
+                          label: provider.strings.calcDapL,
                           kg: standardResult.dapKg,
                           bags: standardResult.dapBags,
                           bagWeight: 50,
@@ -572,7 +573,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                           isDark: isDark,
                         )
                       : _buildFertilizerTile(
-                          label: 'SSP (16% P)',
+                          label: provider.strings.calcSspL,
                           kg: standardResult.sspKg,
                           bags: standardResult.sspBags,
                           bagWeight: 50,
@@ -585,7 +586,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: _buildFertilizerTile(
-                    label: 'MOP (60% K)',
+                    label: provider.strings.calcMopL,
                     kg: standardResult.mopKg,
                     bags: standardResult.mopBags,
                     bagWeight: 50,
@@ -618,7 +619,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'Subsidized Fertilizer Budget:',
+                        provider.strings.calcSubBudget,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w600,
@@ -641,7 +642,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
             const SizedBox(height: 18),
 
             Text(
-              'SPLIT APPLICATION TIMELINE (ICAR PROTOCOL)',
+              provider.strings.translate('SPLIT APPLICATION TIMELINE (ICAR PROTOCOL)'),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -670,8 +671,8 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
               child: Column(
                 children: [
                   _buildScheduleStep(
-                    step: 'Stage 1 • Basal Application',
-                    timing: 'At transplanting or final land tilling',
+                    step: provider.strings.translate('Stage 1 • Basal Application'),
+                    timing: provider.strings.calcTiming1,
                     dose: standardResult.basalDoseSummary,
                     icon: Icons.spa_rounded,
                     color: const Color(0xFF193E32),
@@ -682,7 +683,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                     child: Divider(height: 1),
                   ),
                   _buildScheduleStep(
-                    step: 'Stage 2 • Vegetative Top-Dress',
+                    step: provider.strings.translate('Stage 2 • Vegetative Top-Dress'),
                     timing: '25-30 days after transplanting (active tillering/branching)',
                     dose: standardResult.vegetativeDoseSummary,
                     icon: Icons.eco_rounded,
@@ -694,7 +695,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                     child: Divider(height: 1),
                   ),
                   _buildScheduleStep(
-                    step: 'Stage 3 • Reproductive Booster',
+                    step: provider.strings.translate('Stage 3 • Reproductive Booster'),
                     timing: 'Panicle initiation or early flowering phase',
                     dose: standardResult.floweringDoseSummary,
                     icon: Icons.local_florist_rounded,
@@ -712,6 +713,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
   }
 
   Widget _buildRecoverySection(bool isDark, RecoveryCalculationResult recovery) {
+    final provider = context.watch<FarmProvider>();
     final recipe = recovery.recipe;
 
     return Column(
@@ -749,7 +751,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'CURE & RECOVERY GUIDE',
+                        provider.strings.calcCureGuide,
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w800,
@@ -766,7 +768,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      'STEP-BY-STEP PLAN',
+                      provider.strings.calcStepPlan,
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 8.5,
                         fontWeight: FontWeight.w700,
@@ -798,22 +800,22 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                   children: [
                     _buildGuideStepRow(
                       icon: Icons.water_drop_rounded,
-                      step: 'Step 1: Knapsack Tank Mix',
-                      desc: 'Fill each 16L spray tank with clean water and dissolve the exact grams/ml shown below.',
+                      step: provider.strings.translate('Step 1: Knapsack Tank Mix'),
+                      desc: provider.strings.translate('Fill each 16L spray tank with clean water and dissolve the exact grams/ml shown below.'),
                       isDark: isDark,
                     ),
                     const SizedBox(height: 8),
                     _buildGuideStepRow(
                       icon: Icons.wb_sunny_rounded,
-                      step: 'Step 2: Spray Timing',
-                      desc: 'Spray in the early morning after dew dries. Thoroughly cover top and bottom of leaves.',
+                      step: provider.strings.translate('Step 2: Spray Timing'),
+                      desc: provider.strings.translate('Spray in the early morning after dew dries. Thoroughly cover top and bottom of leaves.'),
                       isDark: isDark,
                     ),
                     const SizedBox(height: 8),
                     _buildGuideStepRow(
                       icon: Icons.grass_rounded,
-                      step: 'Step 3: Soil Nutrition',
-                      desc: 'Broadcast Potash at root zone to restore plant vigor and speed up tissue healing.',
+                      step: provider.strings.translate('Step 3: Soil Nutrition'),
+                      desc: provider.strings.translate('Broadcast Potash at root zone to restore plant vigor and speed up tissue healing.'),
                       isDark: isDark,
                     ),
                   ],
@@ -883,7 +885,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'FOLIAR CURATIVE TANK COMBO',
+              provider.strings.translate('FOLIAR CURATIVE TANK COMBO'),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -1008,7 +1010,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
         // 4. Soil-Applied Recovery Supplement
         if (recovery.soilItems.isNotEmpty) ...[
           Text(
-            'SOIL ROOT-ZONE RECOVERY BROADCAST',
+            provider.strings.translate('SOIL ROOT-ZONE RECOVERY BROADCAST'),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -1094,7 +1096,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                   const Icon(Icons.assignment_turned_in_rounded, size: 16, color: AppTheme.amberWarning),
                   const SizedBox(width: 8),
                   Text(
-                    'FIELD APPLICATION SCHEDULE',
+                    provider.strings.calcAppProtocol,
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w800,

@@ -93,7 +93,7 @@ class HomeDashboardTab extends StatelessWidget {
               // Farm Health Score Card
               FarmHealthRingCard(
                 healthScore: provider.farmHealthScore,
-                statusText: provider.farmHealthScore >= 80 ? 'Healthy Farm' : 'Attention Required',
+                statusText: provider.farmHealthScore >= 80 ? provider.strings.healthyFarm : provider.strings.attentionRequired,
                 soilStatus: provider.sensorData.isSoilCriticallyDry
                     ? 'Dry'
                     : (provider.sensorData.isSoilSaturated ? 'Saturated' : 'Good'),
@@ -492,7 +492,7 @@ class HomeDashboardTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Water Pump Control',
+                provider.strings.waterPumpControl,
                 style: GoogleFonts.bricolageGrotesque(
                   color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
                   fontSize: 12,
@@ -501,7 +501,7 @@ class HomeDashboardTab extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                provider.isPumpLocked ? 'Pump is ON' : 'Pump is OFF',
+                provider.isPumpLocked ? provider.strings.pumpIsOn : provider.strings.pumpIsOff,
                 style: GoogleFonts.bricolageGrotesque(
                   color: provider.isPumpLocked ? Colors.lightBlue : (isDark ? Colors.white : Colors.black),
                   fontSize: 16,
@@ -519,7 +519,7 @@ class HomeDashboardTab extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             ),
-            child: Text(provider.isPumpLocked ? 'TURN OFF' : 'TURN ON', style: GoogleFonts.jetBrainsMono(fontWeight: FontWeight.bold, fontSize: 13)),
+            child: Text(provider.isPumpLocked ? provider.strings.turnOff : provider.strings.turnOn, style: GoogleFonts.jetBrainsMono(fontWeight: FontWeight.bold, fontSize: 13)),
           ),
         ],
       ),
@@ -554,7 +554,7 @@ class HomeDashboardTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Latest Advice',
+                    provider.strings.latestAdvice,
                     style: GoogleFonts.bricolageGrotesque(
                       color: AppTheme.darkTextSecondary,
                       fontSize: 12,
@@ -563,7 +563,7 @@ class HomeDashboardTab extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    provider.fusedAdvisory?.advisory.nameEn ?? 'Diagnosis Complete',
+                    provider.fusedAdvisory?.advisory.nameEn ?? provider.strings.diagComplete,
                     style: GoogleFonts.bricolageGrotesque(
                       color: AppTheme.darkText,
                       fontSize: 15,

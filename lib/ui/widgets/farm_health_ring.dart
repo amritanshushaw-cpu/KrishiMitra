@@ -103,7 +103,7 @@ class _FarmHealthRingCardState extends State<FarmHealthRingCard>
         ? const Color(0xFF262626)
         : const Color(0xFFE8F5EE);
 
-    final friendlyStatus = isOptimal ? '🌿 Thriving & Healthy' : '⚠️ Attention Needed';
+    final friendlyStatus = isOptimal ? provider.strings.healthThriving : provider.strings.healthAttention;
 
     return AppGlassContainer(
       radius: 24,
@@ -208,13 +208,13 @@ class _FarmHealthRingCardState extends State<FarmHealthRingCard>
                     _buildCarePill(
                       context,
                       icon: Icons.eco_rounded,
-                      label: 'Soil: ${widget.soilStatus}',
+                      label: '${provider.strings.ringSoil}: ${widget.soilStatus}',
                       accentColor: isDark ? AppTheme.neonMint : const Color(0xFF40916C),
                     ),
                     _buildCarePill(
                       context,
                       icon: Icons.water_drop_rounded,
-                      label: 'Moist: ${widget.moistureStatus}',
+                      label: '${provider.strings.ringMoist}: ${widget.moistureStatus}',
                       accentColor: AppTheme.skyBlue,
                     ),
                   ],

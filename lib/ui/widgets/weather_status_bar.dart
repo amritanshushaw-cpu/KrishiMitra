@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/sensor_data.dart';
+import 'package:provider/provider.dart';
+import '../../state/farm_provider.dart';
 import 'app_glass_container.dart';
 import 'diagonal_rain_overlay.dart';
 import 'soil_hydration_overlay.dart';
@@ -31,6 +33,7 @@ class WeatherStatusBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<FarmProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final moistureColor = sensorData.isSoilCriticallyDry
@@ -38,17 +41,17 @@ class WeatherStatusBar extends StatelessWidget {
         : (sensorData.isSoilSaturated ? AppTheme.amberWarning : AppTheme.skyBlue);
 
     final moistureStatus = sensorData.isSoilCriticallyDry
-        ? 'Dry Alert'
-        : (sensorData.isSoilSaturated ? 'Saturated' : 'Optimal');
+        ? provider.strings.envDryAlert
+        : (sensorData.isSoilSaturated ? provider.strings.envSaturated : provider.strings.envOptimal);
 
     final rainColor = sensorData.isRaining ? AppTheme.skyBlue : AppTheme.sproutGreen;
-    final rainStatus = sensorData.isRaining ? 'Precipitation' : 'Clear Sky';
+    final rainStatus = sensorData.isRaining ? provider.strings.envPrecipitation : provider.strings.envClearSky;
 
     final isOverheated = sensorData.temperature > 35.0;
     final tempColor = isOverheated ? AppTheme.amberWarning : AppTheme.ambientSunlight;
     final tempStatus = isOverheated
-        ? 'Thermal Stress'
-        : ((DateTime.now().hour >= 5 && DateTime.now().hour < 18) ? 'Daytime' : 'Night Cycle');
+        ? provider.strings.envThermalStress
+        : ((DateTime.now().hour >= 5 && DateTime.now().hour < 18) ? provider.strings.envDaytime : provider.strings.envNightCycle);
     final tempIcon = isOverheated
         ? Icons.wb_sunny_rounded
         : ((DateTime.now().hour >= 5 && DateTime.now().hour < 18)
@@ -81,7 +84,7 @@ class WeatherStatusBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'FARM ENVIRONMENT OVERVIEW',
+                  provider.strings.envOverview,
                   style: GoogleFonts.jetBrainsMono(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -91,25 +94,7 @@ class WeatherStatusBar extends StatelessWidget {
                 ),
               ],
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
-              decoration: BoxDecoration(
-                color: (isDark ? AppTheme.neonMint : AppTheme.forestGreen).withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: (isDark ? AppTheme.neonMint : AppTheme.forestGreen).withValues(alpha: 0.25),
-                  width: 0.8,
-                ),
-              ),
-              child: Text(
-                'LIVE TELEMETRY',
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 8.5,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? AppTheme.neonMint : AppTheme.forestGreen,
-                ),
-              ),
-            ),
+
           ],
         ),
         const SizedBox(height: 12),
@@ -121,7 +106,7 @@ class WeatherStatusBar extends StatelessWidget {
             Expanded(
               child: _buildMetricTile(
                 context,
-                title: 'Soil Moisture',
+                title: provider.strings.envSoilMoisture,
                 value: '${sensorData.soilMoisture}%',
                 status: moistureStatus,
                 icon: Icons.water_drop_rounded,
@@ -141,7 +126,7 @@ class WeatherStatusBar extends StatelessWidget {
             Expanded(
               child: _buildMetricTile(
                 context,
-                title: 'Air Temp',
+                title: provider.strings.envAirTemp,
                 value: '${sensorData.temperature.toStringAsFixed(1)}°C',
                 status: tempStatus,
                 icon: tempIcon,
@@ -160,7 +145,7 @@ class WeatherStatusBar extends StatelessWidget {
             Expanded(
               child: _buildMetricTile(
                 context,
-                title: 'Humidity',
+                title: provider.strings.envHumidity,
                 value: '${sensorData.humidity.toStringAsFixed(1)}%',
                 status: 'Air Moisture',
                 icon: Icons.air_rounded,
@@ -178,7 +163,7 @@ class WeatherStatusBar extends StatelessWidget {
             Expanded(
               child: _buildMetricTile(
                 context,
-                title: 'Rain / Sky',
+                title: provider.strings.envRainSky,
                 value: sensorData.isRaining ? 'RAINING' : '0.0 mm',
                 status: rainStatus,
                 icon: sensorData.isRaining ? Icons.thunderstorm_rounded : Icons.cloud_outlined,

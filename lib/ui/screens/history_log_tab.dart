@@ -12,6 +12,7 @@ class HistoryLogTab extends StatelessWidget {
   const HistoryLogTab({super.key});
 
   Future<void> _downloadHistory(BuildContext context, int days) async {
+    final provider = context.read<FarmProvider>();
     try {
       final logs = await SecureDatabaseService.instance.getLogsForLastDays(days);
       if (logs.isEmpty) {
@@ -21,7 +22,18 @@ class HistoryLogTab extends StatelessWidget {
         return;
       }
 
-      final directory = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = Directory('/storage/emulated/0/Download');
+        if (!await directory.exists()) {
+          directory = await getExternalStorageDirectory();
+        }
+      } else {
+        directory = await getApplicationDocumentsDirectory();
+      }
+      
+      directory ??= await getApplicationDocumentsDirectory();
+
       final fileName = 'KrishiMitra_Logs_${days}_Days.txt';
       final file = File('${directory.path}/$fileName');
 
@@ -33,7 +45,7 @@ class HistoryLogTab extends StatelessWidget {
       for (var log in logs) {
         buffer.writeln('Date/Time: ${log['timestamp']}');
         buffer.writeln('Temp: ${log['temperature']} °C, Humidity: ${log['humidity']}%, Soil Moisture: ${log['soil_moisture']}');
-        buffer.writeln('Advice: ${log['advisory_output']}');
+        buffer.writeln('${provider.strings.colAdvice}: ${provider.strings.translate(log['advisory_output'] ?? '')}');
         buffer.writeln('-' * 40);
       }
 
@@ -193,7 +205,7 @@ class HistoryLogTab extends StatelessWidget {
                                         SizedBox(
                                           width: 200,
                                           child: Text(
-                                            log['advisory_output'] ?? '--',
+                                            provider.strings.translate(log['advisory_output'] ?? '--'),
                                             maxLines: 2,
                                             overflow: TextOverflow.ellipsis,
                                           ),

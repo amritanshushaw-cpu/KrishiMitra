@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../state/farm_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/agri_calculator_service.dart';
@@ -18,6 +20,7 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<FarmProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final result = AgriCalculatorService.calculateSpray(
@@ -34,7 +37,7 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
         children: [
           // 1. Target Problem & Formulation Picker
           Text(
-            'SELECT PEST / PATHOGEN ISSUE',
+            provider.strings.translate('SELECT PEST / PATHOGEN ISSUE'),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -196,7 +199,7 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
                         ),
                         const SizedBox(width: 10),
                         Text(
-                          'Sprayer Tank Capacity',
+                          provider.strings.translate('Sprayer Tank Capacity'),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 13.5,
                             fontWeight: FontWeight.w700,
@@ -218,11 +221,11 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    _buildTankOption(15.0, '15L Manual', isDark),
+                    _buildTankOption(15.0, provider.strings.translate('15L Manual'), isDark),
                     const SizedBox(width: 8),
-                    _buildTankOption(16.0, '16L Knapsack', isDark),
+                    _buildTankOption(16.0, provider.strings.translate('16L Knapsack'), isDark),
                     const SizedBox(width: 8),
-                    _buildTankOption(20.0, '20L Battery', isDark),
+                    _buildTankOption(20.0, provider.strings.translate('20L Battery'), isDark),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -289,7 +292,7 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
 
           // 3. RESULTS CARDS
           Text(
-            'SPRAY SOLUTION & REFILL DOSAGE',
+            provider.strings.translate('SPRAY SOLUTION & REFILL DOSAGE'),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -303,7 +306,7 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
             children: [
               Expanded(
                 child: _buildMetricBox(
-                  label: 'Refill Tanks',
+                  label: provider.strings.translate('Refill Tanks'),
                   value: '${result.totalTanks} Tanks',
                   sub: '${result.totalWaterLiters.toStringAsFixed(0)} L solution',
                   bubbleColor: const Color(0xFFE1F5FE),
@@ -315,7 +318,7 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
               const SizedBox(width: 8),
               Expanded(
                 child: _buildMetricBox(
-                  label: 'Dose per Tank',
+                  label: provider.strings.translate('Dose per Tank'),
                   value: result.isPowder
                       ? '${result.chemicalPerTank.toStringAsFixed(1)} g'
                       : '${result.chemicalPerTank.toStringAsFixed(1)} ml',
@@ -329,11 +332,11 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
               const SizedBox(width: 8),
               Expanded(
                 child: _buildMetricBox(
-                  label: 'Total Chemical',
+                  label: provider.strings.translate('Total Chemical'),
                   value: result.isPowder
                       ? '${result.totalChemicalRequired.toStringAsFixed(0)} g'
                       : '${result.totalChemicalRequired.toStringAsFixed(0)} ml',
-                  sub: 'whole plot',
+                  sub: provider.strings.translate('whole plot'),
                   bubbleColor: const Color(0xFFFFF3E0),
                   iconColor: const Color(0xFFE65100),
                   icon: Icons.scale_rounded,
@@ -395,7 +398,7 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'Rain Safe',
+                        provider.strings.translate('Rain Safe'),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w700,

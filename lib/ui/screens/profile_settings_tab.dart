@@ -25,7 +25,7 @@ class ProfileSettingsTab extends StatelessWidget {
             children: [
               // Header
               Text(
-                'Farmer Profile & Settings',
+                provider.strings.profileFarmerSettings,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
@@ -89,7 +89,7 @@ class ProfileSettingsTab extends StatelessWidget {
 
               // Farm Location & Geolocation Settings
               Text(
-                'FARM LOCATION & GPS SYNCHRONIZATION',
+                provider.strings.farmLocation,
                 style: GoogleFonts.jetBrainsMono(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w700,
@@ -114,7 +114,7 @@ class ProfileSettingsTab extends StatelessWidget {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'EDGE GEOLOCATION // FARM PLOT',
+                            provider.strings.edgeGeo,
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
@@ -132,9 +132,7 @@ class ProfileSettingsTab extends StatelessWidget {
                               color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
                             ),
                           )
-                        else
-                          _buildBadge(context, 'AUTO-DETECTED', isDark),
-                      ],
+                        ],
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -175,7 +173,7 @@ class ProfileSettingsTab extends StatelessWidget {
                                   },
                             icon: const Icon(Icons.my_location_rounded, size: 16),
                             label: Text(
-                              provider.isFetchingLocation ? 'FETCHING LOCATION...' : 'AUTO-FETCH LOCATION',
+                              provider.isFetchingLocation ? provider.strings.fetching : provider.strings.autoFetch,
                               style: GoogleFonts.jetBrainsMono(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w700,
@@ -376,8 +374,8 @@ class ProfileSettingsTab extends StatelessWidget {
                               const SizedBox(height: 2),
                               Text(
                                 provider.farmerMobile.isNotEmpty
-                                    ? 'Account login credentials (+91 ${provider.farmerMobile})'
-                                    : 'Update local SQLite and profile credentials',
+                                    ? '${provider.strings.accountLoginCredentials} (+91 ${provider.farmerMobile})'
+                                    : provider.strings.updateLocalSqlite,
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 11,
                                   color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
@@ -652,7 +650,7 @@ class ProfileSettingsTab extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Set a new secure password for farmer account (${provider.farmerMobile.isNotEmpty ? "+91 ${provider.farmerMobile}" : provider.farmerName}).',
+                        '${provider.strings.setNewPassword} (${provider.farmerMobile.isNotEmpty ? "+91 ${provider.farmerMobile}" : provider.farmerName}).',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,

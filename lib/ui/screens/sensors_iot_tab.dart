@@ -125,7 +125,7 @@ class SensorsIotTab extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'ESP32 Live Edge Node',
+                                  provider.strings.liveEdgeNode,
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
@@ -229,7 +229,7 @@ class SensorsIotTab extends StatelessWidget {
                             },
                             icon: const Icon(Icons.network_ping_rounded, size: 15),
                             label: Text(
-                              'Ping Node',
+                              provider.strings.pingNode,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w700,
@@ -257,7 +257,7 @@ class SensorsIotTab extends StatelessWidget {
                             },
                             icon: const Icon(Icons.camera_alt_rounded, size: 15),
                             label: Text(
-                              'Capture Frame',
+                              provider.strings.captureFrame,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w700,

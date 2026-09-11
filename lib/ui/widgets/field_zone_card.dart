@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../state/farm_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 
@@ -30,6 +32,7 @@ class FieldZoneCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<FarmProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
@@ -228,9 +231,9 @@ class FieldZoneCard extends StatelessWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildMetricCol('SOIL MOISTURE', moistureLevel, AppTheme.skyBlue),
+                              _buildMetricCol(provider.strings.envSoilMoisture.toUpperCase(), moistureLevel, AppTheme.skyBlue),
                               Container(width: 1, height: 20, color: Colors.white24),
-                              _buildMetricCol('AIR TEMP', temperature, AppTheme.ambientSunlight),
+                              _buildMetricCol(provider.strings.envAirTemp.toUpperCase(), temperature, AppTheme.ambientSunlight),
                               Container(width: 1, height: 20, color: Colors.white24),
                               _buildMetricCol('HARVEST', harvestDate, AppTheme.neonMint),
                             ],

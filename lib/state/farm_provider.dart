@@ -2,6 +2,8 @@ import 'dart:typed_data';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/material.dart';
+import '../main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants/app_constants.dart';
 import '../core/localization/app_strings.dart';
@@ -46,6 +48,7 @@ class FarmProvider extends ChangeNotifier {
   SensorData _currentSensorData = SensorData.defaultInitial();
   BleConnectionState _bleState = BleConnectionState.disconnected;
   bool _isPumpLocked = false;
+  bool _hasPromptedDryness = false;
   bool _isCapturing = false;
   bool _isInferenceRunning = false;
   String? _statusMessage;
@@ -307,6 +310,21 @@ class FarmProvider extends ChangeNotifier {
 
   Future<void> togglePump() async {
     final bool nextState = !_isPumpLocked;
+    
+    if (nextState && _currentSensorData.isRaining) {
+      if (navigatorKey.currentContext != null) {
+        showDialog(
+          context: navigatorKey.currentContext!,
+          builder: (_) => AlertDialog(
+            title: const Text('Action Blocked'),
+            content: const Text('It is raining. Cannot turn pump on.'),
+            actions: [TextButton(onPressed: () => Navigator.pop(_), child: const Text('OK'))],
+          ),
+        );
+      }
+      return;
+    }
+
     final bool success = await _cameraService.setPumpState(nextState);
     if (success) {
       _isPumpLocked = nextState;

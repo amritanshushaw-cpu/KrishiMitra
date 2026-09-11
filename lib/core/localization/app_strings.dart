@@ -1,3 +1,4 @@
+import 'translation_map.dart';
 import '../../services/voice_tts_service.dart';
 
 class AppStrings {
@@ -165,4 +166,122 @@ class AppStrings {
   String get daySuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Day');
   String get scanHistoryTitle => isBengali ? '৭-দিনের স্ক্যান ইতিহাস' : (isHindi ? '7-दिन स्कैन इतिहास' : '7-Day Scan History');
   String get scanPrefix => isBengali ? 'স্ক্যান #' : (isHindi ? 'स्कैन #' : 'Scan #');
+
+  // Dashboard & Telemetry Cards
+  String get soilStatusDry => isBengali ? 'শুষ্ক' : (isHindi ? 'सूखी' : 'Dry');
+  String get soilStatusOptimal => isBengali ? 'অনুকূল' : (isHindi ? 'इष्टतम' : 'Optimal');
+  String get waterPumpControl => isBengali ? 'জল পাম্প নিয়ন্ত্রণ' : (isHindi ? 'जल पंप नियंत्रण' : 'Water Pump Control');
+  String get pumpIsOn => isBengali ? 'পাম্প চালু আছে' : (isHindi ? 'पंप चालू है' : 'Pump is ON');
+  String get pumpIsOff => isBengali ? 'পাম্প বন্ধ আছে' : (isHindi ? 'पंप बंद है' : 'Pump is OFF');
+  String get turnOn => isBengali ? 'চালু করুন' : (isHindi ? 'चालू करें' : 'TURN ON');
+  String get turnOff => isBengali ? 'বন্ধ করুন' : (isHindi ? 'बंद करें' : 'TURN OFF');
+  String get latestAdvice => isBengali ? 'সর্বশেষ পরামর্শ' : (isHindi ? 'नवीनतम सलाह' : 'Latest Advice');
+  String get diagComplete => isBengali ? 'রোগ নির্ণয় সম্পন্ন' : (isHindi ? 'निदान पूरा हुआ' : 'Diagnosis Complete');
+  
+  // Sensors Tab
+  String get liveEdgeNode => isBengali ? 'ESP32 লাইভ নোড' : (isHindi ? 'ESP32 लाइव नोड' : 'ESP32 Live Edge Node');
+  String get pingNode => isBengali ? 'পিং নোড' : (isHindi ? 'पिंग नोड' : 'Ping Node');
+  String get captureFrame => isBengali ? 'ছবি তুলুন' : (isHindi ? 'तस्वीर लें' : 'Capture Frame');
+  
+  // Tools & Calculators Hub
+  String get agronomicCalculators => isBengali ? 'কৃষি ক্যালকুলেটর' : (isHindi ? 'कृषि कैलकुलेटर' : 'Agronomic Calculators');
+  String get icarStandard => isBengali ? 'ICAR ও FAO স্ট্যান্ডার্ড ইঞ্জিন' : (isHindi ? 'ICAR और FAO मानक इंजन' : 'ICAR & FAO Standard Advisory Engine');
+  
+  // Calculator Content
+  String get selectTargetCrop => isBengali ? 'ফসল নির্বাচন করুন' : (isHindi ? 'फसल चुनें' : 'SELECT TARGET CROP');
+  String get plotSurfaceArea => isBengali ? 'প্লটের ক্ষেত্রফল' : (isHindi ? 'खेत का क्षेत्रफल' : 'Plot Surface Area');
+  String get totalFertilizer => isBengali ? 'মোট সারের প্রয়োজন' : (isHindi ? 'कुल उर्वरक की आवश्यकता' : 'TOTAL FERTILIZER REQUIRED');
+  String get subBudget => isBengali ? 'ভর্তুকি সারের বাজেট:' : (isHindi ? 'सब्सिडी उर्वरक बजट:' : 'Subsidized Fertilizer Budget:');
+  String get splitTimeline => isBengali ? 'প্রয়োগের সময়সূচী (ICAR)' : (isHindi ? 'अनुप्रयोग समयरेखा (ICAR)' : 'SPLIT APPLICATION TIMELINE (ICAR PROTOCOL)');
+  
+  // Location
+  String get farmLocation => isBengali ? 'খামারের অবস্থান' : (isHindi ? 'खेत का स्थान' : 'FARM LOCATION & GPS SYNCHRONIZATION');
+  String get edgeGeo => isBengali ? 'এজ জিওলোকেশন' : (isHindi ? 'एज जियोलोकेशन' : 'EDGE GEOLOCATION');
+  String get autoFetch => isBengali ? 'অটো-ফেচ অবস্থান' : (isHindi ? 'ऑटो-फेच स्थान' : 'AUTO-FETCH LOCATION');
+  String get fetching => isBengali ? 'অবস্থান আনা হচ্ছে...' : (isHindi ? 'स्थान प्राप्त किया जा रहा है...' : 'FETCHING LOCATION...');
+  
+  // Additional translations
+  String get bags => isBengali ? 'ব্যাগ' : (isHindi ? 'बैग' : 'Bags');
+  String get kgTotal => isBengali ? 'কেজি মোট' : (isHindi ? 'किलो कुल' : 'kg total');
+
+  // Weather Status Bar & Environment
+  String get envOverview => isBengali ? 'খামার পরিবেশ' : (isHindi ? 'खेत का वातावरण' : 'FARM ENVIRONMENT OVERVIEW');
+  String get envSoilMoisture => isBengali ? 'মাটির আর্দ্রতা' : (isHindi ? 'मिट्टी की नमी' : 'Soil Moisture');
+  String get envAirTemp => isBengali ? 'বায়ুর তাপমাত্রা' : (isHindi ? 'हवा का तापमान' : 'Air Temp');
+  String get envHumidity => isBengali ? 'আর্দ্রতা' : (isHindi ? 'नमी' : 'Humidity');
+  String get envRainSky => isBengali ? 'বৃষ্টি / আকাশ' : (isHindi ? 'बारिश / आसमान' : 'Rain / Sky');
+  
+  String get envDryAlert => isBengali ? 'শুষ্ক সতর্কতা' : (isHindi ? 'सूखा अलर्ट' : 'Dry Alert');
+  String get envSaturated => isBengali ? 'সম্পৃক্ত' : (isHindi ? 'संतृप्त' : 'Saturated');
+  String get envOptimal => isBengali ? 'অনুকূল' : (isHindi ? 'इष्टतम' : 'Optimal');
+  String get envPrecipitation => isBengali ? 'বৃষ্টিপাত' : (isHindi ? 'बारिश' : 'Precipitation');
+  String get envClearSky => isBengali ? 'পরিষ্কার আকাশ' : (isHindi ? 'साफ आसमान' : 'Clear Sky');
+  String get envThermalStress => isBengali ? 'তাপীয় চাপ' : (isHindi ? 'थर्मल स्ट्रेस' : 'Thermal Stress');
+  String get envDaytime => isBengali ? 'দিনের বেলা' : (isHindi ? 'दिन का समय' : 'Daytime');
+  String get envNightCycle => isBengali ? 'রাতের চক্র' : (isHindi ? 'रात का चक्र' : 'Night Cycle');
+
+  // Calculator Constants
+  String get calcAreaLabel => isBengali ? 'ক্ষেত্রফল:' : (isHindi ? 'क्षेत्रफल:' : 'Area:');
+  String get calcIcarNpk => isBengali ? 'ICAR NPK:' : (isHindi ? 'ICAR NPK:' : 'ICAR NPK:');
+  String get calcDapUreaMop => isBengali ? 'ড্যাপ + ইউরিয়া + এমওপি' : (isHindi ? 'डीएपी + यूरिया + एमओपी' : 'DAP + Urea + MOP');
+  String get calcSspUreaMop => isBengali ? 'এসএসপি + ইউরিয়া + এমওপি' : (isHindi ? 'एसएसपी + यूरिया + एमओपी' : 'SSP + Urea + MOP');
+  String get calcCommonStd => isBengali ? 'সাধারণ স্ট্যান্ডার্ড' : (isHindi ? 'सामान्य मानक' : 'Common Standard');
+  String get calcSulfurFort => isBengali ? 'সালফার ফর্টিফাইড' : (isHindi ? 'सल्फर फोर्टिफाइड' : 'Sulfur Fortified');
+  
+  String get calcUreaL => isBengali ? 'ইউরিয়া (৪৬% N)' : (isHindi ? 'यूरिया (46% N)' : 'Urea (46% N)');
+  String get calcDapL => isBengali ? 'ড্যাপ (P+N)' : (isHindi ? 'डीएपी (P+N)' : 'DAP (P+N)');
+  String get calcSspL => isBengali ? 'এসএসপি (১৬% P)' : (isHindi ? 'एसएसपी (16% P)' : 'SSP (16% P)');
+  String get calcMopL => isBengali ? 'এমওপি (৬০% K)' : (isHindi ? 'एमओपी (60% K)' : 'MOP (60% K)');
+  
+  String get calcStage1 => isBengali ? 'পর্যায় ১ - বেসাল প্রয়োগ' : (isHindi ? 'चरण 1 - बेसल अनुप्रयोग' : 'Stage 1 — Basal Application');
+  String get calcTiming1 => isBengali ? 'রোপণ বা জমি তৈরির সময়' : (isHindi ? 'रोपाई या जमीन की तैयारी के समय' : 'At transplanting or final land tilling');
+  String get calcStage2 => isBengali ? 'পর্যায় ২ - ভেজিটেটিভ টপ-ড্রেসিং' : (isHindi ? 'चरण 2 - वनस्पति टॉप-ड्रेसिंग' : 'Stage 2 — Vegetative Top-Dressing');
+  String get calcTiming2 => isBengali ? 'রোপণের ২১-২৫ দিন পর (টিলারিং)' : (isHindi ? 'रोपाई के 21-25 दिन बाद (टिलरिंग)' : '21 to 25 days after planting (Tillering)');
+  String get calcStage3 => isBengali ? 'পর্যায় ৩ - ফুল / প্যানিকেল' : (isHindi ? 'चरण 3 - फूल / पैनिकल' : 'Stage 3 — Flowering / Panicle Stage');
+  String get calcTiming3 => isBengali ? '৪৫-৫০ দিন পর' : (isHindi ? '45-50 दिन बाद' : '45 to 50 days (Flower bud & grain fill)');
+
+  // Diagnosis Detail Screen (Output Window)
+  String get diagOverview => isBengali ? 'ওভারভিউ' : (isHindi ? 'अवलोकन' : 'OVERVIEW');
+  String get diagTreatment => isBengali ? 'চিকিৎসা পরিকল্পনা' : (isHindi ? 'उपचार योजना' : 'TREATMENT PLAN');
+  String get diagOrganic => isBengali ? 'জৈব' : (isHindi ? 'जैविक' : 'Organic');
+  String get diagChemical => isBengali ? 'রাসায়নিক' : (isHindi ? 'रासायनिक' : 'Chemical');
+  String get diagDisease => isBengali ? 'রোগের বিবরণ' : (isHindi ? 'रोग का विवरण' : 'DISEASE DETAILS');
+  String get diagSymptoms => isBengali ? 'লক্ষণ' : (isHindi ? 'लक्षण' : 'Symptoms');
+  String get diagPumpInterlock => isBengali ? 'পাম্প ইন্টারলক' : (isHindi ? 'पंप इंटरलॉक' : 'PUMP INTERLOCK');
+  String get diagSprayOverride => isBengali ? 'স্প্রে ওভাররাইড সক্রিয়' : (isHindi ? 'स्प्रे ओवरराइड सक्रिय' : 'SPRAY OVERRIDE ACTIVE');
+
+  // Calculator New Strings
+  String get calcSelectCrop => isBengali ? 'লক্ষ্য ফসল নির্বাচন করুন' : (isHindi ? 'लक्ष्य फसल चुनें' : 'SELECT TARGET CROP');
+  String get calcRecoveryPlan => isBengali ? 'রোগ নিরাময় পরিকল্পনা' : (isHindi ? 'रोग रिकवरी योजना' : 'Disease Recovery Plan');
+  String get calcCureGuide => isBengali ? 'নিরাময় গাইড' : (isHindi ? 'इलाज गाइड' : 'CURE & RECOVERY GUIDE');
+  String get calcStepPlan => isBengali ? 'ধাপে ধাপে পরিকল্পনা' : (isHindi ? 'चरण-दर-चरण योजना' : 'STEP-BY-STEP PLAN');
+  String get calcAppProtocol => isBengali ? 'প্রয়োগের সময়সূচী' : (isHindi ? 'अनुप्रयोग समयरेखा' : 'FIELD APPLICATION SCHEDULE');
+  String get calcSubBudget => isBengali ? 'ভর্তুকি সারের বাজেট:' : (isHindi ? 'सब्सिडी उर्वरक बजट:' : 'Subsidized Fertilizer Budget:');
+
+  // Missing translations for Profile Settings and Health Ring
+  String get profileFarmerSettings => isBengali ? 'কৃষক প্রোফাইল এবং সেটিংস' : (isHindi ? 'किसान प्रोफ़ाइल और सेटिंग्स' : 'Farmer Profile & Settings');
+  String get ringSoil => isBengali ? 'মাটি' : (isHindi ? 'मिट्टी' : 'Soil');
+  String get ringMoist => isBengali ? 'আর্দ্র' : (isHindi ? 'नम' : 'Moist');
+
+  // Profile Login Strings
+  String get accountLoginCredentials => isBengali ? 'অ্যাকাউন্ট লগইন শংসাপত্র' : (isHindi ? 'खाता लॉगिन क्रेडेंशियल' : 'Account login credentials');
+  String get updateLocalSqlite => isBengali ? 'স্থানীয় SQLite এবং প্রোফাইল শংসাপত্র আপডেট করুন' : (isHindi ? 'स्थानीय SQLite और प्रोफ़ाइल क्रेडेंशियल अपडेट करें' : 'Update local SQLite and profile credentials');
+  String get setNewPassword => isBengali ? 'কৃষক অ্যাকাউন্টের জন্য একটি নতুন সুরক্ষিত পাসওয়ার্ড সেট করুন' : (isHindi ? 'किसान खाते के लिए एक नया सुरक्षित पासवर्ड सेट करें' : 'Set a new secure password for farmer account');
+
+  // Health Ring Statuses
+  String get healthThriving => isBengali ? '🌿 সমৃদ্ধশালী এবং সুস্থ' : (isHindi ? '🌿 संपन्न और स्वस्थ' : '🌿 Thriving & Healthy');
+  String get healthAttention => isBengali ? '⚠️ মনোযোগ প্রয়োজন' : (isHindi ? '⚠️ ध्यान देने की आवश्यकता है' : '⚠️ Attention Needed');
+
+  String translate(String text) {
+    if (isBengali) return bengaliTranslationMap[text] ?? text;
+    if (isHindi) return hindiTranslationMap[text] ?? text;
+    return text;
+  }
 }
+
+
+
+
+
+
+

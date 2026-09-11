@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../state/farm_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/agri_calculator_service.dart';
@@ -45,6 +47,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<FarmProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final result = AgriCalculatorService.calculateEconomics(
@@ -67,7 +70,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
         children: [
           // 1. Crop Selection Pills
           Text(
-            'SELECT CROP ENTERPRISE',
+            provider.strings.translate('SELECT CROP ENTERPRISE'),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -140,7 +143,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Expected Harvest Yield',
+                      provider.strings.translate('Expected Harvest Yield'),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w700,
@@ -178,7 +181,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Market Selling Price',
+                      provider.strings.translate('Market Selling Price'),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w700,
@@ -216,7 +219,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Cultivated Area',
+                      provider.strings.translate('Cultivated Area'),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 13.5,
                         fontWeight: FontWeight.w700,
@@ -295,7 +298,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
               children: [
                 ListTile(
                   title: Text(
-                    'Input Costs Breakdown',
+                    provider.strings.translate('Input Costs Breakdown'),
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
@@ -321,12 +324,12 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       children: [
-                        _buildCostRow('Seeds / Seedlings', _seedsCost, (v) => setState(() => _seedsCost = v)),
-                        _buildCostRow('Tillage & Land Prep', _tillageCost, (v) => setState(() => _tillageCost = v)),
-                        _buildCostRow('Fertilizers & Manure', _fertilizerCost, (v) => setState(() => _fertilizerCost = v)),
-                        _buildCostRow('Crop Protection / Sprays', _pesticideCost, (v) => setState(() => _pesticideCost = v)),
-                        _buildCostRow('Irrigation & Fuel/Power', _irrigationCost, (v) => setState(() => _irrigationCost = v)),
-                        _buildCostRow('Labor & Harvesting', _laborCost, (v) => setState(() => _laborCost = v)),
+                        _buildCostRow(provider.strings.translate('Seeds / Seedlings'), _seedsCost, (v) => setState(() => _seedsCost = v)),
+                        _buildCostRow(provider.strings.translate('Tillage & Land Prep'), _tillageCost, (v) => setState(() => _tillageCost = v)),
+                        _buildCostRow(provider.strings.translate('Fertilizers & Manure'), _fertilizerCost, (v) => setState(() => _fertilizerCost = v)),
+                        _buildCostRow(provider.strings.translate('Crop Protection / Sprays'), _pesticideCost, (v) => setState(() => _pesticideCost = v)),
+                        _buildCostRow(provider.strings.translate('Irrigation & Fuel/Power'), _irrigationCost, (v) => setState(() => _irrigationCost = v)),
+                        _buildCostRow(provider.strings.translate('Labor & Harvesting'), _laborCost, (v) => setState(() => _laborCost = v)),
                       ],
                     ),
                   ),
@@ -338,7 +341,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
 
           // 4. KEY ECONOMIC METRICS
           Text(
-            'PROFITABILITY & NO-LOSS ANALYSIS',
+            provider.strings.translate('PROFITABILITY & NO-LOSS ANALYSIS'),
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -354,13 +357,13 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
               // No-Loss Price
               Expanded(
                 child: _buildDecisionCard(
-                  title: 'No-Loss Price',
+                  title: provider.strings.translate('No-Loss Price'),
                   value: '₹${result.noLossPricePerQuintal.toStringAsFixed(0)}',
-                  subtitle: 'per quintal minimum',
+                  subtitle: provider.strings.translate('per quintal minimum'),
                   icon: Icons.price_check_rounded,
                   bubbleColor: const Color(0xFFFFF3E0),
                   iconColor: const Color(0xFFE65100),
-                  badgeText: 'BREAK-EVEN',
+                  badgeText: provider.strings.translate('BREAK-EVEN'),
                   badgeColor: const Color(0xFFFF9800),
                   isDark: isDark,
                 ),
@@ -369,13 +372,13 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
               // Break-Even Yield
               Expanded(
                 child: _buildDecisionCard(
-                  title: 'Required Yield',
+                  title: provider.strings.translate('Required Yield'),
                   value: '${result.breakEvenYieldQuintals.toStringAsFixed(1)} Q',
-                  subtitle: 'to recover costs',
+                  subtitle: provider.strings.translate('to recover costs'),
                   icon: Icons.balance_rounded,
                   bubbleColor: const Color(0xFFE1F5FE),
                   iconColor: const Color(0xFF0288D1),
-                  badgeText: 'MIN HARVEST',
+                  badgeText: provider.strings.translate('MIN HARVEST'),
                   badgeColor: const Color(0xFF0288D1),
                   isDark: isDark,
                 ),
@@ -389,13 +392,13 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
               // Maximum Input Budget
               Expanded(
                 child: _buildDecisionCard(
-                  title: 'Input Budget',
+                  title: provider.strings.translate('Input Budget'),
                   value: '₹${result.totalInputBudget.toStringAsFixed(0)}',
-                  subtitle: 'total expenditures',
+                  subtitle: provider.strings.translate('total expenditures'),
                   icon: Icons.account_balance_wallet_rounded,
                   bubbleColor: const Color(0xFFEDE7F6),
                   iconColor: const Color(0xFF5E35B1),
-                  badgeText: 'COSTS',
+                  badgeText: provider.strings.translate('COSTS'),
                   badgeColor: const Color(0xFF5E35B1),
                   isDark: isDark,
                 ),
@@ -404,7 +407,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
               // Estimated Net Profit
               Expanded(
                 child: _buildDecisionCard(
-                  title: 'Estimated Profit',
+                  title: provider.strings.translate('Estimated Profit'),
                   value: '₹${result.estimatedNetProfit.toStringAsFixed(0)}',
                   subtitle: '${result.profitMarginPct.toStringAsFixed(1)}% margin',
                   icon: Icons.trending_up_rounded,
@@ -449,7 +452,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
                       Text(
                         result.isProfitable
                             ? 'Profitable Enterprise (${result.profitMarginPct.toStringAsFixed(1)}% Profit Margin)'
-                            : 'Loss Alert: Current market price does not cover input costs!',
+                            : provider.strings.translate('Loss Alert: Current market price does not cover input costs!'),
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w700,
@@ -567,6 +570,7 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
   }
 
   Widget _buildCostRow(String title, double cost, ValueChanged<double> onChanged) {
+    final provider = context.watch<FarmProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),

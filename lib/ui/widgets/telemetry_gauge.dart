@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/sensor_data.dart';
+import 'package:provider/provider.dart';
+import '../../state/farm_provider.dart';
 import '../../services/ble_service.dart';
 import 'app_glass_container.dart';
 import 'diagonal_rain_overlay.dart';
@@ -23,6 +25,7 @@ class TelemetryGauge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<FarmProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppGlassContainer(
@@ -69,7 +72,7 @@ class TelemetryGauge extends StatelessWidget {
               Expanded(
                 child: _buildMetricTile(
                   context,
-                  label: 'Air Temp',
+                  label: provider.strings.envAirTemp,
                   value: '${data.temperature.toStringAsFixed(1)}°C',
                   subtext: data.temperature > 35 ? 'High' : 'Optimal',
                   icon: Icons.thermostat_rounded,
@@ -85,7 +88,7 @@ class TelemetryGauge extends StatelessWidget {
               Expanded(
                 child: _buildMetricTile(
                   context,
-                  label: 'Air Humidity',
+                  label: provider.strings.envHumidity,
                   value: '${data.humidity.toStringAsFixed(1)}%',
                   subtext: data.humidity > 80
                       ? 'Humid'
@@ -108,7 +111,7 @@ class TelemetryGauge extends StatelessWidget {
               Expanded(
                 child: _buildMetricTile(
                   context,
-                  label: 'Soil Moisture',
+                  label: provider.strings.envSoilMoisture,
                   value: '${data.soilMoisture}%',
                   subtext: data.isSoilCriticallyDry
                       ? 'Dry'
@@ -133,7 +136,7 @@ class TelemetryGauge extends StatelessWidget {
                     borderRadius: BorderRadius.circular(16),
                     child: _buildMetricTile(
                       context,
-                      label: 'Precipitation',
+                      label: provider.strings.envPrecipitation,
                       value: data.isRaining ? 'Rain' : 'Dry',
                       subtext: data.isRaining ? 'Active (Tap)' : 'Clear (Tap)',
                       icon: data.isRaining ? Icons.thunderstorm_rounded : Icons.wb_sunny_rounded,

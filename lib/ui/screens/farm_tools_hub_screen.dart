@@ -25,19 +25,19 @@ class FarmToolsHubScreen extends StatefulWidget {
 class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  static const List<Map<String, dynamic>> _tabs = [
-    {'title': 'Fertilizer', 'icon': Icons.spa_outlined},
-    {'title': 'Spray Tank', 'icon': Icons.sanitizer_outlined},
-    {'title': 'Economics', 'icon': Icons.trending_up_rounded},
+  List<Map<String, dynamic>> _getTabs(BuildContext context) => [
+    {'title': context.watch<FarmProvider>().strings.translate('Fertilizer'), 'icon': Icons.spa_outlined},
+    {'title': context.watch<FarmProvider>().strings.translate('Spray Tank'), 'icon': Icons.sanitizer_outlined},
+    {'title': context.watch<FarmProvider>().strings.translate('Economics'), 'icon': Icons.trending_up_rounded},
   ];
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(
-      length: _tabs.length,
+      length: 3,
       vsync: this,
-      initialIndex: widget.initialTabIndex.clamp(0, _tabs.length - 1),
+      initialIndex: widget.initialTabIndex.clamp(0, 2),
     );
   }
 
@@ -99,7 +99,7 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Agronomic Calculators',
+                  context.read<FarmProvider>().strings.agronomicCalculators,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
@@ -108,7 +108,7 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
                   ),
                 ),
                 Text(
-                  'ICAR & FAO Standard Advisory Engine',
+                  context.read<FarmProvider>().strings.icarStandard,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 11,
                     color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
@@ -166,7 +166,7 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
                           fontSize: 11.5,
                           fontWeight: FontWeight.w600,
                         ),
-                        tabs: _tabs.map((tab) {
+                        tabs: _getTabs(context).map((tab) {
                           return Tab(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
