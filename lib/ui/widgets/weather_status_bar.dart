@@ -45,12 +45,12 @@ class WeatherStatusBar extends StatelessWidget {
     final rainStatus = sensorData.isRaining ? 'Precipitation' : 'Clear Sky';
 
     final isOverheated = sensorData.temperature > 35.0;
-    final tempColor = isOverheated ? const Color(0xFFFF3B30) : AppTheme.ambientSunlight;
+    final tempColor = isOverheated ? AppTheme.amberWarning : AppTheme.ambientSunlight;
     final tempStatus = isOverheated
-        ? 'Heat Stress'
+        ? 'Thermal Stress'
         : ((DateTime.now().hour >= 5 && DateTime.now().hour < 18) ? 'Daytime' : 'Night Cycle');
     final tempIcon = isOverheated
-        ? Icons.local_fire_department_rounded
+        ? Icons.wb_sunny_rounded
         : ((DateTime.now().hour >= 5 && DateTime.now().hour < 18)
             ? Icons.wb_sunny_rounded
             : Icons.nightlight_round);
@@ -243,7 +243,7 @@ class WeatherStatusBar extends StatelessWidget {
                   color: isRaining
                       ? AppTheme.skyBlue.withValues(alpha: 0.22)
                       : (isOverheated
-                          ? const Color(0xFFFF3B30).withValues(alpha: 0.22)
+                          ? accentColor.withValues(alpha: 0.20)
                           : accentColor.withValues(alpha: 0.12)),
                   borderRadius: BorderRadius.circular(6),
                   border: isRaining
@@ -253,7 +253,7 @@ class WeatherStatusBar extends StatelessWidget {
                         )
                       : (isOverheated
                           ? Border.all(
-                              color: const Color(0xFFFF3B30).withValues(alpha: 0.50),
+                              color: accentColor.withValues(alpha: 0.45),
                               width: 0.8,
                             )
                           : null),
@@ -269,10 +269,10 @@ class WeatherStatusBar extends StatelessWidget {
                       ),
                       const SizedBox(width: 3),
                     ] else if (isOverheated) ...[
-                      const Icon(
-                        Icons.local_fire_department,
+                      Icon(
+                        Icons.wb_sunny_rounded,
                         size: 9.5,
-                        color: Color(0xFFFF3B30),
+                        color: accentColor,
                       ),
                       const SizedBox(width: 3),
                     ],
@@ -281,9 +281,7 @@ class WeatherStatusBar extends StatelessWidget {
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 8.5,
                         fontWeight: FontWeight.w700,
-                        color: isRaining
-                            ? AppTheme.skyBlue
-                            : (isOverheated ? const Color(0xFFFF3B30) : accentColor),
+                        color: isRaining ? AppTheme.skyBlue : accentColor,
                       ),
                     ),
                   ],

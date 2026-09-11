@@ -215,25 +215,25 @@ class TelemetryGauge extends StatelessWidget {
 
     final Color badgeColor = isDark
         ? (isOverheated
-            ? const Color(0xFFFF3B30)
+            ? AppTheme.amberWarning
             : (isWarning ? AppTheme.amberWarning : AppTheme.neonMint))
         : (isOverheated
-            ? const Color(0xFFDC2626)
+            ? const Color(0xFFB45309)
             : (isWarning ? const Color(0xFFB45309) : const Color(0xFF193E32)));
 
     final Color badgeBg = isDark
         ? (isOverheated
-            ? const Color(0xFFFF3B30).withValues(alpha: 0.22)
+            ? AppTheme.amberWarning.withValues(alpha: 0.22)
             : (isWarning
                 ? AppTheme.amberWarning.withValues(alpha: 0.18)
                 : AppTheme.neonMint.withValues(alpha: 0.18)))
         : (isOverheated
-            ? const Color(0xFFFEE2E2)
+            ? const Color(0xFFFEF3C7)
             : (isWarning ? const Color(0xFFFEF3C7) : const Color(0xFFE8F5EE)));
 
     final Color badgeBorder = isDark
         ? (isOverheated
-            ? const Color(0xFFFF3B30).withValues(alpha: 0.45)
+            ? AppTheme.amberWarning.withValues(alpha: 0.45)
             : (isWarning
                 ? AppTheme.amberWarning.withValues(alpha: 0.35)
                 : AppTheme.neonMint.withValues(alpha: 0.35)))
@@ -245,18 +245,16 @@ class TelemetryGauge extends StatelessWidget {
         color: isDark
             ? (isRaining
                 ? const Color(0xFF0F263B).withValues(alpha: 0.90)
-                : (isOverheated
-                    ? const Color(0xFF2A0B0B).withValues(alpha: 0.90)
-                    : AppTheme.darkSurfaceElevated.withValues(alpha: 0.85)))
+                : AppTheme.darkSurfaceElevated.withValues(alpha: 0.85))
             : (isRaining
                 ? const Color(0xFFEDF7FF)
-                : (isOverheated ? const Color(0xFFFFF1F2) : const Color(0xFFF9FBF9))),
+                : (isOverheated ? const Color(0xFFFFFBEB) : const Color(0xFFF9FBF9))),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isRaining
               ? AppTheme.skyBlue.withValues(alpha: 0.50)
               : (isOverheated
-                  ? const Color(0xFFFF3B30).withValues(alpha: 0.55)
+                  ? AppTheme.amberWarning.withValues(alpha: 0.50)
                   : (isDark
                       ? const Color(0xFFFFFFFF).withValues(alpha: 0.10)
                       : const Color(0xFFE3EDE5))),
