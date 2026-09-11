@@ -66,7 +66,7 @@ class HistoryLogTab extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  'Select Duration',
+                  context.read<FarmProvider>().strings.selectDuration,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -124,7 +124,7 @@ class HistoryLogTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              provider.strings.historyTitle,
+              context.read<FarmProvider>().strings.historyTitle,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
@@ -133,7 +133,7 @@ class HistoryLogTab extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Real-time ESP32 sensor captures and AI advisory records.',
+              context.read<FarmProvider>().strings.historyDesc,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
@@ -173,13 +173,13 @@ class HistoryLogTab extends StatelessWidget {
                                 headingRowColor: WidgetStateProperty.all(
                                   (isDark ? AppTheme.deepPine : AppTheme.mintDew).withValues(alpha: 0.5),
                                 ),
-                                columns: const [
-                                  DataColumn(label: Text('Date', style: TextStyle(fontWeight: FontWeight.bold))),
-                                  DataColumn(label: Text('Time', style: TextStyle(fontWeight: FontWeight.bold))),
-                                  DataColumn(label: Text('Temp (°C)', style: TextStyle(fontWeight: FontWeight.bold))),
-                                  DataColumn(label: Text('Humidity (%)', style: TextStyle(fontWeight: FontWeight.bold))),
-                                  DataColumn(label: Text('Soil Moisture', style: TextStyle(fontWeight: FontWeight.bold))),
-                                  DataColumn(label: Text('Advice Generated', style: TextStyle(fontWeight: FontWeight.bold))),
+                                columns: [
+                                  DataColumn(label: Text(provider.strings.colDate, style: TextStyle(fontWeight: FontWeight.bold))),
+                                  DataColumn(label: Text(provider.strings.colTime, style: TextStyle(fontWeight: FontWeight.bold))),
+                                  DataColumn(label: Text(provider.strings.colTemp, style: TextStyle(fontWeight: FontWeight.bold))),
+                                  DataColumn(label: Text(provider.strings.colHumidity, style: TextStyle(fontWeight: FontWeight.bold))),
+                                  DataColumn(label: Text(provider.strings.colSoil, style: TextStyle(fontWeight: FontWeight.bold))),
+                                  DataColumn(label: Text(provider.strings.colAdvice, style: TextStyle(fontWeight: FontWeight.bold))),
                                 ],
                                 rows: logs.map((log) {
                                   return DataRow(
@@ -208,7 +208,7 @@ class HistoryLogTab extends StatelessWidget {
                                   padding: const EdgeInsets.all(32.0),
                                   child: Center(
                                     child: Text(
-                                      'No logs yet. ESP32 data will appear here.',
+                                      provider.strings.noLogsYet,
                                       style: GoogleFonts.plusJakartaSans(
                                         color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
                                       ),
@@ -252,7 +252,7 @@ class HistoryLogTab extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Download History (TXT)',
+                      provider.strings.downloadHistoryBtn,
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,

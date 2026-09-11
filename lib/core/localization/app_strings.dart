@@ -22,7 +22,7 @@ class AppStrings {
 
   // App Bar & Global
   String get appTitle => 'KrishiMitra AI';
-  String get offlineTag => isBengali ? '১০০% অফলাইন' : (isHindi ? '१००% ऑफलाइन' : '100% OFFLINE');
+  String get offlineTag => isBengali ? '১০০% অফলাইন' : (isHindi ? '১০০% ऑफलाइन' : '100% OFFLINE');
 
   // Home Screen
   String get greetingFarmer => getGreetingFarmer();
@@ -66,7 +66,7 @@ class AppStrings {
   String get environmentOverview => isBengali ? 'খামারের পরিবেশ পরিস্থিতি' : (isHindi ? 'खेत पर्यावरण विवरण' : 'FARM ENVIRONMENT OVERVIEW');
 
   // Scan & Diagnostics Screen
-  String get cropDiagnostics => isBengali ? 'এআই ফসল রোগ নির্ণয়' : (isHindi ? 'एआई फसल रोग निदान' : 'AI Crop Diagnostics');
+  String get cropDiagnostics => isBengali ? 'এআই ফসল রোগ নির্ণয়' : (isHindi ? 'এআই फसल रोग निदान' : 'AI Crop Diagnostics');
   String get cropDiagSubtitle => isBengali
       ? '১০০% অফলাইন অন-ডিভাইস টিএফ-লাইট মডেল'
       : (isHindi ? '100% ऑफलाइन ऑन-डिवाइस टीएफ-लाइट मॉडल' : '100% Offline Neural Inference via Edge TFLite');
@@ -85,12 +85,12 @@ class AppStrings {
   String get awaitLeafScanSub => isBengali
       ? 'রোগ নির্ণয় ও প্রতিকার দেখতে "পাতা তুলুন" বা "নমুনা পাতা" চাপুন।'
       : (isHindi
-          ? 'रोग निदान और उपचार देखने के लिए "पत्ती कैप्चर करें" या "डेमो पत्ती" दबाएं।'
+          ? 'রোগ निदान और उपचार देखने के लिए "पत्ती कैप्चर करें" या "डेमो पत्ती" दबाएं।'
           : 'Tap "CAPTURE LEAF" or "DEMO ASSET" to run local neural inference and generate disease remedies.');
   String get confidence => isBengali ? 'নিশ্চিততা' : (isHindi ? 'सटीकता' : 'CONFIDENCE');
 
   // Text-to-Voice
-  String get ttsTitle => isBengali ? 'টেক্সট টু ভয়েস (পরামর্শ)' : (isHindi ? 'टेक्स्ट टू वॉयस (सलाह)' : 'TEXT TO VOICE (TTS)');
+  String get ttsTitle => isBengali ? 'টেক্সট টু ভয়েস (পরামর্শ)' : (isHindi ? 'টেক্সট টু वॉयस (सलाह)' : 'TEXT TO VOICE (TTS)');
   String get ttsSubtitle => isBengali
       ? 'কৃষকদের জন্য আঞ্চলিক মৌখিক পরামর্শ'
       : (isHindi ? 'किसानों के लिए क्षेत्रीय मौखिक सलाह' : 'ICAR/FAO oral advisory for regional farmers');
@@ -139,7 +139,7 @@ class AppStrings {
   String get updatePasswordBtn => isBengali ? 'পাসওয়ার্ড আপডেট করুন' : (isHindi ? 'पासवर्ड अपडेट करें' : 'UPDATE PASSWORD');
 
   // Dashboard & Cockpit
-  String get cockpitTitle => isBengali ? 'ডেটা এবং বৃদ্ধি // ককপিট' : (isHindi ? 'डेटा और विकास // कॉकपिट' : 'DATA MEETS GROWTH // COCKPIT');
+  String get cockpitTitle => isBengali ? 'ডেটা এবং বৃদ্ধি // ককপিট' : (isHindi ? 'ডेटा और विकास // कॉकपिट' : 'DATA MEETS GROWTH // COCKPIT');
   String get interactive => isBengali ? 'ইন্টারেক্টিভ' : (isHindi ? 'इंटरएक्टिव' : 'INTERACTIVE');
   String get cockpitDesc => isBengali ? 'অ্যানিমেটেড মাটির আর্দ্রতা গ্রাফ এবং জলবায়ু গেজ।' : (isHindi ? 'एनिमेटेड मिट्टी की नमी ग्राफ और जलवायु गेज।' : 'Interactive animated Soil Wave area graphs, ClimateIQ 180A rainbow arc gauge.');
   String get openCockpit => isBengali ? 'ককপিট খুলুন' : (isHindi ? 'कॉकपिट खोलें' : 'Open Cockpit & Research Hub');
@@ -148,4 +148,21 @@ class AppStrings {
   String get cropScore => isBengali ? 'ফসল স্কোর' : (isHindi ? 'फसल स्कोर' : 'CROP SCORE');
   String get overallHealth => isBengali ? 'সার্বিক খামার স্বাস্থ্য সূচক' : (isHindi ? 'समग्र खेत स्वास्थ्य सूचकांक' : 'Overall Farm Health Index');
   String get safetyNetSub => isBengali ? 'অফলাইন রোগ নির্ণয় পরীক্ষার জন্য উচ্চ-মানের পাতার ছবি লোড করুন।' : (isHindi ? 'ऑफ़लाइन रोग निदान परीक्षण के लिए उच्च-गुणवत्ता वाली पत्ती की छवियां लोड करें।' : 'Instantly inject high-res leaf assets to test offline neural diagnosis without requiring live ESP32 camera Wi-Fi.');
+
+  // History Logs & Headers
+  String get colDate => isBengali ? 'তারিখ' : (isHindi ? 'तारीख' : 'Date');
+  String get colTime => isBengali ? 'সময়' : (isHindi ? 'समय' : 'Time');
+  String get colTemp => isBengali ? 'তাপমাত্রা (°C)' : (isHindi ? 'तापमान (°C)' : 'Temp (°C)');
+  String get colHumidity => isBengali ? 'আর্দ্রতা (%)' : (isHindi ? 'नमी (%)' : 'Humidity (%)');
+  String get colSoil => isBengali ? 'মাটির আর্দ্রতা' : (isHindi ? 'मिट्टी की नमी' : 'Soil Moisture');
+  String get colAdvice => isBengali ? 'উত্পাদিত পরামর্শ' : (isHindi ? 'उत्पन्न सलाह' : 'Advice Generated');
+  String get noLogsYet => isBengali ? 'এখনও কোনো ডেটা নেই। ESP32 ডেটা এখানে আসবে।' : (isHindi ? 'अभी कोई डेटा नहीं। ESP32 डेटा यहाँ आएगा।' : 'No logs yet. ESP32 data will appear here.');
+  String get historyDesc => isBengali ? 'রিয়েল-টাইম ESP32 সেন্সর ক্যাপচার এবং এআই পরামর্শ রেকর্ড।' : (isHindi ? 'रियल-टाइम ESP32 सेंसर कैप्चर और एআই सलाह रिकॉर्ड।' : 'Real-time ESP32 sensor captures and AI advisory records.');
+  String get downloadHistoryBtn => isBengali ? 'ইতিহাস ডাউনলোড করুন (TXT)' : (isHindi ? 'इतिहास डाउनलोड करें (TXT)' : 'Download History (TXT)');
+  String get selectDuration => isBengali ? 'সময়কাল নির্বাচন করুন' : (isHindi ? 'अवधि चुनें' : 'Select Duration');
+  String get daysPrefix => isBengali ? 'শেষ' : (isHindi ? 'पिछले' : 'Last');
+  String get daysSuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Days');
+  String get daySuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Day');
+  String get scanHistoryTitle => isBengali ? '৭-দিনের স্ক্যান ইতিহাস' : (isHindi ? '7-दिन स्कैन इतिहास' : '7-Day Scan History');
+  String get scanPrefix => isBengali ? 'স্ক্যান #' : (isHindi ? 'स्कैन #' : 'Scan #');
 }
