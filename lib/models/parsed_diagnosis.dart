@@ -236,7 +236,7 @@ class ParsedDiagnosis {
     if (lower.contains('leaf blast')) return 'পাতা ঝলসানো / ব্লাস্ট (Leaf Blast)';
     if (lower.contains('brown spot')) return 'বাদামি দাগ (Brown Spot)';
     if (lower.contains('leaf mold')) return 'পাতা পচা (Leaf Mold)';
-    if (lower.contains('curl virus')) return 'পাতা কোঁকড়ানো (Yellow Leaf Curl)';
+    if (lower.contains('curl')) return 'পাতা কোঁকড়ানো (Yellow Leaf Curl)';
     if (lower.contains('mosaic')) return 'মোজাইক ভাইরাস (Mosaic Virus)';
     if (lower.contains('bacterial blight')) return 'ব্যাকটেরিয়াজনিত পাতা পোড়া (Bacterial Blight)';
     if (lower.contains('hispa')) return 'পামরি পোকা (Stem Hispa)';
@@ -250,7 +250,7 @@ class ParsedDiagnosis {
     if (lower.contains('leaf blast')) return 'पत्ती झुलसा (Leaf Blast)';
     if (lower.contains('brown spot')) return 'भूरा धब्बा (Brown Spot)';
     if (lower.contains('leaf mold')) return 'पत्ती फफूंदी (Leaf Mold)';
-    if (lower.contains('curl virus')) return 'पत्ती मरोड़ (Leaf Curl)';
+    if (lower.contains('curl')) return 'पत्ती मरोड़ (Leaf Curl)';
     if (lower.contains('mosaic')) return 'मोज़ेक वायरस (Mosaic)';
     if (lower.contains('bacterial blight')) return 'जीवाणु झुलसा (Bacterial Blight)';
     if (lower.contains('hispa')) return 'हिसपा कीट (Hispa)';

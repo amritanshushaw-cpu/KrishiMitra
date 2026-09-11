@@ -323,6 +323,20 @@
       "chemical_treatment_en": "No cure for viral infection; control whitefly vector using Spiromesifen 22.9% SC @ 1ml/L or Imidacloprid @ 0.5ml/L.",
       "chemical_treatment_bn": "ভাইরাসের সরাসরি ওষুধ নেই; বাহক সাদা মাছি দমনে প্রতি লিটার জলে ০.৫ মিলি ইমিডাক্লোপ্রিড স্প্রে করুন।",
       "tts_prompt_bn": "সতর্কতা! টমেটোর পাতা কোঁকড়ানো ভাইরাস শনাক্ত হয়েছে। আক্রান্ত গাছ তুলে ধ্বংস করুন এবং সাদা মাছি দমনে অবিলম্বে ওষুধ দিন।"
+    },
+    "Tomato___Yellow_Leaf_Curl": {
+      "name_en": "Tomato Yellow Leaf Curl Virus (TYLCV)",
+      "name_bn": "টমেটোর পাতা কোঁকড়ানো ভাইরাস (লিফ কার্ল)",
+      "category": "disease",
+      "crop": "Tomato",
+      "severity": "Critical",
+      "symptoms_en": "Severe upward cupping and curling of leaves, chlorotic yellow margins, extreme stunting of plants, flower drop.",
+      "symptoms_bn": "পাতাগুলো নৌকার মতো ওপরের দিকে কুঁকড়ে যাওয়া, পাতার কিনারা হলুদ হওয়া, গাছের বাড়বৃদ্ধি থেমে যাওয়া ও ফুল ঝরে যাওয়া।",
+      "organic_treatment_en": "Uproot and burn virus-infected plants; install yellow sticky traps to control the whitefly vector.",
+      "organic_treatment_bn": "আক্রান্ত গাছটি শিকড়সহ তুলে পুড়িয়ে ফেলুন এবং রোগ ছড়ানো সাদা মাছি দমনে হলুদ আঠালো ফাঁদ ব্যবহার করুন।",
+      "chemical_treatment_en": "No cure for viral infection; control whitefly vector using Spiromesifen 22.9% SC @ 1ml/L or Imidacloprid @ 0.5ml/L.",
+      "chemical_treatment_bn": "ভাইরাসের সরাসরি ওষুধ নেই; বাহক সাদা মাছি দমনে প্রতি লিটার জলে ০.৫ মিলি ইমিডাক্লোপ্রিড স্প্রে করুন।",
+      "tts_prompt_bn": "সতর্কতা! টমেটোর পাতা কোঁকড়ানো ভাইরাস শনাক্ত হয়েছে। আক্রান্ত গাছ তুলে ধ্বংস করুন এবং সাদা মাছি দমনে অবিলম্বে ওষুধ দিন।"
     }
   }
 }

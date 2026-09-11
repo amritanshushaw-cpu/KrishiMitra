@@ -71,8 +71,8 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
         _selectedCrop = provider.activeCalculatorCrop!;
       }
       if (provider.activeCalculatorDiseaseId != null &&
-          AgriCalculatorService.diseaseRecoveryRecipes.containsKey(provider.activeCalculatorDiseaseId)) {
-        _selectedDiseaseId = provider.activeCalculatorDiseaseId!;
+          AgriCalculatorService.getRecoveryRecipe(provider.activeCalculatorDiseaseId) != null) {
+        _selectedDiseaseId = AgriCalculatorService.getRecoveryRecipe(provider.activeCalculatorDiseaseId)!.id;
       } else {
         _selectedDiseaseId = _getDefaultDiseaseForCrop(_selectedCrop);
       }
@@ -88,7 +88,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
       combo: _selectedCombo,
     );
 
-    final activeRecipe = AgriCalculatorService.diseaseRecoveryRecipes[_selectedDiseaseId] ??
+    final activeRecipe = AgriCalculatorService.getRecoveryRecipe(_selectedDiseaseId) ??
         AgriCalculatorService.diseaseRecoveryRecipes['Tomato___Late_Blight']!;
 
     final recoveryResult = AgriCalculatorService.calculateDiseaseRecovery(

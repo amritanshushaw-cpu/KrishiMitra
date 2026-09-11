@@ -1,5 +1,6 @@
 /// AgriCalculatorService
 /// Deterministic agronomic and economic calculations based on ICAR / FAO guidelines.
+import '../core/constants/app_constants.dart';
 
 enum CropType {
   paddy('Paddy (Rice)', 'ধান', 40.0, 20.0, 20.0, 22.0, 2183.0),
@@ -670,7 +671,146 @@ class AgriCalculatorService {
       sprayInterval: 'Foliar spray at tillering and panicle initiation; apply soil Zinc and MOP during weeding.',
       practicalInstructions: 'Correct poor soil drainage and incorporate organic compost before next season.',
     ),
+
+    'Tomato___Leaf_Mold': const DiseaseRecoveryRecipe(
+      id: 'Tomato___Leaf_Mold',
+      crop: CropType.tomato,
+      diseaseNameEn: 'Tomato Leaf Mold (Passalora fulva)',
+      diseaseNameBn: 'টমেটোর পাতা ছত্রাক রোগ (লিফ মোল্ড)',
+      researchCitation: 'ICAR-IIHR Bengaluru Bulletin No. 38 & AVRDC Plant Health Guidelines',
+      cellularMechanism: 'High humidity triggers conidiophore sporulation on lower leaf surfaces; Potassium Bicarbonate elevates leaf surface pH to inhibit conidial spore germination, while soluble calcium reinforces mesophyll pectin middle lamella against mycelial invasion.',
+      farmerActionGuide: 'Spray Potassium Bicarbonate (or MKP 00:52:34) combined with Calcium Nitrate to suppress mold spores, stop velvety patches on leaf undersides, and harden foliage. Broadcast Potash to maintain plant vigor.',
+      nitrogenAdvisory: 'RESTRICT NITROGEN: Excessive nitrogen accelerates dense canopy humidity and creates soft, succulent foliage highly susceptible to rapid fungal mold sporulation.',
+      haltNitrogen: true,
+      foliarComponents: [
+        NutrientComponent(
+          nameEn: 'Potassium Bicarbonate (or MKP 00:52:34)',
+          nameBn: 'পটাশিয়াম বাইকার্বনেট (বা ০:৫২:৩৪)',
+          chemicalFormula: 'KHCO₃ / KH₂PO₄',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 3.0,
+          doseKgPerAcre: 0.60,
+          isLiquid: false,
+          role: 'Elevates surface pH to stop mold spore germination and leaf yellowing',
+          marketSource: 'Agricultural Potassium Bicarbonate or Water-Soluble MKP 00:52:34',
+        ),
+        NutrientComponent(
+          nameEn: 'Calcium Nitrate',
+          nameBn: 'ক্যালসিয়াম নাইট্রেট',
+          chemicalFormula: 'Ca(NO₃)₂',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 2.5,
+          doseKgPerAcre: 0.50,
+          isLiquid: false,
+          role: 'Strengthens leaf cuticle and inner cell walls against mold fungal invasion',
+          marketSource: '100% Water-Soluble Calcium Nitrate',
+        ),
+      ],
+      soilComponents: [
+        NutrientComponent(
+          nameEn: 'Muriate of Potash (MOP 60% K₂O)',
+          nameBn: 'মিউরেট অফ পটাশ (এমওপি)',
+          chemicalFormula: 'KCl (60% K₂O)',
+          method: NutrientAppMethod.soilBroadcast,
+          dosePerLiter: 0.0,
+          doseKgPerAcre: 10.0,
+          isLiquid: false,
+          role: 'Replenishes plant potassium reserves for sustained vascular water transport',
+          marketSource: 'Standard MOP 60% Potash',
+        ),
+      ],
+      sprayInterval: 'Apply 2 foliar sprays at 7-10 day intervals; thoroughly coat the undersides of leaves where mold velvety growth develops.',
+      practicalInstructions: 'Prune lower infected leaves to improve canopy aeration and lower relative humidity. Avoid overhead sprinkler irrigation. Combine with registered fungicide (Difenoconazole 25% EC @ 0.5ml/L) if infection has spread to upper canopy.',
+    ),
+
+    'Tomato___Yellow_Leaf_Curl': const DiseaseRecoveryRecipe(
+      id: 'Tomato___Yellow_Leaf_Curl',
+      crop: CropType.tomato,
+      diseaseNameEn: 'Tomato Yellow Leaf Curl (TYLCV Begomovirus)',
+      diseaseNameBn: 'টমেটোর পাতা কোঁকড়ানো ভাইরাস (লিফ কার্ল)',
+      researchCitation: 'ICAR-IIHR Bengaluru Begomovirus Management Bulletin & AVRDC International Vegetable Virus Protocol; Journal of Plant Nutrition',
+      cellularMechanism: 'Viral systemic infection stunts apical meristems and induces severe zinc/boron transport failure; targeted foliar Zinc-EDTA and Boron stimulate plant ribonucleases, restore auxin hormone synthesis in shoot tips, and prevent blossom drop. Soluble MKP supplies phosphorus and potassium energy to sustain fruit set on unaffected lateral branches.',
+      farmerActionGuide: 'Spray Chelated Zinc, Boron, and Monopotassium Phosphate (MKP 00:52:34) to relieve viral stunting, prevent flower drop, and stimulate healthy new branch growth. Broadcast Potash to help fruit development while managing whitefly vectors.',
+      nitrogenAdvisory: 'Avoid high Urea top-dressing surges; lush succulent shoots attract heavy whitefly populations that spread the virus.',
+      haltNitrogen: false,
+      foliarComponents: [
+        NutrientComponent(
+          nameEn: 'Chelated Zinc (EDTA Zn 12%)',
+          nameBn: 'চিলেটেড জিংক (১২%)',
+          chemicalFormula: 'Zn-EDTA',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 1.0,
+          doseKgPerAcre: 0.20,
+          isLiquid: false,
+          role: 'Activates plant defense enzymes and restores auxin growth in stunted shoot tips',
+          marketSource: 'Agricultural Chelated Zinc 12% EDTA',
+        ),
+        NutrientComponent(
+          nameEn: 'Soluble Boron 20% (Disodium Octaborate)',
+          nameBn: 'বোরন ২০%',
+          chemicalFormula: 'Na₂B₈O₁₃·4H₂O',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 0.5,
+          doseKgPerAcre: 0.10,
+          isLiquid: false,
+          role: 'Prevents blossom drop, preserves flower viability, and promotes fruit set',
+          marketSource: 'Agricultural Boron 20% Soluble Powder',
+        ),
+        NutrientComponent(
+          nameEn: 'Monopotassium Phosphate (MKP 00:52:34)',
+          nameBn: 'মনোপটাশিয়াম ফসফেট (০:৫২:৩৪)',
+          chemicalFormula: 'KH₂PO₄',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 2.5,
+          doseKgPerAcre: 0.50,
+          isLiquid: false,
+          role: 'Supplies vital high-potassium energy to support lateral branches and fruit sizing',
+          marketSource: '100% Water-Soluble MKP (00:52:34)',
+        ),
+      ],
+      soilComponents: [
+        NutrientComponent(
+          nameEn: 'Muriate of Potash (MOP 60% K₂O)',
+          nameBn: 'মিউরেট অফ পটাশ (এমওপি)',
+          chemicalFormula: 'KCl (60% K₂O)',
+          method: NutrientAppMethod.soilBroadcast,
+          dosePerLiter: 0.0,
+          doseKgPerAcre: 10.0,
+          isLiquid: false,
+          role: 'Maintains cell turgor pressure and counteracts viral vascular collapse',
+          marketSource: 'Standard MOP 60% Potash',
+        ),
+      ],
+      sprayInterval: 'Apply foliar micronutrient-potassium spray every 10-12 days during active growth and flowering.',
+      practicalInstructions: 'Uproot and bury severely stunted early-infected plants to remove virus source. Install yellow sticky traps (15-20 per acre) at canopy level to capture whitefly vectors. Apply Neem oil (10,000 ppm) @ 3ml/L or Imidacloprid 17.8% SL @ 0.5ml/L to control vector transmission.',
+    ),
   };
+
+  /// Safely resolves any model label, normalized key, or variant to a scientific recovery recipe
+  static DiseaseRecoveryRecipe? getRecoveryRecipe(String? idOrLabel) {
+    if (idOrLabel == null || idOrLabel.isEmpty) return null;
+    if (diseaseRecoveryRecipes.containsKey(idOrLabel)) {
+      return diseaseRecoveryRecipes[idOrLabel];
+    }
+    final normalized = AppConstants.normalizeModelLabel(idOrLabel);
+    if (diseaseRecoveryRecipes.containsKey(normalized)) {
+      return diseaseRecoveryRecipes[normalized];
+    }
+    final clean = idOrLabel
+        .replaceAll('Disease___', '')
+        .replaceAll('_Virus', '');
+    if (diseaseRecoveryRecipes.containsKey(clean)) {
+      return diseaseRecoveryRecipes[clean];
+    }
+    for (final entry in diseaseRecoveryRecipes.entries) {
+      final entryClean = entry.key.replaceAll('Disease___', '').replaceAll('_Virus', '');
+      if (entryClean.toLowerCase() == clean.toLowerCase() ||
+          entryClean.toLowerCase() == normalized.toLowerCase()) {
+        return entry.value;
+      }
+    }
+    return null;
+  }
 
   /// Calculate exact disease recovery fertilizer requirements
   static RecoveryCalculationResult calculateDiseaseRecovery({

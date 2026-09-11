@@ -348,11 +348,11 @@ class DiagnosisDetailScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (AgriCalculatorService.diseaseRecoveryRecipes.containsKey(advisory.label)) ...[
+                if (AgriCalculatorService.getRecoveryRecipe(advisory.label) != null) ...[
                   const SizedBox(height: 14),
                   Builder(
                     builder: (context) {
-                      final recipe = AgriCalculatorService.diseaseRecoveryRecipes[advisory.label]!;
+                      final recipe = AgriCalculatorService.getRecoveryRecipe(advisory.label)!;
                       return AppGlassContainer(
                         radius: 18,
                         hasGoldGlow: true,
