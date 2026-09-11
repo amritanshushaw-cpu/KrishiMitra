@@ -55,7 +55,7 @@ class FarmProvider extends ChangeNotifier {
   FusedAdvisoryResult? _fusedAdvisory;
 
   bool _isSafetyNetMode = false;
-  TtsLanguage _ttsLanguage = TtsLanguage.bengali;
+  TtsLanguage _ttsLanguage = TtsLanguage.english;
   int _activeTabIndex = 0;
   final List<int> _tabHistory = [0];
   final List<FarmNotification> _notifications = [];
@@ -451,10 +451,6 @@ class FarmProvider extends ChangeNotifier {
     _isInferenceRunning = false;
     _statusMessage = 'Diagnosis: ${result.topLabel} (${(result.topConfidence * 100).toStringAsFixed(1)}%)';
     notifyListeners();
-
-    if (_isTtsEnabled) {
-      playVoiceAdvisory();
-    }
   }
 
   Future<void> playVoiceAdvisory() async {
