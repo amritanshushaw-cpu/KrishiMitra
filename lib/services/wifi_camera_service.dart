@@ -11,7 +11,7 @@ class WifiCameraService {
   Future<Uint8List> captureFromEsp32() async {
     final response = await http
         .get(Uri.parse('$baseUrl/snapshot'))
-        .timeout(const Duration(seconds: 10));
+        .timeout(AppConstants.cameraTimeout);
 
     if (response.statusCode == 200 && response.bodyBytes.isNotEmpty) {
       return response.bodyBytes;
@@ -50,7 +50,7 @@ class WifiCameraService {
   }
 
   /// Safety Net Bypassing: Loads a high-res sample leaf image from bundled local assets
-  Future<Uint8List> loadDemoAssetLeaf({String assetPath = AppConstants.demoLateBlightAsset}) async {
+  Future<Uint8List> loadDemoAssetLeaf({String assetPath = AppConstants.demoRiceBlastAsset}) async {
     final ByteData byteData = await rootBundle.load(assetPath);
     return byteData.buffer.asUint8List();
   }

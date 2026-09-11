@@ -114,6 +114,11 @@ class AppStrings {
       ? '১০০% অফলাইন অন-ডিভাইস টিএফ-লাইট মডেল'
       : (isHindi ? '100% ऑफलाइन ऑन-डिवाइस टीएफ-लाइट मॉडल' : '100% Offline Neural Inference via Edge TFLite');
   String get captureLeaf => isBengali ? 'পাতা তুলুন' : (isHindi ? 'पत्ती कैप्चर करें' : 'CAPTURE LEAF');
+  String get esp32Cam => isBengali ? 'ইএসপি৩২ ক্যামেরা' : (isHindi ? 'ईएसपी32 कैमरा' : 'ESP32 CAM');
+  String get phoneCamera => isBengali ? 'ফোন ক্যামেরা' : (isHindi ? 'फ़ोन कैमरा' : 'PHONE CAMERA');
+  String get captureWithPhone => isBengali ? 'ফোন ক্যামেরা দিয়ে তুলুন' : (isHindi ? 'फ़ोन कैमरे से लें' : 'CAPTURE FROM PHONE');
+  String get captureWithEsp32 => isBengali ? 'ইএসপি৩২ দিয়ে তুলুন' : (isHindi ? 'ईएसपी32 से कैप्चर करें' : 'CAPTURE VIA ESP32');
+  String get uploadFromStorage => isBengali ? 'ফোন স্টোরেজ থেকে আপলোড' : (isHindi ? 'फ़ोन स्टोरेज से अपलोड करें' : 'UPLOAD FROM PHONE STORAGE');
   String get demoAsset => isBengali ? 'নমুনা পাতা' : (isHindi ? 'डेमो पत्ती' : 'DEMO ASSET');
   String get diagnosticMatrix => isBengali ? '৫-প্যারামিটার রোগ নির্ণয় ম্যাট্রিক্স' : (isHindi ? '5-पैरामीटर निदान मैट्रिक्स' : '5-PARAMETER DIAGNOSTIC MATRIX');
   String get viewPrescription => isBengali ? 'প্রেসক্রিপশন ও প্রতিকার দেখুন' : (isHindi ? 'प्रिस्क्रिप्शन और उपचार देखें' : 'VIEW PRESCRIPTION & REMEDIES');

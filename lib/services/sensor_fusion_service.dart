@@ -63,7 +63,18 @@ class SensorFusionService {
     required SensorData sensor,
   }) {
     final String label = inference.topLabel;
-    final AdvisoryModel? base = _advisoryDb[label];
+    final String normalized = AppConstants.normalizeModelLabel(label);
+    AdvisoryModel? base = _advisoryDb[label] ?? _advisoryDb[normalized];
+    if (base == null) {
+      for (final entry in _advisoryDb.entries) {
+        if (entry.key.toLowerCase() == normalized.toLowerCase() ||
+            normalized.toLowerCase().endsWith(entry.key.toLowerCase()) ||
+            entry.key.toLowerCase().endsWith(normalized.toLowerCase())) {
+          base = entry.value;
+          break;
+        }
+      }
+    }
 
     final AdvisoryModel advisory = base ?? AdvisoryModel(
       label: label,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/constants/app_constants.dart';
 import 'inference_result.dart';
 
 enum ParameterStatus { optimal, warning, critical, info }
@@ -48,7 +49,8 @@ class ParsedDiagnosis {
   ];
 
   factory ParsedDiagnosis.fromInference(InferenceResult result) {
-    final String label = result.topLabel;
+    final String rawLabel = result.topLabel;
+    final String label = AppConstants.normalizeModelLabel(rawLabel);
     final List<String> parts = label.split('___');
 
     String cropVal = 'Multi-Crop (Field)';
@@ -137,7 +139,7 @@ class ParsedDiagnosis {
 
     // Comprehensive scan across all top candidates to resolve crop, disease, and pest
     for (final candidate in result.topCandidates) {
-      final cLabel = candidate.label;
+      final String cLabel = AppConstants.normalizeModelLabel(candidate.label);
       final cParts = cLabel.split('___');
       if (cropVal == 'Multi-Crop (Field)') {
         if (cLabel.startsWith('Tomato___')) {
