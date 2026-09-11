@@ -607,43 +607,15 @@ class MainShellScreen extends StatelessWidget {
                     )
                   : null,
               titleSpacing: (provider.activeTabIndex != 0 && provider.activeTabIndex != 6) ? 0 : 16,
-              title: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    provider.strings.authTitle,
-                    style: GoogleFonts.jetBrainsMono(
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.6,
-                      color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: const BoxDecoration(
-                          color: AppTheme.emeraldLight,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        provider.strings.offlineTag,
-                        style: GoogleFonts.jetBrainsMono(
-                          fontSize: 8.5,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.4,
-                          color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              title: Text(
+                provider.strings.authTitle,
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.6,
+                  color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             actions: [
               // Notification / Action Center Trigger
