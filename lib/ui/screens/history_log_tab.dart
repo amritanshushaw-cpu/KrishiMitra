@@ -124,7 +124,7 @@ class HistoryLogTab extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              provider.strings.historyTitle,
+              context.read<FarmProvider>().strings.historyTitle,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
@@ -133,7 +133,7 @@ class HistoryLogTab extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              provider.strings.historyDesc,
+              context.read<FarmProvider>().strings.historyDesc,
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 13,
                 color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
@@ -173,7 +173,7 @@ class HistoryLogTab extends StatelessWidget {
                                 headingRowColor: WidgetStateProperty.all(
                                   (isDark ? AppTheme.deepPine : AppTheme.mintDew).withValues(alpha: 0.5),
                                 ),
-                                columns: const [
+                                columns: [
                                   DataColumn(label: Text(provider.strings.colDate, style: TextStyle(fontWeight: FontWeight.bold))),
                                   DataColumn(label: Text(provider.strings.colTime, style: TextStyle(fontWeight: FontWeight.bold))),
                                   DataColumn(label: Text(provider.strings.colTemp, style: TextStyle(fontWeight: FontWeight.bold))),
