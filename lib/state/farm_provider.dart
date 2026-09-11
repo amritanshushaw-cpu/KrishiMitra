@@ -525,7 +525,7 @@ class FarmProvider extends ChangeNotifier {
     _activeCalculatorCrop = crop;
     _activeCalculatorDiseaseId = diseaseId;
     _openCalculatorInRecoveryMode = true;
-    setTabIndex(1);
+    setTabIndex(6);
   }
 
   void clearRecoveryCalculator() {

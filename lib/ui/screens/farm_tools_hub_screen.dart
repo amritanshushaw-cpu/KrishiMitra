@@ -65,6 +65,11 @@ class _FarmToolsHubScreenState extends State<FarmToolsHubScreen> with SingleTick
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final provider = context.watch<FarmProvider>();
+
+    if (provider.openCalculatorInRecoveryMode && _tabController.index != 0) {
+      _tabController.index = 0;
+    }
 
     return PopScope(
       canPop: false,

@@ -483,7 +483,7 @@ class DiagnosisDetailScreen extends StatelessWidget {
                                     crop: recipe.crop,
                                     diseaseId: recipe.id,
                                   );
-                                  Navigator.pop(context);
+                                  Navigator.of(context).popUntil((route) => route.isFirst);
                                 },
                               ),
                             ),

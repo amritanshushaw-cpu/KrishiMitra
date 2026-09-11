@@ -27,29 +27,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
     CropType.paddy,
   ];
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_initializedFromProvider) {
-      final provider = context.read<FarmProvider>();
-      if (provider.openCalculatorInRecoveryMode) {
-        _isRecoveryMode = true;
-        if (provider.activeCalculatorCrop != null) {
-          _selectedCrop = provider.activeCalculatorCrop!;
-        }
-        if (provider.activeCalculatorDiseaseId != null &&
-            AgriCalculatorService.diseaseRecoveryRecipes.containsKey(provider.activeCalculatorDiseaseId)) {
-          _selectedDiseaseId = provider.activeCalculatorDiseaseId!;
-        } else {
-          _selectedDiseaseId = _getDefaultDiseaseForCrop(_selectedCrop);
-        }
-        _initializedFromProvider = true;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          provider.clearRecoveryCalculator();
-        });
-      }
-    }
-  }
+  // Cleaned didChangeDependencies; reactive handling now lives in build()
 
   String _getDefaultDiseaseForCrop(CropType crop) {
     switch (crop) {
@@ -85,6 +63,23 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final provider = context.watch<FarmProvider>();
+
+    if (provider.openCalculatorInRecoveryMode) {
+      _isRecoveryMode = true;
+      if (provider.activeCalculatorCrop != null) {
+        _selectedCrop = provider.activeCalculatorCrop!;
+      }
+      if (provider.activeCalculatorDiseaseId != null &&
+          AgriCalculatorService.diseaseRecoveryRecipes.containsKey(provider.activeCalculatorDiseaseId)) {
+        _selectedDiseaseId = provider.activeCalculatorDiseaseId!;
+      } else {
+        _selectedDiseaseId = _getDefaultDiseaseForCrop(_selectedCrop);
+      }
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        provider.clearRecoveryCalculator();
+      });
+    }
 
     final standardResult = AgriCalculatorService.calculateFertilizer(
       crop: _selectedCrop,
