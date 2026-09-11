@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../state/farm_provider.dart';
+import '../../services/voice_tts_service.dart';
+import '../../models/advisory_model.dart';
+
 import '../widgets/liquid_glass_container.dart';
 
 class LatestScanDetailsScreen extends StatelessWidget {
@@ -133,7 +136,7 @@ class LatestScanDetailsScreen extends StatelessWidget {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
-                                  advisory.advisory.nameEn,
+                                  _getLocalizedTitle(provider, advisory.advisory),
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -144,24 +147,48 @@ class LatestScanDetailsScreen extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 16),
-                          _buildDetailRow(context, 'Symptoms', advisory.advisory.symptomsEn),
-                          const SizedBox(height: 12),
-                          _buildDetailRow(context, 'Organic Treatment', advisory.advisory.organicTreatmentEn),
-                          const SizedBox(height: 12),
-                          _buildDetailRow(
-                            context,
-                            'Chemical Strategy',
-                            advisory.effectiveChemicalTreatmentEn,
-                            highlight: advisory.isSprayOverrideActive,
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                if (provider.isTtsPlaying) {
+                                  provider.stopVoiceAdvisory();
+                                } else {
+                                  provider.playVoiceAdvisory();
+                                }
+                              },
+                              icon: Icon(
+                                provider.isTtsPlaying ? Icons.stop_circle_rounded : Icons.play_circle_fill_rounded,
+                                color: Colors.white,
+                              ),
+                              label: Text(
+                                provider.isTtsPlaying 
+                                    ? (provider.ttsLanguage == TtsLanguage.bengali ? 'অডিও থামান' : 'Stop Audio Advisory') 
+                                    : (provider.ttsLanguage == TtsLanguage.bengali ? 'অডিও শুনুন' : 'Play Audio Advisory'),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: provider.isTtsPlaying ? Colors.redAccent : primaryColor,
+                                padding: const EdgeInsets.symmetric(vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                elevation: 0,
+                              ),
+                            ),
                           ),
+                          const SizedBox(height: 16),
+                          _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'লক্ষণ' : 'Symptoms', _getLocalizedSymptoms(provider, advisory.advisory)),
+                          const SizedBox(height: 12),
+                          _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'জৈব প্রতিকার' : 'Organic Treatment', _getLocalizedOrganic(provider, advisory.advisory)),
+                          const SizedBox(height: 12),
+                          _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'রাসায়নিক চিকিৎসা' : 'Chemical Strategy', _getLocalizedChemical(provider, advisory), highlight: advisory.isSprayOverrideActive,),
                           if (advisory.overrideReasonEn != null) ...[
                             const SizedBox(height: 12),
-                            _buildDetailRow(
-                              context,
-                              'Sensor Override',
-                              advisory.overrideReasonEn!,
-                              highlight: true,
-                            ),
+                            _buildDetailRow(context, provider.ttsLanguage == TtsLanguage.bengali ? 'সেন্সর সতর্কতা' : 'Sensor Override', _getLocalizedOverride(provider, advisory), highlight: true,),
                           ],
                         ],
                       ),
@@ -172,6 +199,35 @@ class LatestScanDetailsScreen extends StatelessWidget {
               ),
       ),
     );
+  }
+
+
+  String _getLocalizedTitle(FarmProvider provider, AdvisoryModel advisory) {
+    if (provider.ttsLanguage == TtsLanguage.bengali) return advisory.nameBn;
+    // Fallback to English for Hindi text since we don't have Hindi text in DB yet, only TTS
+    return advisory.nameEn;
+  }
+
+  String _getLocalizedSymptoms(FarmProvider provider, AdvisoryModel advisory) {
+    if (provider.ttsLanguage == TtsLanguage.bengali) return advisory.symptomsBn;
+    return advisory.symptomsEn;
+  }
+
+  String _getLocalizedOrganic(FarmProvider provider, AdvisoryModel advisory) {
+    if (provider.ttsLanguage == TtsLanguage.bengali) return advisory.organicTreatmentBn;
+    return advisory.organicTreatmentEn;
+  }
+
+  String _getLocalizedChemical(FarmProvider provider, var advisoryResult) {
+    if (provider.ttsLanguage == TtsLanguage.bengali) return advisoryResult.effectiveChemicalTreatmentBn;
+    if (provider.ttsLanguage == TtsLanguage.hindi && advisoryResult.effectiveChemicalTreatmentHi.isNotEmpty) return advisoryResult.effectiveChemicalTreatmentHi;
+    return advisoryResult.effectiveChemicalTreatmentEn;
+  }
+
+  String _getLocalizedOverride(FarmProvider provider, var advisoryResult) {
+    if (provider.ttsLanguage == TtsLanguage.bengali && advisoryResult.overrideReasonBn != null) return advisoryResult.overrideReasonBn!;
+    if (provider.ttsLanguage == TtsLanguage.hindi && advisoryResult.overrideReasonHi != null) return advisoryResult.overrideReasonHi!;
+    return advisoryResult.overrideReasonEn ?? '';
   }
 
   Widget _buildSensorNode(BuildContext context, {required IconData icon, required String label, required String value}) {
