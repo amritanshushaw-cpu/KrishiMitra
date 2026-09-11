@@ -350,6 +350,7 @@ class AgriCalculatorService {
       diseaseNameBn: 'আলুর নাবী ধসা রোগ',
       researchCitation: 'ICAR-Central Potato Research Institute (CPRI) Bulletin No. 42 & Phytopathology 98(3)',
       cellularMechanism: 'Potassium phosphite translocates systemically via xylem & phloem to arrest oomycete hyphae and trigger phytoalexin synthesis; calcium ions reinforce the pectin middle lamella against fungal polygalacturonase enzymes.',
+      farmerActionGuide: 'Apply this curative tank mixture of Potassium Phosphite (or MKP) and Calcium Nitrate to halt late blight progression and protect uninfected leaves. Broadcast Potash to strengthen stem tissues and boost tuber recovery.',
       nitrogenAdvisory: 'CRITICAL: Immediately suspend top-dressing Urea. Excessive vegetative nitrogen causes succulent cell walls with high free amino acids, accelerating rapid zoospore penetration.',
       haltNitrogen: true,
       foliarComponents: [
@@ -361,7 +362,7 @@ class AgriCalculatorService {
           dosePerLiter: 2.5, // g/L
           doseKgPerAcre: 0.50, // 500g in 200L water
           isLiquid: false,
-          role: 'Systemic SAR Inducer & Oomycete Growth Blocker',
+          role: 'Halts late blight spread and stimulates natural plant defense',
           marketSource: 'Potassium Phosphite 40% SL or Water-Soluble MKP 00:52:34',
         ),
         NutrientComponent(
@@ -372,7 +373,7 @@ class AgriCalculatorService {
           dosePerLiter: 3.0, // g/L
           doseKgPerAcre: 0.60, // 600g in 200L water
           isLiquid: false,
-          role: 'Cell Wall Pectin Stabilization & Middle Lamella Reinforcement',
+          role: 'Hardens plant cell walls against fungal penetration',
           marketSource: 'Water-Soluble 100% Chelated Calcium Nitrate',
         ),
       ],
@@ -400,6 +401,7 @@ class AgriCalculatorService {
       diseaseNameBn: 'টমেটোর নাবী ধসা রোগ',
       researchCitation: 'ICAR-IIHR Bengaluru & AVRDC Plant Health Technical Manual',
       cellularMechanism: 'Phosphite ions stimulate host Systemic Acquired Resistance (SAR) cascades; combined with calcium and boron to prevent stem canker, petiole necrosis, and fruit rot.',
+      farmerActionGuide: 'Spray this curative combo of Potassium Phosphite, Calcium Nitrate, and Boron to stop blight lesions, protect growing tips, and prevent fruit rot. Broadcast Potash to strengthen vine vigor.',
       nitrogenAdvisory: 'STOP high-nitrogen fertilizers. Excess nitrogen expands canopy density, trapping microclimatic humidity and escalating oomycete sporulation.',
       haltNitrogen: true,
       foliarComponents: [
@@ -411,7 +413,7 @@ class AgriCalculatorService {
           dosePerLiter: 2.5,
           doseKgPerAcre: 0.50,
           isLiquid: false,
-          role: 'Oomycete Hyphal Disruption & Defense Elicitation',
+          role: 'Arrests fungal blight progression across leaves and stems',
           marketSource: 'Potassium Phosphite 40% SL or Monopotassium Phosphate',
         ),
         NutrientComponent(
@@ -422,7 +424,7 @@ class AgriCalculatorService {
           dosePerLiter: 2.5,
           doseKgPerAcre: 0.50,
           isLiquid: false,
-          role: 'Epidermal tissue barrier against zoospore encystment',
+          role: 'Builds leaf surface barrier against rot and tissue collapse',
           marketSource: '100% Water Soluble Calcium Nitrate',
         ),
         NutrientComponent(
@@ -433,7 +435,7 @@ class AgriCalculatorService {
           dosePerLiter: 0.5,
           doseKgPerAcre: 0.10,
           isLiquid: false,
-          role: 'Vascular translocation and blossom-end tissue recovery',
+          role: 'Protects flower clusters and prevents blossom-end fruit rot',
           marketSource: 'Agricultural Boron 20% Soluble Powder',
         ),
       ],
@@ -461,6 +463,7 @@ class AgriCalculatorService {
       diseaseNameBn: 'আলুর আগাম ধসা রোগ',
       researchCitation: 'ICAR-CPRI Agronomy Series & FAO Plant Protection Paper 176',
       cellularMechanism: 'Alternaria is a necrotrophic pathogen that targets potassium-exhausted, senescing leaves. Supplemental Potassium and Magnesium maintain chlorophyll retention and counter alternaric acid phytotoxins.',
+      farmerActionGuide: 'Spray Potassium Nitrate with Magnesium Sulfate to heal dark concentric target spots and restore lush green leaves. Apply Potash at root zone to recover plant strength.',
       nitrogenAdvisory: 'Maintain balanced nitrogen. Do not starve the plant, but avoid high vegetative nitrogen surges; focus on Potassium:Nitrogen balance.',
       haltNitrogen: false,
       foliarComponents: [
@@ -472,7 +475,7 @@ class AgriCalculatorService {
           dosePerLiter: 4.0,
           doseKgPerAcre: 0.80,
           isLiquid: false,
-          role: 'Halts premature leaf senescence & recharges potassium pool',
+          role: 'Halts premature leaf yellowing & replenishes leaf potassium',
           marketSource: '100% Water Soluble Potassium Nitrate (13:0:45)',
         ),
         NutrientComponent(
@@ -483,7 +486,7 @@ class AgriCalculatorService {
           dosePerLiter: 3.0,
           doseKgPerAcre: 0.60,
           isLiquid: false,
-          role: 'Chlorophyll synthesis & prevention of concentric chlorosis',
+          role: 'Restores leaf greenness and active photosynthesis',
           marketSource: 'Agricultural Grade Magnesium Sulfate 9.6% Mg',
         ),
       ],
@@ -511,6 +514,7 @@ class AgriCalculatorService {
       diseaseNameBn: 'টমেটোর আগাম ধসা রোগ',
       researchCitation: 'ICAR-IIHR Tomato Disease Management & Journal of Plant Pathology',
       cellularMechanism: 'Potassium boosts structural lignin in stem collars; foliar Magnesium prevents interveinal chlorosis and delays lower leaf senescence.',
+      farmerActionGuide: 'Spray Potassium Nitrate and Magnesium Sulfate to halt early blight spots and keep leaves productive. Broadcast Potash to help fruit set and vine vigor.',
       nitrogenAdvisory: 'Avoid nitrogen exhaustion. Apply balanced foliar potassium to sustain fruit sizing while controlling leaf spotting.',
       haltNitrogen: false,
       foliarComponents: [
@@ -522,7 +526,7 @@ class AgriCalculatorService {
           dosePerLiter: 3.5,
           doseKgPerAcre: 0.70,
           isLiquid: false,
-          role: 'Recharges leaf potassium, strengthens leaf margins against fungal necrosis',
+          role: 'Strengthens leaf margins against fungal necrosis',
           marketSource: 'Water Soluble Multi-K 13:0:45',
         ),
         NutrientComponent(
@@ -533,7 +537,7 @@ class AgriCalculatorService {
           dosePerLiter: 2.5,
           doseKgPerAcre: 0.50,
           isLiquid: false,
-          role: 'Enhances enzymatic resistance and leaf chlorophyll density',
+          role: 'Maintains green leaf area and fruit sizing efficiency',
           marketSource: 'Epsom Salt Agricultural Grade',
         ),
       ],
@@ -561,6 +565,7 @@ class AgriCalculatorService {
       diseaseNameBn: 'ধানের ব্লাস্ট রোগ (লিফ ব্লাস্ট)',
       researchCitation: 'ICAR-National Rice Research Institute (NRRI) Cuttack & IRRI Rice Knowledge Bank',
       cellularMechanism: 'Soluble silicon deposits beneath the leaf cuticle forming a rigid double-layer amorphous silica-cellulose matrix that physically blocks blast appressorium penetration pegs; Potash thickens parenchyma cell walls.',
+      farmerActionGuide: 'Spray Soluble Silica and Monopotassium Phosphate (MKP) to build a protective shield on rice leaves that physically blocks blast fungus. Apply Potash to protect the panicle neck.',
       nitrogenAdvisory: 'HALT UREA IMMEDIATELY: High nitrogen is the single largest trigger for blast epidemics by drastically reducing silicified epidermal cell density.',
       haltNitrogen: true,
       foliarComponents: [
@@ -572,7 +577,7 @@ class AgriCalculatorService {
           dosePerLiter: 2.5, // ml/L
           doseKgPerAcre: 0.50, // 500 ml/acre
           isLiquid: true,
-          role: 'Physical Cuticular Silica Barrier blocking blast penetration pegs',
+          role: 'Creates physical protective shield on leaves blocking blast fungus',
           marketSource: 'Agricultural Grade Liquid Potassium Silicate (20% SiO₂)',
         ),
         NutrientComponent(
@@ -583,7 +588,7 @@ class AgriCalculatorService {
           dosePerLiter: 2.0,
           doseKgPerAcre: 0.40,
           isLiquid: false,
-          role: 'Lignification of culms & leaf sheaths; halts spindle lesion expansion',
+          role: 'Strengthens stems & leaf sheaths to stop lesion spread',
           marketSource: '100% Water Soluble MKP (00:52:34)',
         ),
       ],
@@ -596,7 +601,7 @@ class AgriCalculatorService {
           dosePerLiter: 0.0,
           doseKgPerAcre: 10.0,
           isLiquid: false,
-          role: 'Systemic resistance against neck and node blast',
+          role: 'Protects stem and panicle neck against blast collapse',
           marketSource: 'Standard MOP 60%',
         ),
       ],
@@ -611,6 +616,7 @@ class AgriCalculatorService {
       diseaseNameBn: 'ধানের বাদামি দাগ রোগ (ব্রাউন স্পট)',
       researchCitation: 'ICAR-NRRI & IRRI Nutrient Disorders and Nutrient Management in Rice',
       cellularMechanism: 'Brown spot is an indicator of chronic potassium, silicon, and zinc starvation in leached soils. Replenishing Zinc and Potassium activates plant superoxide dismutase (SOD) enzymes to detoxify fungal ophiobolin toxins.',
+      farmerActionGuide: 'Spray Chelated Zinc with Potassium Nitrate to relieve nutritional stress and heal brown spots. Broadcast Zinc Sulfate and Potash to the soil to strengthen tillers.',
       nitrogenAdvisory: 'Apply light balanced nitrogen with potash; do not under-fertilize as starved plants suffer maximum mortality.',
       haltNitrogen: false,
       foliarComponents: [
@@ -622,7 +628,7 @@ class AgriCalculatorService {
           dosePerLiter: 1.0,
           doseKgPerAcre: 0.20,
           isLiquid: false,
-          role: 'Enzymatic detoxification of fungal toxins and membrane stabilization',
+          role: 'Revives stressed leaf tissue and neutralizes fungal toxins',
           marketSource: 'Agricultural Chelated Zinc 12% EDTA',
         ),
         NutrientComponent(
@@ -633,7 +639,7 @@ class AgriCalculatorService {
           dosePerLiter: 3.0,
           doseKgPerAcre: 0.60,
           isLiquid: false,
-          role: 'Rapid leaf absorption to overcome nutritional starvation',
+          role: 'Rapid leaf nutrient absorption to overcome starvation',
           marketSource: '100% Water Soluble 13:0:45',
         ),
       ],
@@ -657,7 +663,7 @@ class AgriCalculatorService {
           dosePerLiter: 0.0,
           doseKgPerAcre: 12.0,
           isLiquid: false,
-          role: 'Cell wall reinforcement against necrotic lesion enlargement',
+          role: 'Strengthens leaf cells against brown spot lesion enlargement',
           marketSource: 'Standard MOP 60%',
         ),
       ],
@@ -758,6 +764,7 @@ class DiseaseRecoveryRecipe {
   final String diseaseNameBn;
   final String researchCitation;
   final String cellularMechanism;
+  final String farmerActionGuide;
   final String nitrogenAdvisory;
   final bool haltNitrogen;
   final List<NutrientComponent> foliarComponents;
@@ -772,6 +779,7 @@ class DiseaseRecoveryRecipe {
     required this.diseaseNameBn,
     required this.researchCitation,
     required this.cellularMechanism,
+    required this.farmerActionGuide,
     required this.nitrogenAdvisory,
     required this.haltNitrogen,
     required this.foliarComponents,

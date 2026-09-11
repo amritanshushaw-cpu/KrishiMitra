@@ -372,14 +372,14 @@ class DiagnosisDetailScreen extends StatelessWidget {
                                         shape: BoxShape.circle,
                                       ),
                                       child: Icon(
-                                        Icons.science_rounded,
+                                        Icons.healing_rounded,
                                         color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
                                         size: 16,
                                       ),
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
-                                      'RESEARCH RECOVERY COMBO',
+                                      'CURATIVE RECOVERY PLAN',
                                       style: GoogleFonts.jetBrainsMono(
                                         fontSize: 10.5,
                                         fontWeight: FontWeight.w800,
@@ -390,13 +390,13 @@ class DiagnosisDetailScreen extends StatelessWidget {
                                   ],
                                 ),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                   decoration: BoxDecoration(
                                     color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.12),
-                                    borderRadius: BorderRadius.circular(5),
+                                    borderRadius: BorderRadius.circular(6),
                                   ),
                                   child: Text(
-                                    'PEER-REVIEWED',
+                                    'ACTION GUIDE',
                                     style: GoogleFonts.jetBrainsMono(
                                       fontSize: 8.5,
                                       fontWeight: FontWeight.w700,
@@ -408,7 +408,7 @@ class DiagnosisDetailScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              'Best Fertilizer Combo to Heal Disease',
+                              'Recommended Fertilizer Cure',
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
@@ -417,7 +417,7 @@ class DiagnosisDetailScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              recipe.cellularMechanism,
+                              recipe.farmerActionGuide,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12.5,
                                 color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,

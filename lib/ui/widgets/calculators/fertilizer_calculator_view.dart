@@ -177,7 +177,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                           ),
                           const SizedBox(width: 5),
                           Text(
-                            'Disease Recovery Rx',
+                            'Disease Recovery Plan',
                             textAlign: TextAlign.center,
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 12,
@@ -199,7 +199,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
 
           // 1. Crop Selection
           Text(
-            _isRecoveryMode ? 'TARGET CROP (RESEARCH-BACKED)' : 'SELECT TARGET CROP',
+            'SELECT TARGET CROP',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -722,7 +722,7 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // 1. Scientific Research Citation Card
+        // 1. Farmer Action & Cure Guide Card
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -740,12 +740,23 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                 children: [
                   Row(
                     children: [
-                      const Icon(Icons.science_rounded, color: AppTheme.emeraldLight, size: 18),
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.healing_rounded,
+                          color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                          size: 16,
+                        ),
+                      ),
                       const SizedBox(width: 8),
                       Text(
-                        'RESEARCH CITATION',
+                        'CURE & RECOVERY GUIDE',
                         style: GoogleFonts.jetBrainsMono(
-                          fontSize: 10,
+                          fontSize: 10.5,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.6,
                           color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
@@ -754,13 +765,13 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppTheme.emeraldLight.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(5),
+                      color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(6),
                     ),
                     child: Text(
-                      'ACTUAL EXPERIMENTAL DATA',
+                      'STEP-BY-STEP PLAN',
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 8.5,
                         fontWeight: FontWeight.w700,
@@ -770,22 +781,47 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Text(
-                recipe.researchCitation,
+                recipe.farmerActionGuide,
                 style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
                   color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                  height: 1.4,
                 ),
               ),
-              const SizedBox(height: 6),
-              Text(
-                recipe.cellularMechanism,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 11.5,
-                  color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
-                  height: 1.4,
+              const SizedBox(height: 12),
+              // Step-by-step practical guide
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF0F1814) : const Color(0xFFF1F8F5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  children: [
+                    _buildGuideStepRow(
+                      icon: Icons.water_drop_rounded,
+                      step: 'Step 1: Knapsack Tank Mix',
+                      desc: 'Fill each 16L spray tank with clean water and dissolve the exact grams/ml shown below.',
+                      isDark: isDark,
+                    ),
+                    const SizedBox(height: 8),
+                    _buildGuideStepRow(
+                      icon: Icons.wb_sunny_rounded,
+                      step: 'Step 2: Spray Timing',
+                      desc: 'Spray in the early morning after dew dries. Thoroughly cover top and bottom of leaves.',
+                      isDark: isDark,
+                    ),
+                    const SizedBox(height: 8),
+                    _buildGuideStepRow(
+                      icon: Icons.grass_rounded,
+                      step: 'Step 3: Soil Nutrition',
+                      desc: 'Broadcast Potash at root zone to restore plant vigor and speed up tissue healing.',
+                      isDark: isDark,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -1060,10 +1096,10 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.schedule_rounded, size: 16, color: AppTheme.amberWarning),
+                  const Icon(Icons.assignment_turned_in_rounded, size: 16, color: AppTheme.amberWarning),
                   const SizedBox(width: 8),
                   Text(
-                    'APPLICATION PROTOCOL',
+                    'FIELD APPLICATION SCHEDULE',
                     style: GoogleFonts.jetBrainsMono(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w800,
@@ -1089,6 +1125,45 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                   fontSize: 11.5,
                   color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
                   height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGuideStepRow({
+    required IconData icon,
+    required String step,
+    required String desc,
+    required bool isDark,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                step,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                desc,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11,
+                  color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+                  height: 1.3,
                 ),
               ),
             ],
