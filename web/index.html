@@ -31,33 +31,8 @@
 
   <title>smartfarm_app</title>
   <link rel="manifest" href="manifest.json">
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #03120E;
-    }
-    #mesh-drift-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-      pointer-events: none;
-      display: block;
-    }
-    flutter-view, flt-glass-pane {
-      background: transparent !important;
-    }
-  </style>
 </head>
 <body>
-  <canvas id="mesh-drift-canvas"></canvas>
-  <script src="mesh_drift.js"></script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>

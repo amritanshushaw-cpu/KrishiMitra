@@ -8,7 +8,6 @@ import '../../state/farm_provider.dart';
 import '../../services/voice_tts_service.dart';
 import '../widgets/liquid_glass_container.dart';
 import '../widgets/liquid_glass_button.dart';
-import '../widgets/mesh_drift_background.dart';
 import 'main_shell_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -157,8 +156,10 @@ class _AuthScreenState extends State<AuthScreen> {
     final provider = context.watch<FarmProvider>();
     final strings = provider.strings;
 
-    return MeshDriftBackground(
-      isDark: isDark,
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: AppTheme.backgroundDecoration(isDark),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(

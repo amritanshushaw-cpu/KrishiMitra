@@ -14,7 +14,7 @@ import '../services/wifi_camera_service.dart';
 import '../services/secure_db_service.dart';
 import 'dart:async';
 import '../services/location_service.dart';
-import '../ui/widgets/web_shader_bridge.dart';
+
 
 class FarmNotification {
   final String id;
@@ -445,7 +445,6 @@ class FarmProvider extends ChangeNotifier {
 
   void toggleTheme() {
     _isDarkMode = !_isDarkMode;
-    syncWebShaderMode(_isDarkMode);
     notifyListeners();
     SharedPreferences.getInstance().then((prefs) {
       prefs.setBool('is_dark_mode', _isDarkMode);
@@ -480,7 +479,6 @@ class FarmProvider extends ChangeNotifier {
       final savedDark = prefs.getBool('is_dark_mode');
       if (savedDark != null) {
         _isDarkMode = savedDark;
-        syncWebShaderMode(_isDarkMode);
         notifyListeners();
       }
       final savedName = prefs.getString('farmer_name');
