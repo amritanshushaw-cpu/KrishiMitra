@@ -7,13 +7,20 @@ import '../../models/inference_result.dart';
 import '../../state/farm_provider.dart';
 import 'liquid_glass_button.dart';
 
+enum CameraSource {
+  esp32,
+  phone,
+  storage,
+}
+
 class LeafInspectionViewfinder extends StatefulWidget {
   final Uint8List? imageBytes;
   final bool isCapturing;
   final bool isInferenceRunning;
   final InferenceResult? inferenceResult;
   final VoidCallback onCapture;
-  final VoidCallback? onOpenDemoModal;
+  final VoidCallback? onCapturePhone;
+  final VoidCallback? onPickGallery;
 
   const LeafInspectionViewfinder({
     super.key,
@@ -22,7 +29,8 @@ class LeafInspectionViewfinder extends StatefulWidget {
     required this.isInferenceRunning,
     required this.inferenceResult,
     required this.onCapture,
-    this.onOpenDemoModal,
+    this.onCapturePhone,
+    this.onPickGallery,
   });
 
   @override
@@ -32,14 +40,7 @@ class LeafInspectionViewfinder extends StatefulWidget {
 class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
     with SingleTickerProviderStateMixin {
   late AnimationController _scanController;
-  int _selectedSectionIndex = 0;
-
-  final List<Map<String, String>> _plantSections = [
-    {'name': 'Leaf', 'samples': 'Active Scan'},
-    {'name': 'Stem', 'samples': 'Normal'},
-    {'name': 'Root', 'samples': 'Moist'},
-    {'name': 'Twigs', 'samples': 'Optimal'},
-  ];
+  CameraSource _selectedSource = CameraSource.esp32;
 
   @override
   void initState() {
@@ -84,68 +85,6 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Plant Anatomical Section Tabs: Leaf / Stem / Root / Twigs
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            color: isDark ? const Color(0xFF0F1A13) : const Color(0xFFF9FBF9),
-            child: Row(
-              children: [
-                for (int i = 0; i < _plantSections.length; i++) ...[
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () => setState(() => _selectedSectionIndex = i),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(vertical: 7),
-                        decoration: BoxDecoration(
-                          color: _selectedSectionIndex == i
-                              ? (isDark ? AppTheme.neonMint : const Color(0xFF193E32))
-                              : (isDark ? Colors.white10 : const Color(0xFFE8F5EE)),
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: _selectedSectionIndex == i
-                              ? [
-                                  BoxShadow(
-                                    color: (isDark ? AppTheme.neonMint : const Color(0xFF193E32)).withValues(alpha: 0.25),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              _plantSections[i]['name']!,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: _selectedSectionIndex == i
-                                    ? (isDark ? const Color(0xFF0A120D) : Colors.white)
-                                    : (isDark ? AppTheme.darkTextPrimary : const Color(0xFF2D6A4F)),
-                              ),
-                            ),
-                            const SizedBox(height: 1),
-                            Text(
-                              _plantSections[i]['samples']!,
-                              style: GoogleFonts.jetBrainsMono(
-                                fontSize: 8.5,
-                                fontWeight: FontWeight.w500,
-                                color: _selectedSectionIndex == i
-                                    ? (isDark ? const Color(0xFF0A120D).withValues(alpha: 0.8) : Colors.white.withValues(alpha: 0.85))
-                                    : (isDark ? AppTheme.darkTextMuted : const Color(0xFF7A9E93)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (i < _plantSections.length - 1) const SizedBox(width: 6),
-                ],
-              ],
-            ),
-          ),
-
           // Viewfinder Camera Stream & Pinpoint Nodes
           Stack(
             alignment: Alignment.center,
@@ -163,13 +102,21 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.camera_enhance_outlined,
+                              _selectedSource == CameraSource.storage
+                                  ? Icons.photo_library_outlined
+                                  : (_selectedSource == CameraSource.esp32
+                                      ? Icons.wifi_tethering_rounded
+                                      : Icons.photo_camera_rounded),
                               size: 40,
                               color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'ESP32 CAM SOFTAP // 192.168.4.1/capture',
+                              _selectedSource == CameraSource.storage
+                                  ? 'DEVICE STORAGE // SELECT LOCAL PHOTO'
+                                  : (_selectedSource == CameraSource.esp32
+                                      ? 'ESP32 CAM SOFTAP // 192.168.4.1/capture'
+                                      : 'PHONE CAMERA // REAR SENSOR READY'),
                               style: GoogleFonts.jetBrainsMono(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w600,
@@ -178,7 +125,11 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Tap below to capture live foliage',
+                              _selectedSource == CameraSource.storage
+                                  ? 'Tap "UPLOAD FROM PHONE STORAGE" below'
+                                  : (_selectedSource == CameraSource.esp32
+                                      ? 'Tap "ESP32 CAM" to download live frame'
+                                      : 'Tap "PHONE CAMERA" to snap photo with device'),
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 11,
                                 color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
@@ -251,6 +202,25 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
               if (widget.imageBytes != null && !isScanning) ...[
                 Positioned(
                   top: 20,
+                  left: 18,
+                  child: _buildPinpointNode(
+                    icon: _selectedSource == CameraSource.storage
+                        ? Icons.photo_library_outlined
+                        : (_selectedSource == CameraSource.esp32
+                            ? Icons.wifi_tethering_rounded
+                            : Icons.photo_camera_rounded),
+                    title: 'Source',
+                    value: _selectedSource == CameraSource.esp32
+                        ? 'ESP32 Node'
+                        : (_selectedSource == CameraSource.phone
+                            ? 'Phone Cam'
+                            : 'Storage'),
+                    isDark: isDark,
+                    accentColor: AppTheme.emeraldLight,
+                  ),
+                ),
+                Positioned(
+                  top: 20,
                   right: 18,
                   child: _buildPinpointNode(
                     icon: Icons.biotech_outlined,
@@ -302,7 +272,11 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
                         const SizedBox(height: 12),
                         Text(
                           widget.isCapturing
-                              ? 'DOWNLOADING ESP32 SOFTAP STREAM...'
+                              ? (_selectedSource == CameraSource.storage
+                                  ? 'OPENING DEVICE STORAGE...'
+                                  : (_selectedSource == CameraSource.phone
+                                      ? 'OPENING PHONE CAMERA...'
+                                      : 'DOWNLOADING ESP32 SOFTAP STREAM...'))
                               : 'AI MODEL INFERENCE IN PROGRESS...',
                           style: GoogleFonts.jetBrainsMono(
                             color: Colors.white,
@@ -318,16 +292,75 @@ class _LeafInspectionViewfinderState extends State<LeafInspectionViewfinder>
             ],
           ),
 
-          // Action Toolbar
+          // Action Toolbar: Dual Option (ESP32 Cam & Phone Camera) + Phone Storage Upload
           Padding(
             padding: const EdgeInsets.all(12),
-            child: LiquidGlassButton(
-              width: double.infinity,
-              onPressed: isScanning ? null : widget.onCapture,
-              icon: Icons.camera_alt_rounded,
-              text: provider.strings.captureLeaf,
-              variant: LiquidButtonVariant.primary,
-              borderRadius: 16,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: LiquidGlassButton(
+                        height: 48,
+                        size: LiquidButtonSize.sm,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        onPressed: isScanning
+                            ? null
+                            : () {
+                                setState(() => _selectedSource = CameraSource.esp32);
+                                widget.onCapture();
+                              },
+                        icon: Icons.wifi_tethering_rounded,
+                        text: provider.strings.esp32Cam,
+                        variant: _selectedSource == CameraSource.esp32
+                            ? LiquidButtonVariant.primary
+                            : LiquidButtonVariant.glass,
+                        borderRadius: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: LiquidGlassButton(
+                        height: 48,
+                        size: LiquidButtonSize.sm,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        onPressed: isScanning
+                            ? null
+                            : () {
+                                setState(() => _selectedSource = CameraSource.phone);
+                                widget.onCapturePhone?.call();
+                              },
+                        icon: Icons.photo_camera_rounded,
+                        text: provider.strings.phoneCamera,
+                        variant: _selectedSource == CameraSource.phone
+                            ? LiquidButtonVariant.primary
+                            : LiquidButtonVariant.glass,
+                        borderRadius: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                LiquidGlassButton(
+                  width: double.infinity,
+                  height: 46,
+                  size: LiquidButtonSize.sm,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  onPressed: isScanning
+                      ? null
+                      : () {
+                          setState(() => _selectedSource = CameraSource.storage);
+                          widget.onPickGallery?.call();
+                        },
+                  icon: Icons.photo_library_outlined,
+                  text: provider.strings.uploadFromStorage,
+                  variant: _selectedSource == CameraSource.storage
+                      ? LiquidButtonVariant.primary
+                      : LiquidButtonVariant.glass,
+                  borderRadius: 14,
+                ),
+              ],
             ),
           ),
         ],

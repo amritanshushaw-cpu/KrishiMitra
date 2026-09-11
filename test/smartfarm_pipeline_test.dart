@@ -102,6 +102,42 @@ void main() {
       expect(parsed.nutrient.status, ParameterStatus.warning);
       expect(parsed.nutrient.bengaliValue.contains('নাইট্রোজেনের অভাব'), true);
     });
+
+    test('Parses Disease___Rice_Leaf_Blast into 5 parameters and Bengali/Hindi translations', () {
+      const result = InferenceResult(
+        topLabel: 'Disease___Rice_Leaf_Blast',
+        topConfidence: 0.94,
+        topCandidates: [
+          PredictionCandidate(label: 'Disease___Rice_Leaf_Blast', confidence: 0.94),
+          PredictionCandidate(label: 'Stage___Vegetative', confidence: 0.25),
+        ],
+        isConfident: true,
+        inferenceLatency: Duration(milliseconds: 40),
+      );
+
+      final parsed = ParsedDiagnosis.fromInference(result);
+
+      // Crop
+      expect(parsed.crop.title, 'Crop Identity');
+      expect(parsed.crop.value.contains('Rice'), true);
+      expect(parsed.crop.bengaliValue, 'ধান');
+
+      // Disease
+      expect(parsed.disease.title, 'Pathogen / Disease');
+      expect(parsed.disease.value.contains('Leaf Blast'), true);
+      expect(parsed.disease.status, ParameterStatus.critical);
+      expect(parsed.disease.bengaliValue.contains('ব্লাস্ট') || parsed.disease.bengaliValue.contains('Leaf Blast'), true);
+
+      // Pest
+      expect(parsed.pest.value, 'No Infestation');
+      expect(parsed.pest.status, ParameterStatus.optimal);
+
+      // Nutrient
+      expect(parsed.nutrient.value.contains('Optimal'), true);
+
+      // Growth Stage
+      expect(parsed.growthStage.value.contains('Vegetative'), true);
+    });
   });
 
   group('3. Sensor Fusion & ICAR Ruleset Tests', () {
@@ -190,6 +226,30 @@ void main() {
       final fused = fusionService.fuse(inference: inference, sensor: droughtSensor);
 
       expect(fused.recommendedPumpAction, 'UNLOCK');
+    });
+
+    test('Advisory Engine: Generates Tricyclazole prescription & remedies for Disease___Rice_Leaf_Blast', () {
+      const inference = InferenceResult(
+        topLabel: 'Disease___Rice_Leaf_Blast',
+        topConfidence: 0.94,
+        topCandidates: [
+          PredictionCandidate(label: 'Disease___Rice_Leaf_Blast', confidence: 0.94),
+        ],
+        isConfident: true,
+        inferenceLatency: Duration(milliseconds: 38),
+      );
+
+      final drySensor = SensorData(temperature: 28.0, soilMoisture: 40, rain: 0);
+      final fused = fusionService.fuse(inference: inference, sensor: drySensor);
+
+      expect(fused.advisory.crop, 'Rice');
+      expect(fused.advisory.nameEn, 'Rice Leaf Blast');
+      expect(fused.advisory.nameBn.contains('ব্লাস্ট') || fused.advisory.nameBn.contains('Rice Leaf Blast'), true);
+      expect(fused.advisory.chemicalTreatmentEn.contains('Tricyclazole'), true);
+      expect(fused.advisory.organicTreatmentEn.contains('neem') || fused.advisory.organicTreatmentEn.contains('nitrogen'), true);
+      expect(fused.effectiveChemicalTreatmentEn.contains('Tricyclazole'), true);
+      expect(fused.isSprayOverrideActive, false);
+      expect(fused.ttsScriptBn.contains('ব্লাস্ট') || fused.ttsScriptBn.contains('ট্রাইসাইক্লাজোল'), true);
     });
   });
 }

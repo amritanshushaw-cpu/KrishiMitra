@@ -63,7 +63,18 @@ class SensorFusionService {
     required SensorData sensor,
   }) {
     final String label = inference.topLabel;
-    final AdvisoryModel? base = _advisoryDb[label];
+    final String normalized = AppConstants.normalizeModelLabel(label);
+    AdvisoryModel? base = _advisoryDb[label] ?? _advisoryDb[normalized];
+    if (base == null) {
+      for (final entry in _advisoryDb.entries) {
+        if (entry.key.toLowerCase() == normalized.toLowerCase() ||
+            normalized.toLowerCase().endsWith(entry.key.toLowerCase()) ||
+            entry.key.toLowerCase().endsWith(normalized.toLowerCase())) {
+          base = entry.value;
+          break;
+        }
+      }
+    }
 
     final AdvisoryModel advisory = base ?? AdvisoryModel(
       label: label,
@@ -104,7 +115,7 @@ class SensorFusionService {
     if (sensor.isRaining && isDiseaseOrPest) {
       isSprayOverridden = true;
       overrideEn = '🌧️ RAIN OVERRIDE: Active precipitation detected. Chemical spraying is temporarily HALTED to prevent fungicide/pesticide runoff.';
-      overrideBn = '🌧️ বৃষ্টি সতর্কতা: সক্রিয় বৃষ্টিপাত শনাক্ত করা হয়েছে। কীটনাশক ধুয়ে যাওয়া রোধ করতে রাসায়নিক স্প্রে করা সাময়িকভাবে বন্ধ করা হয়েছে।';
+      overrideBn = '🌧️ বৃষ্টির সতর্কতা: সক্রিয় বৃষ্টিপাত শনাক্ত করা হয়েছে। কীটনাশক ধুয়ে যাওয়া রোধ করতে রাসায়নিক স্প্রে করা সাময়িকভাবে বন্ধ করা হয়েছে।';
       overrideHi = '🌧️ बारिश अलर्ट: सक्रिय वर्षा का पता चला है। कीटनाशक के बहने से रोकने के लिए रासायनिक छिड़काव अस्थायी रूप से रोक दिया गया है।';
       effChemEn = '[SUSPENDED DUE TO RAIN] Postpone spray until 24 hours after rain ceases. In the meantime, ensure drainage channels are open.';
       effChemBn = '[বৃষ্টির কারণে স্থগিত] বৃষ্টি থামার ২৪ ঘন্টা পর স্প্রে করুন। এর মধ্যে জল নিষ্কাশন ব্যবস্থা নিশ্চিত করুন।';

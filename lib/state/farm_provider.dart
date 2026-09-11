@@ -1,5 +1,7 @@
 import 'dart:typed_data';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/constants/app_constants.dart';
 import '../core/localization/app_strings.dart';
@@ -323,6 +325,77 @@ class FarmProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> captureFromPhoneCamera() async {
+    _isCapturing = true;
+    _statusMessage = 'Opening device back camera...';
+    notifyListeners();
+
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.camera,
+        preferredCameraDevice: CameraDevice.rear,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (photo == null) {
+        _isCapturing = false;
+        _statusMessage = 'Camera capture cancelled';
+        notifyListeners();
+        return;
+      }
+
+      final Uint8List bytes = await photo.readAsBytes();
+      _currentLeafBytes = bytes;
+      _isCapturing = false;
+      _statusMessage = 'Analyzing photo with Edge TFLite...';
+      notifyListeners();
+
+      await _processImageBytes(bytes, photo.name.isNotEmpty ? photo.name : 'phone_camera.jpg');
+    } catch (e) {
+      _isCapturing = false;
+      _statusMessage = 'Phone camera error: $e';
+      notifyListeners();
+    }
+  }
+
+  Future<void> pickFromGallery() async {
+    _isCapturing = true;
+    _statusMessage = 'Opening phone storage...';
+    notifyListeners();
+
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (photo == null) {
+        _isCapturing = false;
+        _statusMessage = 'Storage selection cancelled';
+        notifyListeners();
+        return;
+      }
+
+      final Uint8List bytes = await photo.readAsBytes();
+      _currentLeafBytes = bytes;
+      _isCapturing = false;
+      _statusMessage = 'Analyzing photo with Edge TFLite...';
+      notifyListeners();
+
+      await _processImageBytes(bytes, photo.name.isNotEmpty ? photo.name : 'storage_leaf.jpg');
+    } catch (e) {
+      _isCapturing = false;
+      _statusMessage = 'Storage upload error: $e';
+      notifyListeners();
+    }
+  }
+
   Future<void> triggerSafetyNetDemo({String? assetPath}) async {
     _isSafetyNetMode = true;
     _isInferenceRunning = true;
@@ -330,7 +403,7 @@ class FarmProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final String path = assetPath ?? AppConstants.demoLateBlightAsset;
+      final String path = assetPath ?? AppConstants.demoRiceBlastAsset;
       final Uint8List bytes = await _cameraService.loadDemoAssetLeaf(assetPath: path);
       _currentLeafBytes = bytes;
       await _processImageBytes(bytes, path);
@@ -569,6 +642,45 @@ class FarmProvider extends ChangeNotifier {
     await prefs.setBool('isLoggedIn', false);
     await stopVoiceAdvisory();
     notifyListeners();
+  }
+
+  Future<void> runBatchModelDiagnostics() async {
+    final List<String> testFiles = [
+      '/data/local/tmp/test_leaves/01_tomato_early_blight.jpg',
+      '/data/local/tmp/test_leaves/02_rice_brown_spot.jpg',
+      '/data/local/tmp/test_leaves/03_tomato_late_blight.jpg',
+      '/data/local/tmp/test_leaves/04_potato_early_blight.jpg',
+      '/data/local/tmp/test_leaves/05_rice_leaf_blast.jpg',
+    ];
+
+    print('====================================================');
+    print('STARTING ON-DEVICE ML MODEL COMPREHENSIVE BENCHMARK');
+    print('====================================================');
+
+    for (final path in testFiles) {
+      final file = File(path);
+      if (await file.exists()) {
+        final bytes = await file.readAsBytes();
+        final stopwatch = Stopwatch()..start();
+        final res = await _tfliteService.runInference(bytes, hintName: path);
+        stopwatch.stop();
+
+        print('--> TEST IMAGE: $path');
+        print('    File Size: ${bytes.length} bytes');
+        print('    Latency: ${stopwatch.elapsedMilliseconds} ms');
+        print('    TOP PREDICTION: [${res.topLabel}] with ${(res.topConfidence * 100).toStringAsFixed(2)}% confidence');
+        print('    Top 3 Candidates:');
+        for (final c in res.topCandidates) {
+          print('       - ${c.label}: ${(c.confidence * 100).toStringAsFixed(2)}%');
+        }
+        print('----------------------------------------------------');
+      } else {
+        print('Test file not found: $path');
+      }
+    }
+    print('====================================================');
+    print('ON-DEVICE ML BENCHMARK COMPLETED');
+    print('====================================================');
   }
 
   @override

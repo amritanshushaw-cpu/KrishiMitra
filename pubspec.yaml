@@ -26,6 +26,7 @@ dependencies:
   fresnel: ^0.1.0
   geolocator: ^14.0.3
   path_provider_foundation: 2.4.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -38,6 +39,7 @@ flutter:
   assets:
     - assets/data/labels.txt
     - assets/data/advisory_db.json
+    - assets/demo/sample_leaf_inspection.jpg
     - assets/demo/tomato_late_blight.jpg
     - assets/demo/potato_healthy.jpg
     - assets/demo/rice_leaf_blast.jpg

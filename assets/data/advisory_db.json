@@ -86,6 +86,48 @@
       "chemical_treatment_bn": "প্রতি লিটার জলে ০.৩ গ্রাম থায়ামেথোক্সাম বা ১ গ্রাম ডায়াফেনথিউরন মিশিয়ে স্প্রে করুন।",
       "tts_prompt_bn": "ফসলে সাদা মাছির উপদ্রব শনাক্ত হয়েছে। এটি পাতা কোঁকড়ানো ভাইরাস ছড়ায়। অবিলম্বে হলুদ ফাঁদ ও কীটনাশক ব্যবহার করুন।"
     },
+    "Pest___Grasshopper": {
+      "name_en": "Grasshopper Foliage Damage",
+      "name_bn": "ঘাসফড়িং বা পঙ্গপালের আক্রমণ",
+      "category": "pest",
+      "crop": "Multi-crop",
+      "severity": "Medium",
+      "symptoms_en": "Irregular jagged chewing marks along leaf margins, defoliation, chewed panicles and tender leaves.",
+      "symptoms_bn": "পাতার কিনারায় অসমান চিবানো দাগ, পাতা ঝাঁঝরা হয়ে যাওয়া ও কচি ডালপালা ক্ষতিগ্রস্ত হওয়া।",
+      "organic_treatment_en": "Spray 5% neem seed kernel extract (NSKE) or Beauveria bassiana bio-pesticide @ 5g/L; use light traps at night.",
+      "organic_treatment_bn": "৫% নিম বীজের নির্যাস অথবা বিউভেরিয়া ব্যাসিয়ানা জৈব কীটনাশক প্রতি লিটার জলে ৫ গ্রাম গুলে স্প্রে করুন এবং রাতে আলোর ফাঁদ ব্যবহার করুন।",
+      "chemical_treatment_en": "Foliar spray of Chlorpyrifos 20% EC @ 2ml/L or Malathion 50% EC @ 1.5ml/L during early morning.",
+      "chemical_treatment_bn": "ভোরবেলা প্রতি লিটার জলে ২ মিলি ক্লোরপাইরিফস অথবা ১.৫ মিলি ম্যালাথিয়ন গুলে গাছে স্প্রে করুন।",
+      "tts_prompt_bn": "ফসলে ঘাসফড়িংয়ের আক্রমণ শনাক্ত হয়েছে। পাতা চিবিয়ে ক্ষতি করছে। অবিলম্বে নিম বীজের নির্যাস অথবা ক্লোরপাইরিফস স্প্রে করুন।"
+    },
+    "Pest___Caterpillar": {
+      "name_en": "Caterpillar Foliage Infestation",
+      "name_bn": "লেদা পোকার আক্রমণ (ক্যাটারপিলার)",
+      "category": "pest",
+      "crop": "Multi-crop",
+      "severity": "High",
+      "symptoms_en": "Skeletonized leaves, irregular large holes, presence of black frass pellets on foliage.",
+      "symptoms_bn": "পাতায় বড় বড় ছিদ্র, পাতার শিরা অবশিষ্ট থাকা এবং পাতার উপরে কালো মল লক্ষ্য করা যাওয়া।",
+      "organic_treatment_en": "Handpick and destroy large larvae; apply Bacillus thuringiensis (Bt) kurstaki @ 2g/L or Neem oil 10,000 ppm @ 3ml/L.",
+      "organic_treatment_bn": "হাত দিয়ে পোকা ও ডিম সংগ্রহ করে ধ্বংস করুন এবং ব্যাসিলাস থুরিনজিয়েনসিস (Bt) প্রতি লিটার জলে ২ গ্রাম গুলে স্প্রে করুন।",
+      "chemical_treatment_en": "Spray Emamectin Benzoate 5% SG @ 0.5g/L or Spinosad 45% SC @ 0.3ml per liter of water.",
+      "chemical_treatment_bn": "প্রতি লিটার জলে ০.৫ গ্রাম ইমমেকটিন বেনজোয়েট অথবা ০.৩ মিলি স্পিনোস্যাড মিশিয়ে স্প্রে করুন।",
+      "tts_prompt_bn": "সতর্কতা! ফসলে লেদা পোকার আক্রমণ দেখা দিয়েছে। পাতা ঝাঁঝরা হয়ে যাচ্ছে। দ্রুত বিটি বা ইমমেকটিন কীটনাশক প্রয়োগ করুন।"
+    },
+    "Pest___Rice_Stem_Hispa": {
+      "name_en": "Rice Hispa (Dicladispa armigera)",
+      "name_bn": "ধানের পামরি পোকা (হিসপা)",
+      "category": "pest",
+      "crop": "Rice",
+      "severity": "Critical",
+      "symptoms_en": "Parallel white streaks along leaf veins, blistered white dry patches caused by grub leaf mining, withered leaf tips.",
+      "symptoms_bn": "পাতার শিরার সমান্তরালে সাদা লম্বাটে রেখা, পাতার উপরিভাগ শুকিয়ে ঝামা ইটের মতো খড়খড়ে হওয়া এবং শিষ শুকিয়ে যাওয়া।",
+      "organic_treatment_en": "Clip off and destroy infested top leaf tips during nursery/tillering; sweep field with nylon sweep nets.",
+      "organic_treatment_bn": "আক্রান্ত পাতার ডগা কেটে নষ্ট করুন এবং নাইলনের জাল টেনে পূর্ণাঙ্গ পোকা ধরে ধ্বংস করুন।",
+      "chemical_treatment_en": "Foliar spray of Chlorpyrifos 20% EC @ 2.5ml/L or Quinalphos 25% EC @ 2ml per liter of water.",
+      "chemical_treatment_bn": "প্রতি লিটার জলে ২.৫ মিলি ক্লোরপাইরিফস অথবা ২ মিলি কুইনালফস মিশিয়ে দ্রুত স্প্রে করুন।",
+      "tts_prompt_bn": "জরুরি সতর্কতা! ধানের ক্ষেতে মারাত্মক পামরি পোকার আক্রমণ শনাক্ত হয়েছে। পাতার উপরিভাগে সাদা দাগ তৈরি হচ্ছে। অবিলম্বে অনুমোদিত কীটনাশক প্রয়োগ করুন।"
+    },
     "Potato___Early_Blight": {
       "name_en": "Potato Early Blight",
       "name_bn": "আলুর আগাম ধসা রোগ",

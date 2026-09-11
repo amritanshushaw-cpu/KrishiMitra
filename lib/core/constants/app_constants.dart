@@ -19,7 +19,7 @@ class AppConstants {
   // Asset Paths
   static const String labelsAsset = 'assets/data/labels.txt';
   static const String advisoryDbAsset = 'assets/data/advisory_db.json';
-  static const String tfliteModelAsset = 'assets/models/smartfarm_unified.tflite';
+  static const String tfliteModelAsset = 'assets/models/smartfarm_model.tflite';
 
   // Demo Fallback Leaf Assets (For Hackathon Pitch Resilience)
   static const String demoLateBlightAsset = 'assets/demo/tomato_late_blight.jpg';
@@ -29,4 +29,22 @@ class AppConstants {
   // Pump Commands (JSON)
   static const String pumpLockJson = '{"pump": "LOCK"}';
   static const String pumpUnlockJson = '{"pump": "UNLOCK"}';
+
+  /// Standardizes ML class labels to match advisory DB keys
+  static String normalizeModelLabel(String label) {
+    if (label.startsWith('Disease___')) {
+      final rest = label.substring('Disease___'.length); // e.g. "Rice_Leaf_Blast"
+      final firstUnderscore = rest.indexOf('_');
+      if (firstUnderscore != -1) {
+        final crop = rest.substring(0, firstUnderscore); // "Rice"
+        final cond = rest.substring(firstUnderscore + 1); // "Leaf_Blast"
+        return '${crop}___${cond}'; // "Rice___Leaf_Blast"
+      }
+      return rest;
+    } else if (label.startsWith('Healthy___')) {
+      final crop = label.substring('Healthy___'.length); // "Rice"
+      return '${crop}___Healthy'; // "Rice___Healthy"
+    }
+    return label;
+  }
 }

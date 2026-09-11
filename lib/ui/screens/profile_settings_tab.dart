@@ -8,9 +8,7 @@ import '../widgets/app_glass_container.dart';
 import 'auth_screen.dart';
 
 class ProfileSettingsTab extends StatelessWidget {
-  final VoidCallback onOpenSafetyNet;
-
-  const ProfileSettingsTab({super.key, required this.onOpenSafetyNet});
+  const ProfileSettingsTab({super.key});
 
   @override
   Widget build(BuildContext context) {

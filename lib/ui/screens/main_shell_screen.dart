@@ -86,125 +86,7 @@ class MainShellScreen extends StatelessWidget {
   }
 
 
-  void _showSafetyNetModal(BuildContext context, FarmProvider provider) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (ctx) {
-        return ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-            child: Container(
-              decoration: BoxDecoration(
-                color: (isDark ? AppTheme.deepPine : AppTheme.mintDew).withValues(alpha: isDark ? 0.90 : 0.94),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                border: Border(
-                  top: BorderSide(
-                    color: isDark ? AppTheme.softSage.withValues(alpha: 0.3) : AppTheme.softSage.withValues(alpha: 0.45),
-                    width: 1.2,
-                  ),
-                ),
-              ),
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.shield_outlined,
-                          color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          provider.strings.safetyNetTitle,
-                          style: GoogleFonts.jetBrainsMono(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.5,
-                            color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        size: 18,
-                        color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                      ),
-                      onPressed: () => Navigator.pop(ctx),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  provider.strings.safetyNetSub,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 12,
-                    color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                _buildDemoTile(
-                  context: ctx,
-                  code: 'SAMPLE_01',
-                  title: 'Tomato // Late Blight (Fungus)',
-                  subtitle: 'Triggers active rain spray suspension & pump interlock test',
-                  accentColor: AppTheme.alertRose,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    provider.triggerSafetyNetDemo(assetPath: AppConstants.demoLateBlightAsset);
-                    provider.setTabIndex(1); // switch to scan tab
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildDemoTile(
-                  context: ctx,
-                  code: 'SAMPLE_02',
-                  title: 'Potato // Healthy Foliage',
-                  subtitle: 'Nominal baseline condition — zero chemical intervention required',
-                  accentColor: AppTheme.emeraldLight,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    provider.triggerSafetyNetDemo(assetPath: AppConstants.demoHealthyAsset);
-                    provider.setTabIndex(1);
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildDemoTile(
-                  context: ctx,
-                  code: 'SAMPLE_03',
-                  title: 'Paddy Rice // Leaf Blast',
-                  subtitle: 'Magnaporthe oryzae pathogen analysis & bio-fungicide prescription',
-                  accentColor: AppTheme.amberWarning,
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    provider.triggerSafetyNetDemo(assetPath: AppConstants.demoRiceBlastAsset);
-                    provider.setTabIndex(1);
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    ),
-  );
-},
-);
-}
 
   List<Map<String, dynamic>> _getActiveAlerts(BuildContext context, FarmProvider provider) {
     final List<Map<String, dynamic>> alerts = [];
@@ -666,84 +548,7 @@ class MainShellScreen extends StatelessWidget {
     );
   }
 
-  static Widget _buildDemoTile({
-    required BuildContext context,
-    required String code,
-    required String title,
-    required String subtitle,
-    required Color accentColor,
-    required VoidCallback onTap,
-  }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: isDark
-              ? AppTheme.deepPine.withValues(alpha: 0.50)
-              : AppTheme.pureWhite.withValues(alpha: 0.70),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDark
-                ? AppTheme.softSage.withValues(alpha: 0.20)
-                : AppTheme.softSage.withValues(alpha: 0.35),
-            width: 1.0,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-              decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Text(
-                code,
-                style: GoogleFonts.jetBrainsMono(
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  color: accentColor,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 1),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 11,
-                      color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 12,
-              color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -751,11 +556,11 @@ class MainShellScreen extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final List<Widget> tabs = [
-      HomeDashboardTab(onOpenSafetyNet: () => _showSafetyNetModal(context, provider)),
-      ScanVisionTab(onOpenSafetyNet: () => _showSafetyNetModal(context, provider)),
+      const HomeDashboardTab(),
+      const ScanVisionTab(),
       const SensorsIotTab(),
       const AnalyticsAlertsTab(),
-      ProfileSettingsTab(onOpenSafetyNet: () => _showSafetyNetModal(context, provider)),
+      const ProfileSettingsTab(),
       const HistoryLogTab(),
       FarmToolsHubScreen(
         onBack: () {
@@ -875,6 +680,7 @@ class MainShellScreen extends StatelessWidget {
                   );
                 },
               ),
+
               // Theme switch
               IconButton(
                 icon: Icon(

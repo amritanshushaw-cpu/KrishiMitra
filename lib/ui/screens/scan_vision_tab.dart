@@ -8,9 +8,7 @@ import '../widgets/liquid_glass_button.dart';
 import 'diagnosis_detail_screen.dart';
 
 class ScanVisionTab extends StatelessWidget {
-  final VoidCallback onOpenSafetyNet;
-
-  const ScanVisionTab({super.key, required this.onOpenSafetyNet});
+  const ScanVisionTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +80,8 @@ class ScanVisionTab extends StatelessWidget {
                 isInferenceRunning: provider.isInferenceRunning,
                 inferenceResult: provider.lastInference,
                 onCapture: () => provider.captureAndAnalyze(),
-                onOpenDemoModal: onOpenSafetyNet,
+                onCapturePhone: () => provider.captureFromPhoneCamera(),
+                onPickGallery: () => provider.pickFromGallery(),
               ),
               const SizedBox(height: 14),
 

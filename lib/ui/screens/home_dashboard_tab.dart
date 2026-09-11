@@ -13,9 +13,7 @@ import '../widgets/historical_advisory_card.dart';
 import 'latest_scan_details_screen.dart';
 
 class HomeDashboardTab extends StatelessWidget {
-  final VoidCallback onOpenSafetyNet;
-
-  const HomeDashboardTab({super.key, required this.onOpenSafetyNet});
+  const HomeDashboardTab({super.key});
 
   @override
   Widget build(BuildContext context) {
