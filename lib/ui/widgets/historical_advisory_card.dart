@@ -67,7 +67,7 @@ class _HistoricalAdvisoryCardState extends State<HistoricalAdvisoryCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '7-Day Scan History',
+                provider.strings.scanHistoryTitle,
                 style: GoogleFonts.bricolageGrotesque(
                   color: isDark ? AppTheme.darkTextSecondary : AppTheme.lightTextSecondary,
                   fontSize: 12,

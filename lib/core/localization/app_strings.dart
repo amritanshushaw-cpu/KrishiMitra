@@ -33,17 +33,102 @@ class AppStrings {
     if (hour >= 4 && hour < 12) {
       return isBengali ? 'শুভ সকাল' : (isHindi ? 'सुप्रभात' : 'Good Morning');
       String get todaysActionPlan => isBengali ? 'আজকের কর্মপরিকল্পনা' : (isHindi ? 'आज की कार्ययोजना' : 'Today\'s Action Plan');
+
+  // History Logs & Headers
+  String get colDate => isBengali ? 'তারিখ' : (isHindi ? 'तारीख' : 'Date');
+  String get colTime => isBengali ? 'সময়' : (isHindi ? 'समय' : 'Time');
+  String get colTemp => isBengali ? 'তাপমাত্রা (°C)' : (isHindi ? 'तापमान (°C)' : 'Temp (°C)');
+  String get colHumidity => isBengali ? 'আর্দ্রতা (%)' : (isHindi ? 'नमी (%)' : 'Humidity (%)');
+  String get colSoil => isBengali ? 'মাটির আর্দ্রতা' : (isHindi ? 'मिट्टी की नमी' : 'Soil Moisture');
+  String get colAdvice => isBengali ? 'উত্পাদিত পরামর্শ' : (isHindi ? 'उत्पन्न सलाह' : 'Advice Generated');
+  String get noLogsYet => isBengali ? 'এখনও কোনো ডেটা নেই। ESP32 ডেটা এখানে আসবে।' : (isHindi ? 'अभी कोई डेटा नहीं। ESP32 डेटा यहाँ आएगा।' : 'No logs yet. ESP32 data will appear here.');
+  String get historyDesc => isBengali ? 'রিয়েল-টাইম ESP32 সেন্সর ক্যাপচার এবং এআই পরামর্শ রেকর্ড।' : (isHindi ? 'रियल-टाइम ESP32 सेंसर कैप्चर और एआई सलाह रिकॉर्ड।' : 'Real-time ESP32 sensor captures and AI advisory records.');
+  String get downloadHistoryBtn => isBengali ? 'ইতিহাস ডাউনলোড করুন (TXT)' : (isHindi ? 'इतिहास डाउनलोड करें (TXT)' : 'Download History (TXT)');
+  String get selectDuration => isBengali ? 'সময়কাল নির্বাচন করুন' : (isHindi ? 'अवधि चुनें' : 'Select Duration');
+  String get daysPrefix => isBengali ? 'শেষ' : (isHindi ? 'पिछले' : 'Last');
+  String get daysSuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Days');
+  String get daySuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Day');
+  String get scanHistoryTitle => isBengali ? '৭-দিনের স্ক্যান ইতিহাস' : (isHindi ? '7-दिन स्कैन इतिहास' : '7-Day Scan History');
+  String get scanPrefix => isBengali ? 'স্ক্যান #' : (isHindi ? 'स्कैन #' : 'Scan #');
 } else if (hour >= 12 && hour < 17) {
       return isBengali ? 'শুভ অপরাহ্ন' : (isHindi ? 'शुभ दोपहर' : 'Good Afternoon');
       String get todaysActionPlan => isBengali ? 'আজকের কর্মপরিকল্পনা' : (isHindi ? 'आज की कार्ययोजना' : 'Today\'s Action Plan');
+
+  // History Logs & Headers
+  String get colDate => isBengali ? 'তারিখ' : (isHindi ? 'तारीख' : 'Date');
+  String get colTime => isBengali ? 'সময়' : (isHindi ? 'समय' : 'Time');
+  String get colTemp => isBengali ? 'তাপমাত্রা (°C)' : (isHindi ? 'तापमान (°C)' : 'Temp (°C)');
+  String get colHumidity => isBengali ? 'আর্দ্রতা (%)' : (isHindi ? 'नमी (%)' : 'Humidity (%)');
+  String get colSoil => isBengali ? 'মাটির আর্দ্রতা' : (isHindi ? 'मिट्टी की नमी' : 'Soil Moisture');
+  String get colAdvice => isBengali ? 'উত্পাদিত পরামর্শ' : (isHindi ? 'उत्पन्न सलाह' : 'Advice Generated');
+  String get noLogsYet => isBengali ? 'এখনও কোনো ডেটা নেই। ESP32 ডেটা এখানে আসবে।' : (isHindi ? 'अभी कोई डेटा नहीं। ESP32 डेटा यहाँ आएगा।' : 'No logs yet. ESP32 data will appear here.');
+  String get historyDesc => isBengali ? 'রিয়েল-টাইম ESP32 সেন্সর ক্যাপচার এবং এআই পরামর্শ রেকর্ড।' : (isHindi ? 'रियल-टाइम ESP32 सेंसर कैप्चर और एआई सलाह रिकॉर्ड।' : 'Real-time ESP32 sensor captures and AI advisory records.');
+  String get downloadHistoryBtn => isBengali ? 'ইতিহাস ডাউনলোড করুন (TXT)' : (isHindi ? 'इतिहास डाउनलोड करें (TXT)' : 'Download History (TXT)');
+  String get selectDuration => isBengali ? 'সময়কাল নির্বাচন করুন' : (isHindi ? 'अवधि चुनें' : 'Select Duration');
+  String get daysPrefix => isBengali ? 'শেষ' : (isHindi ? 'पिछले' : 'Last');
+  String get daysSuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Days');
+  String get daySuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Day');
+  String get scanHistoryTitle => isBengali ? '৭-দিনের স্ক্যান ইতিহাস' : (isHindi ? '7-दिन स्कैन इतिहास' : '7-Day Scan History');
+  String get scanPrefix => isBengali ? 'স্ক্যান #' : (isHindi ? 'स्कैन #' : 'Scan #');
 } else if (hour >= 17 && hour < 20) {
       return isBengali ? 'শুভ সন্ধ্যা' : (isHindi ? 'शुभ संध्या' : 'Good Evening');
       String get todaysActionPlan => isBengali ? 'আজকের কর্মপরিকল্পনা' : (isHindi ? 'आज की कार्ययोजना' : 'Today\'s Action Plan');
+
+  // History Logs & Headers
+  String get colDate => isBengali ? 'তারিখ' : (isHindi ? 'तारीख' : 'Date');
+  String get colTime => isBengali ? 'সময়' : (isHindi ? 'समय' : 'Time');
+  String get colTemp => isBengali ? 'তাপমাত্রা (°C)' : (isHindi ? 'तापमान (°C)' : 'Temp (°C)');
+  String get colHumidity => isBengali ? 'আর্দ্রতা (%)' : (isHindi ? 'नमी (%)' : 'Humidity (%)');
+  String get colSoil => isBengali ? 'মাটির আর্দ্রতা' : (isHindi ? 'मिट्टी की नमी' : 'Soil Moisture');
+  String get colAdvice => isBengali ? 'উত্পাদিত পরামর্শ' : (isHindi ? 'उत्पन्न सलाह' : 'Advice Generated');
+  String get noLogsYet => isBengali ? 'এখনও কোনো ডেটা নেই। ESP32 ডেটা এখানে আসবে।' : (isHindi ? 'अभी कोई डेटा नहीं। ESP32 डेटा यहाँ आएगा।' : 'No logs yet. ESP32 data will appear here.');
+  String get historyDesc => isBengali ? 'রিয়েল-টাইম ESP32 সেন্সর ক্যাপচার এবং এআই পরামর্শ রেকর্ড।' : (isHindi ? 'रियल-टाइम ESP32 सेंसर कैप्चर और एआई सलाह रिकॉर्ड।' : 'Real-time ESP32 sensor captures and AI advisory records.');
+  String get downloadHistoryBtn => isBengali ? 'ইতিহাস ডাউনলোড করুন (TXT)' : (isHindi ? 'इतिहास डाउनलोड करें (TXT)' : 'Download History (TXT)');
+  String get selectDuration => isBengali ? 'সময়কাল নির্বাচন করুন' : (isHindi ? 'अवधि चुनें' : 'Select Duration');
+  String get daysPrefix => isBengali ? 'শেষ' : (isHindi ? 'पिछले' : 'Last');
+  String get daysSuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Days');
+  String get daySuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Day');
+  String get scanHistoryTitle => isBengali ? '৭-দিনের স্ক্যান ইতিহাস' : (isHindi ? '7-दिन स्कैन इतिहास' : '7-Day Scan History');
+  String get scanPrefix => isBengali ? 'স্ক্যান #' : (isHindi ? 'स्कैन #' : 'Scan #');
 } else {
       return isBengali ? 'শুভ রাত্রি' : (isHindi ? 'शुभ रात्रि' : 'Good Night');
       String get todaysActionPlan => isBengali ? 'আজকের কর্মপরিকল্পনা' : (isHindi ? 'आज की कार्ययोजना' : 'Today\'s Action Plan');
+
+  // History Logs & Headers
+  String get colDate => isBengali ? 'তারিখ' : (isHindi ? 'तारीख' : 'Date');
+  String get colTime => isBengali ? 'সময়' : (isHindi ? 'समय' : 'Time');
+  String get colTemp => isBengali ? 'তাপমাত্রা (°C)' : (isHindi ? 'तापमान (°C)' : 'Temp (°C)');
+  String get colHumidity => isBengali ? 'আর্দ্রতা (%)' : (isHindi ? 'नमी (%)' : 'Humidity (%)');
+  String get colSoil => isBengali ? 'মাটির আর্দ্রতা' : (isHindi ? 'मिट्टी की नमी' : 'Soil Moisture');
+  String get colAdvice => isBengali ? 'উত্পাদিত পরামর্শ' : (isHindi ? 'उत्पन्न सलाह' : 'Advice Generated');
+  String get noLogsYet => isBengali ? 'এখনও কোনো ডেটা নেই। ESP32 ডেটা এখানে আসবে।' : (isHindi ? 'अभी कोई डेटा नहीं। ESP32 डेटा यहाँ आएगा।' : 'No logs yet. ESP32 data will appear here.');
+  String get historyDesc => isBengali ? 'রিয়েল-টাইম ESP32 সেন্সর ক্যাপচার এবং এআই পরামর্শ রেকর্ড।' : (isHindi ? 'रियल-टाइम ESP32 सेंसर कैप्चर और एआई सलाह रिकॉर्ड।' : 'Real-time ESP32 sensor captures and AI advisory records.');
+  String get downloadHistoryBtn => isBengali ? 'ইতিহাস ডাউনলোড করুন (TXT)' : (isHindi ? 'इतिहास डाउनलोड करें (TXT)' : 'Download History (TXT)');
+  String get selectDuration => isBengali ? 'সময়কাল নির্বাচন করুন' : (isHindi ? 'अवधि चुनें' : 'Select Duration');
+  String get daysPrefix => isBengali ? 'শেষ' : (isHindi ? 'पिछले' : 'Last');
+  String get daysSuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Days');
+  String get daySuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Day');
+  String get scanHistoryTitle => isBengali ? '৭-দিনের স্ক্যান ইতিহাস' : (isHindi ? '7-दिन स्कैन इतिहास' : '7-Day Scan History');
+  String get scanPrefix => isBengali ? 'স্ক্যান #' : (isHindi ? 'स्कैन #' : 'Scan #');
 }
     String get todaysActionPlan => isBengali ? 'আজকের কর্মপরিকল্পনা' : (isHindi ? 'आज की कार्ययोजना' : 'Today\'s Action Plan');
+
+  // History Logs & Headers
+  String get colDate => isBengali ? 'তারিখ' : (isHindi ? 'तारीख' : 'Date');
+  String get colTime => isBengali ? 'সময়' : (isHindi ? 'समय' : 'Time');
+  String get colTemp => isBengali ? 'তাপমাত্রা (°C)' : (isHindi ? 'तापमान (°C)' : 'Temp (°C)');
+  String get colHumidity => isBengali ? 'আর্দ্রতা (%)' : (isHindi ? 'नमी (%)' : 'Humidity (%)');
+  String get colSoil => isBengali ? 'মাটির আর্দ্রতা' : (isHindi ? 'मिट्टी की नमी' : 'Soil Moisture');
+  String get colAdvice => isBengali ? 'উত্পাদিত পরামর্শ' : (isHindi ? 'उत्पन्न सलाह' : 'Advice Generated');
+  String get noLogsYet => isBengali ? 'এখনও কোনো ডেটা নেই। ESP32 ডেটা এখানে আসবে।' : (isHindi ? 'अभी कोई डेटा नहीं। ESP32 डेटा यहाँ आएगा।' : 'No logs yet. ESP32 data will appear here.');
+  String get historyDesc => isBengali ? 'রিয়েল-টাইম ESP32 সেন্সর ক্যাপচার এবং এআই পরামর্শ রেকর্ড।' : (isHindi ? 'रियल-टाइम ESP32 सेंसर कैप्चर और एआई सलाह रिकॉर्ड।' : 'Real-time ESP32 sensor captures and AI advisory records.');
+  String get downloadHistoryBtn => isBengali ? 'ইতিহাস ডাউনলোড করুন (TXT)' : (isHindi ? 'इतिहास डाउनलोड करें (TXT)' : 'Download History (TXT)');
+  String get selectDuration => isBengali ? 'সময়কাল নির্বাচন করুন' : (isHindi ? 'अवधि चुनें' : 'Select Duration');
+  String get daysPrefix => isBengali ? 'শেষ' : (isHindi ? 'पिछले' : 'Last');
+  String get daysSuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Days');
+  String get daySuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Day');
+  String get scanHistoryTitle => isBengali ? '৭-দিনের স্ক্যান ইতিহাস' : (isHindi ? '7-दिन स्कैन इतिहास' : '7-Day Scan History');
+  String get scanPrefix => isBengali ? 'স্ক্যান #' : (isHindi ? 'स्कैन #' : 'Scan #');
 }
 
   String getGreetingSubtitle() {
@@ -51,6 +136,23 @@ class AppStrings {
         ? 'আপনার খামার সেন্সর আজ সুস্থ আছে।' 
         : (isHindi ? 'आज आपके खेत के सेंसर स्वस्थ हैं।' : 'Your farm sensors are healthy today.');
     String get todaysActionPlan => isBengali ? 'আজকের কর্মপরিকল্পনা' : (isHindi ? 'आज की कार्ययोजना' : 'Today\'s Action Plan');
+
+  // History Logs & Headers
+  String get colDate => isBengali ? 'তারিখ' : (isHindi ? 'तारीख' : 'Date');
+  String get colTime => isBengali ? 'সময়' : (isHindi ? 'समय' : 'Time');
+  String get colTemp => isBengali ? 'তাপমাত্রা (°C)' : (isHindi ? 'तापमान (°C)' : 'Temp (°C)');
+  String get colHumidity => isBengali ? 'আর্দ্রতা (%)' : (isHindi ? 'नमी (%)' : 'Humidity (%)');
+  String get colSoil => isBengali ? 'মাটির আর্দ্রতা' : (isHindi ? 'मिट्टी की नमी' : 'Soil Moisture');
+  String get colAdvice => isBengali ? 'উত্পাদিত পরামর্শ' : (isHindi ? 'उत्पन्न सलाह' : 'Advice Generated');
+  String get noLogsYet => isBengali ? 'এখনও কোনো ডেটা নেই। ESP32 ডেটা এখানে আসবে।' : (isHindi ? 'अभी कोई डेटा नहीं। ESP32 डेटा यहाँ आएगा।' : 'No logs yet. ESP32 data will appear here.');
+  String get historyDesc => isBengali ? 'রিয়েল-টাইম ESP32 সেন্সর ক্যাপচার এবং এআই পরামর্শ রেকর্ড।' : (isHindi ? 'रियल-टाइम ESP32 सेंसर कैप्चर और एआई सलाह रिकॉर्ड।' : 'Real-time ESP32 sensor captures and AI advisory records.');
+  String get downloadHistoryBtn => isBengali ? 'ইতিহাস ডাউনলোড করুন (TXT)' : (isHindi ? 'इतिहास डाउनलोड करें (TXT)' : 'Download History (TXT)');
+  String get selectDuration => isBengali ? 'সময়কাল নির্বাচন করুন' : (isHindi ? 'अवधि चुनें' : 'Select Duration');
+  String get daysPrefix => isBengali ? 'শেষ' : (isHindi ? 'पिछले' : 'Last');
+  String get daysSuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Days');
+  String get daySuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Day');
+  String get scanHistoryTitle => isBengali ? '৭-দিনের স্ক্যান ইতিহাস' : (isHindi ? '7-दिन स्कैन इतिहास' : '7-Day Scan History');
+  String get scanPrefix => isBengali ? 'স্ক্যান #' : (isHindi ? 'स्कैन #' : 'Scan #');
 }
 
   String get latestAdviceTitle => isBengali ? 'সর্বশেষ পরামর্শ' : (isHindi ? 'नवीनतम सलाह' : 'Latest Advice');
@@ -111,4 +213,21 @@ class AppStrings {
   String get smartIrrigation => isBengali ? 'স্মার্ট সেচ' : (isHindi ? 'स्मार्ट सिंचाई' : 'SMART IRRIGATION');
   String get captureLeaf => isBengali ? 'পাতা স্ক্যান করুন' : (isHindi ? 'पत्ता स्कैन करें' : 'CAPTURE LEAF');
   String get todaysActionPlan => isBengali ? 'আজকের কর্মপরিকল্পনা' : (isHindi ? 'आज की कार्ययोजना' : 'Today\'s Action Plan');
+
+  // History Logs & Headers
+  String get colDate => isBengali ? 'তারিখ' : (isHindi ? 'तारीख' : 'Date');
+  String get colTime => isBengali ? 'সময়' : (isHindi ? 'समय' : 'Time');
+  String get colTemp => isBengali ? 'তাপমাত্রা (°C)' : (isHindi ? 'तापमान (°C)' : 'Temp (°C)');
+  String get colHumidity => isBengali ? 'আর্দ্রতা (%)' : (isHindi ? 'नमी (%)' : 'Humidity (%)');
+  String get colSoil => isBengali ? 'মাটির আর্দ্রতা' : (isHindi ? 'मिट्टी की नमी' : 'Soil Moisture');
+  String get colAdvice => isBengali ? 'উত্পাদিত পরামর্শ' : (isHindi ? 'उत्पन्न सलाह' : 'Advice Generated');
+  String get noLogsYet => isBengali ? 'এখনও কোনো ডেটা নেই। ESP32 ডেটা এখানে আসবে।' : (isHindi ? 'अभी कोई डेटा नहीं। ESP32 डेटा यहाँ आएगा।' : 'No logs yet. ESP32 data will appear here.');
+  String get historyDesc => isBengali ? 'রিয়েল-টাইম ESP32 সেন্সর ক্যাপচার এবং এআই পরামর্শ রেকর্ড।' : (isHindi ? 'रियल-टाइम ESP32 सेंसर कैप्चर और एआई सलाह रिकॉर्ड।' : 'Real-time ESP32 sensor captures and AI advisory records.');
+  String get downloadHistoryBtn => isBengali ? 'ইতিহাস ডাউনলোড করুন (TXT)' : (isHindi ? 'इतिहास डाउनलोड करें (TXT)' : 'Download History (TXT)');
+  String get selectDuration => isBengali ? 'সময়কাল নির্বাচন করুন' : (isHindi ? 'अवधि चुनें' : 'Select Duration');
+  String get daysPrefix => isBengali ? 'শেষ' : (isHindi ? 'पिछले' : 'Last');
+  String get daysSuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Days');
+  String get daySuffix => isBengali ? 'দিন' : (isHindi ? 'दिन' : 'Day');
+  String get scanHistoryTitle => isBengali ? '৭-দিনের স্ক্যান ইতিহাস' : (isHindi ? '7-दिन स्कैन इतिहास' : '7-Day Scan History');
+  String get scanPrefix => isBengali ? 'স্ক্যান #' : (isHindi ? 'स्कैन #' : 'Scan #');
 }
