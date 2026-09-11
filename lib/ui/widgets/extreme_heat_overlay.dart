@@ -1,37 +1,19 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../../core/theme/app_theme.dart';
 
-/// Specification for vertical thermal shimmer streamline ribbons
-class _HeatRibbon {
-  final double xFraction;
-  final double speed;
-  final double amplitude;
-  final double frequency;
-  final double phase;
-  final double strokeWidth;
-  final Color baseColor;
-
-  const _HeatRibbon({
-    required this.xFraction,
-    required this.speed,
-    required this.amplitude,
-    required this.frequency,
-    required this.phase,
-    required this.strokeWidth,
-    required this.baseColor,
-  });
-}
-
-/// A sophisticated, high-aesthetic extreme heat / thermal stress animation.
-/// Replaces static red tint with organic rising thermal haze ribbons,
-/// ascending convective heat ripples, and a breathing radiant solar glow.
-/// Free of distracting floating bubbles or noisy dots.
+/// A refined, elegant solar thermal radiance and ambient heat shimmer overlay.
+/// Replaces harsh fire/furnace animations with a gentle solar breathing glow,
+/// delicate expanding solar corona pulses, and subtle horizontal thermal mirage waves.
+/// Strictly designed to preserve UI legibility and match KrishiMitra's glassmorphic theme.
 class ExtremeHeatOverlay extends StatefulWidget {
   final double borderRadius;
+  final Color? accentColor;
 
   const ExtremeHeatOverlay({
     super.key,
     this.borderRadius = 18.0,
+    this.accentColor,
   });
 
   @override
@@ -41,62 +23,13 @@ class ExtremeHeatOverlay extends StatefulWidget {
 class _ExtremeHeatOverlayState extends State<ExtremeHeatOverlay>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final List<_HeatRibbon> _ribbons;
 
   @override
   void initState() {
     super.initState();
-    _ribbons = const [
-      _HeatRibbon(
-        xFraction: 0.16,
-        speed: 1.0,
-        amplitude: 3.5,
-        frequency: 2.2,
-        phase: 0.0,
-        strokeWidth: 1.3,
-        baseColor: Color(0xFFFF453A),
-      ),
-      _HeatRibbon(
-        xFraction: 0.34,
-        speed: 1.25,
-        amplitude: 4.5,
-        frequency: 1.8,
-        phase: 1.4,
-        strokeWidth: 1.8,
-        baseColor: Color(0xFFFF9F0A),
-      ),
-      _HeatRibbon(
-        xFraction: 0.52,
-        speed: 0.85,
-        amplitude: 4.0,
-        frequency: 2.4,
-        phase: 2.7,
-        strokeWidth: 1.5,
-        baseColor: Color(0xFFFF375F),
-      ),
-      _HeatRibbon(
-        xFraction: 0.70,
-        speed: 1.15,
-        amplitude: 3.8,
-        frequency: 1.9,
-        phase: 4.1,
-        strokeWidth: 1.7,
-        baseColor: Color(0xFFFF9F0A),
-      ),
-      _HeatRibbon(
-        xFraction: 0.86,
-        speed: 0.95,
-        amplitude: 3.2,
-        frequency: 2.6,
-        phase: 5.3,
-        strokeWidth: 1.2,
-        baseColor: Color(0xFFFF453A),
-      ),
-    ];
-
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3000),
+      duration: const Duration(milliseconds: 3500),
     )..repeat();
   }
 
@@ -109,33 +42,36 @@ class _ExtremeHeatOverlayState extends State<ExtremeHeatOverlay>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final themeColor = widget.accentColor ?? AppTheme.amberWarning;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(widget.borderRadius),
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, _) {
-          return CustomPaint(
-            painter: _HeatPainter(
-              progress: _controller.value,
-              ribbons: _ribbons,
-              isDark: isDark,
-            ),
-          );
-        },
+      child: RepaintBoundary(
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            return CustomPaint(
+              painter: _SolarThermalPainter(
+                progress: _controller.value,
+                color: themeColor,
+                isDark: isDark,
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 }
 
-class _HeatPainter extends CustomPainter {
+class _SolarThermalPainter extends CustomPainter {
   final double progress;
-  final List<_HeatRibbon> ribbons;
+  final Color color;
   final bool isDark;
 
-  _HeatPainter({
+  _SolarThermalPainter({
     required this.progress,
-    required this.ribbons,
+    required this.color,
     required this.isDark,
   });
 
@@ -143,128 +79,124 @@ class _HeatPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (size.width <= 0 || size.height <= 0) return;
 
-    // 1. Radiant breathing thermal background aura
     final double pulse = 0.5 + 0.5 * math.sin(progress * 2 * math.pi);
-    final double bgAlpha = isDark ? (0.35 + pulse * 0.15) : (0.12 + pulse * 0.08);
 
-    final bgPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.bottomCenter,
-        end: Alignment.topCenter,
-        colors: [
-          const Color(0xFF5A0C0C).withValues(alpha: bgAlpha * 1.3),
-          const Color(0xFF380808).withValues(alpha: bgAlpha * 0.8),
-          const Color(0xFF1F0404).withValues(alpha: bgAlpha * 0.3),
-        ],
-        stops: const [0.0, 0.55, 1.0],
-      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+    // 1. Soft Solar Breathing Warmth (Radial ambient aura from top-right / sun position)
+    final Offset sunCenter = Offset(size.width * 0.80, size.height * 0.22);
+    final double maxSunRadius = size.width * 0.95;
 
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
-
-    // Warm radial core at bottom center to simulate rising furnace heat
-    final corePaint = Paint()
+    final sunAuraPaint = Paint()
       ..shader = RadialGradient(
-        center: const Alignment(0.0, 1.1),
-        radius: 0.9,
+        center: const Alignment(0.65, -0.55),
+        radius: 0.95,
         colors: [
-          const Color(0xFFFF453A).withValues(alpha: isDark ? (0.28 + pulse * 0.10) : 0.14),
-          const Color(0xFFFF9F0A).withValues(alpha: isDark ? (0.16 + pulse * 0.06) : 0.07),
+          color.withValues(alpha: isDark ? (0.16 + pulse * 0.08) : (0.10 + pulse * 0.05)),
+          color.withValues(alpha: isDark ? (0.07 + pulse * 0.04) : (0.04 + pulse * 0.02)),
           Colors.transparent,
         ],
         stops: const [0.0, 0.55, 1.0],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), corePaint);
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), sunAuraPaint);
 
-    // 2. Ascending Convective Heat Waves (subtle horizontal ripples lifting upward)
-    _drawAscendingRipple(canvas, size, (progress) % 1.0, 0.22);
-    _drawAscendingRipple(canvas, size, (progress + 0.5) % 1.0, 0.18);
+    // 2. Expanding Solar Corona Pulses (Delicate, calm radiation rings)
+    _drawCoronaRing(canvas, sunCenter, progress, maxSunRadius);
+    _drawCoronaRing(canvas, sunCenter, (progress + 0.5) % 1.0, maxSunRadius);
 
-    // 3. Vertical Heat Haze Shimmer Ribbons
-    final ribbonPaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+    // 3. Gentle Horizontal Thermal Mirage Waves (Floating near card base, harmonizing with soil/vapor cards)
+    _drawThermalWave(
+      canvas: canvas,
+      size: size,
+      phaseProgress: progress,
+      heightRatio: 0.22,
+      amplitude: 2.5,
+      frequency: 1.8,
+      baseOpacity: isDark ? 0.09 : 0.05,
+    );
 
-    const int steps = 28;
-    for (final ribbon in ribbons) {
-      final double baseX = ribbon.xFraction * size.width;
-      final double cyclePhase = progress * 2 * math.pi * ribbon.speed + ribbon.phase;
-
-      final path = Path();
-      for (int i = 0; i <= steps; i++) {
-        final double ratio = i / steps; // 0 = bottom, 1 = top
-        final double y = size.height * (1.0 - ratio);
-        
-        // Sine displacement simulating thermal air mirage
-        final double angle = ratio * ribbon.frequency * 2 * math.pi - cyclePhase;
-        final double x = baseX + math.sin(angle) * ribbon.amplitude;
-
-        if (i == 0) {
-          path.moveTo(x, y);
-        } else {
-          path.lineTo(x, y);
-        }
-      }
-
-      // Vertical gradient: fades in near bottom, vibrant in middle, softly evaporates near top
-      final Rect ribbonBounds = Rect.fromLTWH(baseX - 10, 0, 20, size.height);
-      ribbonPaint
-        ..strokeWidth = ribbon.strokeWidth
-        ..shader = LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            ribbon.baseColor.withValues(alpha: 0.0),
-            ribbon.baseColor.withValues(alpha: isDark ? 0.32 : 0.22),
-            ribbon.baseColor.withValues(alpha: isDark ? 0.25 : 0.16),
-            ribbon.baseColor.withValues(alpha: 0.0),
-          ],
-          stops: const [0.05, 0.35, 0.70, 0.98],
-        ).createShader(ribbonBounds);
-
-      canvas.drawPath(path, ribbonPaint);
-    }
+    _drawThermalWave(
+      canvas: canvas,
+      size: size,
+      phaseProgress: (progress + 0.4) % 1.0,
+      heightRatio: 0.16,
+      amplitude: 3.2,
+      frequency: 2.2,
+      baseOpacity: isDark ? 0.14 : 0.08,
+    );
   }
 
-  void _drawAscendingRipple(Canvas canvas, Size size, double phaseProgress, double baseOpacity) {
-    // Phase 0.0 is at bottom (height), Phase 1.0 is near top (height * 0.15)
-    final double y = size.height * (1.0 - phaseProgress * 0.75);
-    // Ripple fades as it reaches upper air
-    final double opacity = math.sin(phaseProgress * math.pi) * (isDark ? baseOpacity : baseOpacity * 0.7);
-    if (opacity <= 0.01) return;
+  void _drawCoronaRing(Canvas canvas, Offset center, double phase, double maxRadius) {
+    // Ring expands outward and smoothly fades
+    final double radius = 10.0 + phase * (maxRadius - 10.0);
+    final double opacity = math.sin(phase * math.pi) * (isDark ? 0.20 : 0.12);
+    if (opacity <= 0.005) return;
 
-    final ripplePaint = Paint()
+    final ringPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2
-      ..shader = LinearGradient(
+      ..strokeWidth = 1.0
+      ..shader = RadialGradient(
+        center: Alignment(
+          (center.dx / maxRadius) * 2 - 1,
+          (center.dy / maxRadius) * 2 - 1,
+        ),
+        radius: 1.0,
         colors: [
-          const Color(0xFFFF9F0A).withValues(alpha: 0.0),
-          const Color(0xFFFF453A).withValues(alpha: opacity),
-          const Color(0xFFFF9F0A).withValues(alpha: opacity * 0.8),
-          const Color(0xFFFF453A).withValues(alpha: 0.0),
+          color.withValues(alpha: opacity),
+          color.withValues(alpha: opacity * 0.4),
+          Colors.transparent,
         ],
-        stops: const [0.0, 0.3, 0.7, 1.0],
-      ).createShader(Rect.fromLTWH(0, y - 6, size.width, 12));
+        stops: const [0.85, 0.95, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: radius));
+
+    canvas.drawCircle(center, radius, ringPaint);
+  }
+
+  void _drawThermalWave({
+    required Canvas canvas,
+    required Size size,
+    required double phaseProgress,
+    required double heightRatio,
+    required double amplitude,
+    required double frequency,
+    required double baseOpacity,
+  }) {
+    final double baseY = size.height * (1.0 - heightRatio);
+    final double wavePhase = phaseProgress * 2 * math.pi;
 
     final path = Path();
-    const int steps = 24;
-    for (int i = 0; i <= steps; i++) {
-      final double x = (i / steps) * size.width;
-      final double waveOffset = math.sin((i / steps) * 2 * math.pi + progress * 2 * math.pi) * 3.0;
-      final double curY = y + waveOffset;
+    const int segments = 32;
 
-      if (i == 0) {
-        path.moveTo(x, curY);
-      } else {
-        path.lineTo(x, curY);
-      }
+    path.moveTo(0, size.height);
+
+    for (int i = 0; i <= segments; i++) {
+      final double x = (i / segments) * size.width;
+      final double normX = i / segments;
+      final double y = baseY +
+          math.sin(normX * frequency * 2 * math.pi + wavePhase) * amplitude;
+
+      path.lineTo(x, y);
     }
 
-    canvas.drawPath(path, ripplePaint);
+    path.lineTo(size.width, size.height);
+    path.close();
+
+    final wavePaint = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          color.withValues(alpha: baseOpacity * 0.4),
+          color.withValues(alpha: baseOpacity),
+        ],
+      ).createShader(Rect.fromLTWH(0, baseY - amplitude, size.width, size.height - baseY + amplitude));
+
+    canvas.drawPath(path, wavePaint);
   }
 
   @override
-  bool shouldRepaint(covariant _HeatPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.isDark != isDark;
+  bool shouldRepaint(covariant _SolarThermalPainter oldDelegate) {
+    return oldDelegate.progress != progress ||
+        oldDelegate.color != color ||
+        oldDelegate.isDark != isDark;
   }
 }

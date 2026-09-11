@@ -1,4 +1,4 @@
-﻿import '../models/advisory_model.dart';
+import '../models/advisory_model.dart';
 import '../models/sensor_data.dart';
 import '../models/parsed_diagnosis.dart';
 

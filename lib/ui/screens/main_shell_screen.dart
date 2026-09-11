@@ -15,7 +15,6 @@ import 'history_log_tab.dart';
 import 'scan_vision_tab.dart';
 import 'sensors_iot_tab.dart';
 import '../../models/parsed_diagnosis.dart';
-import '../widgets/mesh_drift_background.dart';
 
 class MainShellScreen extends StatelessWidget {
   const MainShellScreen({super.key});
@@ -779,8 +778,8 @@ class MainShellScreen extends StatelessWidget {
       },
       child: LayoutBuilder(
       builder: (context, constraints) {
-        return MeshDriftBackground(
-          isDark: isDark,
+        return Container(
+          decoration: AppTheme.backgroundDecoration(isDark),
           child: Scaffold(
             backgroundColor: Colors.transparent,
             appBar: AppBar(
@@ -949,32 +948,9 @@ class MainShellScreen extends StatelessWidget {
               const SizedBox(width: 8),
             ],
           ),
-          body: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 260),
-            switchInCurve: Curves.easeOutCubic,
-            switchOutCurve: Curves.easeInCubic,
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return FadeTransition(
-                opacity: CurvedAnimation(
-                  parent: animation,
-                  curve: const Interval(0.15, 1.0, curve: Curves.easeOut),
-                ),
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0.0, 0.025),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutCubic,
-                  )),
-                  child: child,
-                ),
-              );
-            },
-            child: KeyedSubtree(
-              key: ValueKey<int>(provider.activeTabIndex),
-              child: tabs[provider.activeTabIndex],
-            ),
+          body: IndexedStack(
+            index: provider.activeTabIndex,
+            children: tabs,
           ),
           bottomNavigationBar: Container(
             color: Colors.transparent,

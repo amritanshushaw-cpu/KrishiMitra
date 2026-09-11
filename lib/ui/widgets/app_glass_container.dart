@@ -21,6 +21,7 @@ class AppGlassContainer extends StatelessWidget {
   final double? width;
   final double? height;
   final VoidCallback? onTap;
+  final bool enableBackdropFilter;
 
   const AppGlassContainer({
     super.key,
@@ -38,6 +39,7 @@ class AppGlassContainer extends StatelessWidget {
     this.width,
     this.height,
     this.onTap,
+    this.enableBackdropFilter = false,
   });
 
   @override
@@ -52,6 +54,7 @@ class AppGlassContainer extends StatelessWidget {
         height: height,
         onTap: onTap,
         liquidColors: liquidColors,
+        enableBackdropFilter: enableBackdropFilter,
         child: child,
       );
     }
@@ -76,26 +79,28 @@ class AppGlassContainer extends StatelessWidget {
       ),
     );
 
-    Widget frosted = ClipRRect(
+    Widget glassCard = ClipRRect(
       borderRadius: BorderRadius.circular(radius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: container,
-      ),
+      child: enableBackdropFilter && blur > 0
+          ? BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+              child: container,
+            )
+          : container,
     );
 
     if (onTap != null) {
-      frosted = InkWell(
+      glassCard = InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(radius),
-        child: frosted,
+        child: glassCard,
       );
     }
 
     if (margin != null) {
-      return Padding(padding: margin!, child: frosted);
+      return Padding(padding: margin!, child: glassCard);
     }
 
-    return frosted;
+    return glassCard;
   }
 }

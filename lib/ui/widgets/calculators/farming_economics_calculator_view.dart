@@ -90,12 +90,12 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
                       decoration: BoxDecoration(
                         color: isSelected
                             ? (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32))
-                            : (isDark ? AppTheme.darkCard : Colors.white),
+                            : (isDark ? const Color(0xFF16201B).withValues(alpha: 0.65) : Colors.white.withValues(alpha: 0.78)),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: isSelected
                               ? (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32))
-                              : (isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5)),
+                              : (isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
                         ),
                       ),
                       child: Text(
@@ -120,10 +120,10 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: isDark ? AppTheme.darkCard : Colors.white,
+              color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5),
+                color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
               ),
               boxShadow: [
                 BoxShadow(
@@ -278,16 +278,16 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
           // 3. Collapsible Input Costs Breakdown
           Container(
             decoration: BoxDecoration(
-              color: isDark ? AppTheme.darkCard : Colors.white,
+              color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5),
+                color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
               ),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
-                  color: const Color(0x0A1A3E31),
+                  color: Color(0x0A1A3E31),
                   blurRadius: 12,
-                  offset: const Offset(0, 3),
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
@@ -423,14 +423,15 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isDark
-                  ? AppTheme.darkSurfaceElevated
-                  : (result.isProfitable ? const Color(0xFFE8F5EE) : const Color(0xFFFFEBEE)),
+              color: (isDark
+                      ? AppTheme.darkSurfaceElevated
+                      : (result.isProfitable ? const Color(0xFFE8F5EE) : const Color(0xFFFFEBEE)))
+                  .withValues(alpha: isDark ? 0.72 : 0.85),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
                 color: isDark
                     ? (result.isProfitable ? AppTheme.darkAccentGreen.withValues(alpha: 0.3) : AppTheme.alertRed.withValues(alpha: 0.3))
-                    : Colors.transparent,
+                    : const Color(0x281A3E31),
               ),
             ),
             child: Row(
@@ -489,10 +490,10 @@ class _FarmingEconomicsCalculatorViewState extends State<FarmingEconomicsCalcula
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkCard : Colors.white,
+        color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5),
+          color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
         ),
         boxShadow: [
           BoxShadow(

@@ -60,12 +60,12 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? (isDark ? const Color(0xFF163828) : const Color(0xFFE8F5EE))
-                            : (isDark ? AppTheme.darkCard : Colors.white),
+                            : (isDark ? const Color(0xFF16201B).withValues(alpha: 0.65) : Colors.white.withValues(alpha: 0.78)),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: isSelected
                               ? (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32))
-                              : (isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5)),
+                              : (isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
                           width: isSelected ? 1.5 : 1.0,
                         ),
                         boxShadow: [
@@ -160,10 +160,10 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: isDark ? AppTheme.darkCard : Colors.white,
+              color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5),
+                color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
               ),
               boxShadow: [
                 BoxShadow(
@@ -348,16 +348,16 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: isDark ? AppTheme.darkCard : Colors.white,
+              color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
-                color: const Color(0xFFE3EDE5),
+                color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
               ),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
-                  color: const Color(0x0A1A3E31),
+                  color: Color(0x0A1A3E31),
                   blurRadius: 12,
-                  offset: const Offset(0, 3),
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
@@ -467,10 +467,10 @@ class _PesticideCalculatorViewState extends State<PesticideCalculatorView> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkCard : Colors.white,
+        color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AppTheme.darkBorder : const Color(0xFFE3EDE5),
+          color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
         ),
         boxShadow: [
           BoxShadow(
