@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../services/agri_calculator_service.dart';
+import '../../../state/farm_provider.dart';
 
 class FertilizerCalculatorView extends StatefulWidget {
   const FertilizerCalculatorView({super.key});
@@ -11,20 +13,93 @@ class FertilizerCalculatorView extends StatefulWidget {
 }
 
 class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
+  bool _isRecoveryMode = false;
   CropType _selectedCrop = CropType.tomato;
+  String _selectedDiseaseId = 'Tomato___Late_Blight';
   LandUnit _selectedUnit = LandUnit.acre;
   double _area = 1.0;
   FertilizerCombination _selectedCombo = FertilizerCombination.ureaDapMop;
+  bool _initializedFromProvider = false;
+
+  static const List<CropType> _recoveryCrops = [
+    CropType.potato,
+    CropType.tomato,
+    CropType.paddy,
+  ];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initializedFromProvider) {
+      final provider = context.read<FarmProvider>();
+      if (provider.openCalculatorInRecoveryMode) {
+        _isRecoveryMode = true;
+        if (provider.activeCalculatorCrop != null) {
+          _selectedCrop = provider.activeCalculatorCrop!;
+        }
+        if (provider.activeCalculatorDiseaseId != null &&
+            AgriCalculatorService.diseaseRecoveryRecipes.containsKey(provider.activeCalculatorDiseaseId)) {
+          _selectedDiseaseId = provider.activeCalculatorDiseaseId!;
+        } else {
+          _selectedDiseaseId = _getDefaultDiseaseForCrop(_selectedCrop);
+        }
+        _initializedFromProvider = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          provider.clearRecoveryCalculator();
+        });
+      }
+    }
+  }
+
+  String _getDefaultDiseaseForCrop(CropType crop) {
+    switch (crop) {
+      case CropType.potato:
+        return 'Potato___Late_Blight';
+      case CropType.tomato:
+        return 'Tomato___Late_Blight';
+      case CropType.paddy:
+        return 'Rice___Leaf_Blast';
+      default:
+        return 'Tomato___Late_Blight';
+    }
+  }
+
+  List<DiseaseRecoveryRecipe> _getAvailableRecipesForCrop(CropType crop) {
+    return AgriCalculatorService.diseaseRecoveryRecipes.values
+        .where((recipe) => recipe.crop == crop)
+        .toList();
+  }
+
+  void _onCropSelected(CropType crop) {
+    setState(() {
+      _selectedCrop = crop;
+      if (_isRecoveryMode) {
+        final available = _getAvailableRecipesForCrop(crop);
+        if (available.isNotEmpty && !available.any((r) => r.id == _selectedDiseaseId)) {
+          _selectedDiseaseId = available.first.id;
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final result = AgriCalculatorService.calculateFertilizer(
+    final standardResult = AgriCalculatorService.calculateFertilizer(
       crop: _selectedCrop,
       area: _area,
       unit: _selectedUnit,
       combo: _selectedCombo,
+    );
+
+    final activeRecipe = AgriCalculatorService.diseaseRecoveryRecipes[_selectedDiseaseId] ??
+        AgriCalculatorService.diseaseRecoveryRecipes['Tomato___Late_Blight']!;
+
+    final recoveryResult = AgriCalculatorService.calculateDiseaseRecovery(
+      recipe: activeRecipe,
+      area: _area,
+      unit: _selectedUnit,
     );
 
     return SingleChildScrollView(
@@ -32,9 +107,99 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // 0. Mode Switcher (Standard NPK vs Therapeutic Recovery Rx)
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: (isDark ? const Color(0xFF16201B) : const Color(0xFFE8F0EA)).withValues(alpha: 0.85),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? AppTheme.darkBorder : const Color(0x331A3E31),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => setState(() => _isRecoveryMode = false),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: !_isRecoveryMode
+                            ? (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32))
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Standard Nutrition',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: !_isRecoveryMode
+                              ? Colors.white
+                              : (isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isRecoveryMode = true;
+                        if (!_recoveryCrops.contains(_selectedCrop)) {
+                          _selectedCrop = CropType.tomato;
+                        }
+                        _selectedDiseaseId = _getDefaultDiseaseForCrop(_selectedCrop);
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      decoration: BoxDecoration(
+                        color: _isRecoveryMode
+                            ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.healing_rounded,
+                            size: 14,
+                            color: _isRecoveryMode
+                                ? (isDark ? const Color(0xFF03120E) : Colors.white)
+                                : (isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F)),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(
+                            'Disease Recovery Rx',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: _isRecoveryMode
+                                  ? (isDark ? const Color(0xFF03120E) : Colors.white)
+                                  : (isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
           // 1. Crop Selection
           Text(
-            'SELECT TARGET CROP',
+            _isRecoveryMode ? 'TARGET CROP (RESEARCH-BACKED)' : 'SELECT TARGET CROP',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -46,14 +211,14 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: CropType.values.map((crop) {
+              children: (_isRecoveryMode ? _recoveryCrops : CropType.values).map((crop) {
                 final isSelected = crop == _selectedCrop;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      onTap: () => setState(() => _selectedCrop = crop),
+                      onTap: () => _onCropSelected(crop),
                       borderRadius: BorderRadius.circular(14),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
@@ -119,7 +284,73 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
               }).toList(),
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 16),
+
+          // In Recovery Mode: Disease Selector
+          if (_isRecoveryMode) ...[
+            Text(
+              'DIAGNOSED DISEASE TARGET',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
+                color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+              ),
+            ),
+            const SizedBox(height: 8),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: _getAvailableRecipesForCrop(_selectedCrop).map((recipe) {
+                  final isSelected = recipe.id == _selectedDiseaseId;
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _selectedDiseaseId = recipe.id),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? (isDark ? AppTheme.emeraldLight.withValues(alpha: 0.20) : const Color(0xFFE8F5EE))
+                              : (isDark ? const Color(0xFF16201B).withValues(alpha: 0.65) : Colors.white.withValues(alpha: 0.75)),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isSelected
+                                ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
+                                : (isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
+                            width: isSelected ? 1.5 : 1.0,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.coronavirus_outlined,
+                              size: 14,
+                              color: isSelected
+                                  ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
+                                  : (isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F)),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              recipe.diseaseNameEn.split('(').first.trim(),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11.5,
+                                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                color: isSelected
+                                    ? (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen)
+                                    : (isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
 
           // 2. Land Area & Unit Selector Card
           Container(
@@ -220,7 +451,9 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
                       ),
                     ),
                     Text(
-                      'ICAR NPK: ${_selectedCrop.defaultN.toInt()}-${_selectedCrop.defaultP.toInt()}-${_selectedCrop.defaultK.toInt()} kg/ac',
+                      _isRecoveryMode
+                          ? 'Water: ${recoveryResult.totalWaterLiters.toStringAsFixed(0)}L (${recoveryResult.totalKnapsackTanks} Tanks)'
+                          : 'ICAR NPK: ${_selectedCrop.defaultN.toInt()}-${_selectedCrop.defaultP.toInt()}-${_selectedCrop.defaultK.toInt()} kg/ac',
                       style: GoogleFonts.jetBrainsMono(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
@@ -247,174 +480,504 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
               ],
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
 
-          // 3. Formulation Switcher
-          Row(
-            children: FertilizerCombination.values.map((combo) {
-              final isCombo = combo == _selectedCombo;
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: GestureDetector(
-                    onTap: () => setState(() => _selectedCombo = combo),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: isCombo
-                            ? (isDark ? AppTheme.darkAccentGreen.withValues(alpha: 0.18) : const Color(0xFFE8F5EE))
-                            : (isDark ? const Color(0xFF16201B).withValues(alpha: 0.65) : Colors.white.withValues(alpha: 0.78)),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: isCombo ? (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32)) : (isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
-                          width: isCombo ? 1.5 : 1.0,
+          // IF RECOVERY MODE: Render Scientific Disease Recovery Section
+          if (_isRecoveryMode) ...[
+            _buildRecoverySection(isDark, recoveryResult),
+          ] else ...[
+            // STANDARD MODE: Formulation Switcher & Results
+            // 3. Formulation Switcher
+            Row(
+              children: FertilizerCombination.values.map((combo) {
+                final isCombo = combo == _selectedCombo;
+                return Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _selectedCombo = combo),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: isCombo
+                              ? (isDark ? AppTheme.darkAccentGreen.withValues(alpha: 0.18) : const Color(0xFFE8F5EE))
+                              : (isDark ? const Color(0xFF16201B).withValues(alpha: 0.65) : Colors.white.withValues(alpha: 0.78)),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isCombo ? (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32)) : (isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
+                            width: isCombo ? 1.5 : 1.0,
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            combo == FertilizerCombination.ureaDapMop ? 'DAP + Urea + MOP' : 'SSP + Urea + MOP',
-                            textAlign: TextAlign.center,
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w700,
-                              color: isDark ? (isCombo ? AppTheme.darkAccentGreen : AppTheme.darkTextPrimary) : const Color(0xFF193E32),
+                        child: Column(
+                          children: [
+                            Text(
+                              combo == FertilizerCombination.ureaDapMop ? 'DAP + Urea + MOP' : 'SSP + Urea + MOP',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: isDark ? (isCombo ? AppTheme.darkAccentGreen : AppTheme.darkTextPrimary) : const Color(0xFF193E32),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            combo == FertilizerCombination.ureaDapMop ? 'Common Standard' : 'Sulfur Fortified',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 9.5,
-                              color: isDark ? AppTheme.darkTextSecondary : const Color(0xFF52796F),
+                            const SizedBox(height: 2),
+                            Text(
+                              combo == FertilizerCombination.ureaDapMop ? 'Common Standard' : 'Sulfur Fortified',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 9.5,
+                                color: isDark ? AppTheme.darkTextSecondary : const Color(0xFF52796F),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-          const SizedBox(height: 18),
+                );
+              }).toList(),
+            ),
+            const SizedBox(height: 18),
 
-          // 4. RESULTS SECTION
-          Text(
-            'TOTAL FERTILIZER REQUIRED',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.6,
-              color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+            // 4. Standard Results Section
+            Text(
+              'TOTAL FERTILIZER REQUIRED',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
+                color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            Row(
+              children: [
+                Expanded(
+                  child: _buildFertilizerTile(
+                    label: 'Urea (46% N)',
+                    kg: standardResult.ureaKg,
+                    bags: standardResult.ureaBags,
+                    bagWeight: 45,
+                    bubbleColor: const Color(0xFFE8F5EE),
+                    iconColor: const Color(0xFF193E32),
+                    icon: Icons.grain_rounded,
+                    isDark: isDark,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _selectedCombo == FertilizerCombination.ureaDapMop
+                      ? _buildFertilizerTile(
+                          label: 'DAP (P+N)',
+                          kg: standardResult.dapKg,
+                          bags: standardResult.dapBags,
+                          bagWeight: 50,
+                          bubbleColor: const Color(0xFFFFF3E0),
+                          iconColor: const Color(0xFFE65100),
+                          icon: Icons.science_rounded,
+                          isDark: isDark,
+                        )
+                      : _buildFertilizerTile(
+                          label: 'SSP (16% P)',
+                          kg: standardResult.sspKg,
+                          bags: standardResult.sspBags,
+                          bagWeight: 50,
+                          bubbleColor: const Color(0xFFFFF3E0),
+                          iconColor: const Color(0xFFE65100),
+                          icon: Icons.science_rounded,
+                          isDark: isDark,
+                        ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: _buildFertilizerTile(
+                    label: 'MOP (60% K)',
+                    kg: standardResult.mopKg,
+                    bags: standardResult.mopBags,
+                    bagWeight: 50,
+                    bubbleColor: const Color(0xFFEDE7F6),
+                    iconColor: const Color(0xFF5E35B1),
+                    icon: Icons.filter_vintage_rounded,
+                    isDark: isDark,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: (isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFE8F5EE)).withValues(alpha: isDark ? 0.72 : 0.85),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.currency_rupee_rounded,
+                        size: 18,
+                        color: isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32),
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Subsidized Fertilizer Budget:',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    '₹${standardResult.estimatedCostInr.toStringAsFixed(0)}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                      color: isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
+
+            Text(
+              'SPLIT APPLICATION TIMELINE (ICAR PROTOCOL)',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
+                color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: isDark ? Colors.black.withValues(alpha: 0.2) : const Color(0x0C1A3E31),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  _buildScheduleStep(
+                    step: 'Stage 1 • Basal Application',
+                    timing: 'At transplanting or final land tilling',
+                    dose: standardResult.basalDoseSummary,
+                    icon: Icons.spa_rounded,
+                    color: const Color(0xFF193E32),
+                    isDark: isDark,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Divider(height: 1),
+                  ),
+                  _buildScheduleStep(
+                    step: 'Stage 2 • Vegetative Top-Dress',
+                    timing: '25-30 days after transplanting (active tillering/branching)',
+                    dose: standardResult.vegetativeDoseSummary,
+                    icon: Icons.eco_rounded,
+                    color: const Color(0xFF2E7D32),
+                    isDark: isDark,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Divider(height: 1),
+                  ),
+                  _buildScheduleStep(
+                    step: 'Stage 3 • Reproductive Booster',
+                    timing: 'Panicle initiation or early flowering phase',
+                    dose: standardResult.floweringDoseSummary,
+                    icon: Icons.local_florist_rounded,
+                    color: const Color(0xFFF57F17),
+                    isDark: isDark,
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRecoverySection(bool isDark, RecoveryCalculationResult recovery) {
+    final recipe = recovery.recipe;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 1. Scientific Research Citation Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.85),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isDark ? AppTheme.emeraldLight.withValues(alpha: 0.25) : const Color(0x331A3E31),
             ),
           ),
-          const SizedBox(height: 8),
-
-          // Bags Grid
-          Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Urea
-              Expanded(
-                child: _buildFertilizerTile(
-                  label: 'Urea (46% N)',
-                  kg: result.ureaKg,
-                  bags: result.ureaBags,
-                  bagWeight: 45,
-                  bubbleColor: const Color(0xFFE8F5EE),
-                  iconColor: const Color(0xFF193E32),
-                  icon: Icons.grain_rounded,
-                  isDark: isDark,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.science_rounded, color: AppTheme.emeraldLight, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        'RESEARCH CITATION',
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.6,
+                          color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                    decoration: BoxDecoration(
+                      color: AppTheme.emeraldLight.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                      'ACTUAL EXPERIMENTAL DATA',
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 8.5,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                recipe.researchCitation,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
                 ),
               ),
-              const SizedBox(width: 8),
-              // DAP or SSP
-              Expanded(
-                child: _selectedCombo == FertilizerCombination.ureaDapMop
-                    ? _buildFertilizerTile(
-                        label: 'DAP (P+N)',
-                        kg: result.dapKg,
-                        bags: result.dapBags,
-                        bagWeight: 50,
-                        bubbleColor: const Color(0xFFFFF3E0),
-                        iconColor: const Color(0xFFE65100),
-                        icon: Icons.science_rounded,
-                        isDark: isDark,
-                      )
-                    : _buildFertilizerTile(
-                        label: 'SSP (16% P)',
-                        kg: result.sspKg,
-                        bags: result.sspBags,
-                        bagWeight: 50,
-                        bubbleColor: const Color(0xFFFFF3E0),
-                        iconColor: const Color(0xFFE65100),
-                        icon: Icons.science_rounded,
-                        isDark: isDark,
-                      ),
-              ),
-              const SizedBox(width: 8),
-              // MOP
-              Expanded(
-                child: _buildFertilizerTile(
-                  label: 'MOP (60% K)',
-                  kg: result.mopKg,
-                  bags: result.mopBags,
-                  bagWeight: 50,
-                  bubbleColor: const Color(0xFFEDE7F6),
-                  iconColor: const Color(0xFF5E35B1),
-                  icon: Icons.filter_vintage_rounded,
-                  isDark: isDark,
+              const SizedBox(height: 6),
+              Text(
+                recipe.cellularMechanism,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11.5,
+                  color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+                  height: 1.4,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
+        ),
+        const SizedBox(height: 12),
 
-          // Estimated Subsidized Cost Banner
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: (isDark ? AppTheme.darkSurfaceElevated : const Color(0xFFE8F5EE)).withValues(alpha: isDark ? 0.72 : 0.85),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31)),
+        // 2. Critical Nitrogen / Urea Action Alert
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: recipe.haltNitrogen
+                ? AppTheme.alertRose.withValues(alpha: 0.12)
+                : AppTheme.amberWarningSoft,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: recipe.haltNitrogen
+                  ? AppTheme.alertRose.withValues(alpha: 0.3)
+                  : AppTheme.amberWarning.withValues(alpha: 0.3),
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                recipe.haltNitrogen ? Icons.cancel_rounded : Icons.info_rounded,
+                color: recipe.haltNitrogen ? AppTheme.alertRose : AppTheme.amberWarning,
+                size: 20,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.currency_rupee_rounded,
-                      size: 18,
-                      color: isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32),
-                    ),
-                    const SizedBox(width: 6),
                     Text(
-                      'Subsidized Fertilizer Budget:',
+                      recipe.haltNitrogen ? 'UREA APPLICATION RESTRICTION' : 'BALANCED NITROGEN MANAGEMENT',
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w800,
+                        color: recipe.haltNitrogen ? AppTheme.alertRose : AppTheme.amberWarning,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      recipe.nitrogenAdvisory,
                       style: GoogleFonts.plusJakartaSans(
-                        fontSize: 12.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                        color: recipe.haltNitrogen ? AppTheme.alertRose : AppTheme.amberWarning,
+                        height: 1.35,
                       ),
                     ),
                   ],
                 ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // 3. Foliar Curative Tank Mixture Breakdown
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'FOLIAR CURATIVE TANK COMBO',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.6,
+                color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+              ),
+            ),
+            Text(
+              '${recovery.totalKnapsackTanks} Tanks (@ 16L/tank)',
+              style: GoogleFonts.jetBrainsMono(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+
+        ...recovery.foliarItems.map((item) {
+          final isGrams = !item.isLiquid;
+          final totalFormatted = item.amountTotal >= 1000
+              ? '${(item.amountTotal / 1000).toStringAsFixed(2)} kg'
+              : '${item.amountTotal.toStringAsFixed(0)} ${isGrams ? 'g' : 'ml'}';
+          final perTankFormatted = '${item.amountPerTank.toStringAsFixed(1)} ${isGrams ? 'g' : 'ml'} / tank';
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.85),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.nameEn,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                          color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: (isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32)).withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        totalFormatted,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: isDark ? AppTheme.emeraldLight : const Color(0xFF193E32),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Text(
+                        item.chemicalFormula,
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? AppTheme.darkTextSecondary : const Color(0xFF52796F),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '• $perTankFormatted',
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? AppTheme.emeraldLight : const Color(0xFF2E7D32),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
                 Text(
-                  '₹${result.estimatedCostInr.toStringAsFixed(0)}',
+                  'Role: ${item.role}',
                   style: GoogleFonts.plusJakartaSans(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
-                    color: isDark ? AppTheme.darkAccentGreen : const Color(0xFF193E32),
+                    fontSize: 11.5,
+                    color: isDark ? AppTheme.darkTextMuted : const Color(0xFF7A9E93),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Commercial Form: ${item.marketSource}',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? AppTheme.darkTextSecondary : const Color(0xFF52796F),
                   ),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 18),
+          );
+        }),
+        const SizedBox(height: 8),
 
-          // 5. SPLIT APPLICATION SCHEDULE
+        // 4. Soil-Applied Recovery Supplement
+        if (recovery.soilItems.isNotEmpty) ...[
           Text(
-            'SPLIT APPLICATION TIMELINE (ICAR PROTOCOL)',
+            'SOIL ROOT-ZONE RECOVERY BROADCAST',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -423,57 +986,115 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
             ),
           ),
           const SizedBox(height: 8),
-
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.80),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
+          ...recovery.soilItems.map((item) {
+            return Container(
+              margin: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.85),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
+                ),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: isDark ? Colors.black.withValues(alpha: 0.2) : const Color(0x0C1A3E31),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                _buildScheduleStep(
-                  step: 'Stage 1 • Basal Application',
-                  timing: 'At transplanting or final land tilling',
-                  dose: result.basalDoseSummary,
-                  icon: Icons.spa_rounded,
-                  color: const Color(0xFF193E32),
-                  isDark: isDark,
-                ),
-                const Divider(height: 24, color: Color(0xFFEEF4F0)),
-                _buildScheduleStep(
-                  step: 'Stage 2 • Vegetative Top-Dressing',
-                  timing: '21 to 25 days after planting (Tillering)',
-                  dose: result.vegetativeDoseSummary,
-                  icon: Icons.eco_rounded,
-                  color: const Color(0xFF2E7D32),
-                  isDark: isDark,
-                ),
-                const Divider(height: 24, color: Color(0xFFEEF4F0)),
-                _buildScheduleStep(
-                  step: 'Stage 3 • Flowering / Panicle Stage',
-                  timing: '45 to 50 days (Flower bud & grain fill)',
-                  dose: result.floweringDoseSummary,
-                  icon: Icons.local_florist_rounded,
-                  color: const Color(0xFF0288D1),
-                  isDark: isDark,
-                ),
-              ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.nameEn,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w800,
+                            color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          item.role,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 11,
+                            color: isDark ? AppTheme.darkTextMuted : const Color(0xFF7A9E93),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '${item.totalKg.toStringAsFixed(1)} kg',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+        const SizedBox(height: 10),
+
+        // 5. Application Protocol & Schedule Card
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: (isDark ? const Color(0xFF16201B) : Colors.white).withValues(alpha: isDark ? 0.70 : 0.85),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isDark ? AppTheme.darkBorder : const Color(0x281A3E31),
             ),
           ),
-          const SizedBox(height: 24),
-        ],
-      ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.schedule_rounded, size: 16, color: AppTheme.amberWarning),
+                  const SizedBox(width: 8),
+                  Text(
+                    'APPLICATION PROTOCOL',
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                      color: AppTheme.amberWarning,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Schedule: ${recipe.sprayInterval}',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF193E32),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                recipe.practicalInstructions,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 11.5,
+                  color: isDark ? AppTheme.darkTextMuted : const Color(0xFF52796F),
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 

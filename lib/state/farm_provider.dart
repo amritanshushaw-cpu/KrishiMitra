@@ -16,6 +16,7 @@ import '../services/wifi_camera_service.dart';
 import '../services/secure_db_service.dart';
 import 'dart:async';
 import '../services/location_service.dart';
+import '../services/agri_calculator_service.dart';
 
 
 class FarmNotification {
@@ -71,6 +72,11 @@ class FarmProvider extends ChangeNotifier {
   bool _isFetchingLocation = false;
   String? _locationStatusMessage;
 
+  // Disease Recovery Calculator state
+  String? _activeCalculatorDiseaseId;
+  CropType? _activeCalculatorCrop;
+  bool _openCalculatorInRecoveryMode = false;
+
   // Getters
   SensorData get sensorData => _currentSensorData;
   BleConnectionState get bleState => _bleState;
@@ -100,6 +106,9 @@ class FarmProvider extends ChangeNotifier {
   double? get longitude => _longitude;
   bool get isFetchingLocation => _isFetchingLocation;
   String? get locationStatusMessage => _locationStatusMessage;
+  String? get activeCalculatorDiseaseId => _activeCalculatorDiseaseId;
+  CropType? get activeCalculatorCrop => _activeCalculatorCrop;
+  bool get openCalculatorInRecoveryMode => _openCalculatorInRecoveryMode;
   String get coordinatesDisplay {
     if (_latitude != null && _longitude != null) {
       final latDir = _latitude! >= 0 ? 'N' : 'S';
@@ -510,6 +519,18 @@ class FarmProvider extends ChangeNotifier {
       return true;
     }
     return false;
+  }
+
+  void openRecoveryCalculator({required CropType crop, required String diseaseId}) {
+    _activeCalculatorCrop = crop;
+    _activeCalculatorDiseaseId = diseaseId;
+    _openCalculatorInRecoveryMode = true;
+    setTabIndex(1);
+  }
+
+  void clearRecoveryCalculator() {
+    _openCalculatorInRecoveryMode = false;
+    notifyListeners();
   }
 
   void toggleTheme() {

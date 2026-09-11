@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../services/voice_tts_service.dart';
+import '../../services/agri_calculator_service.dart';
 import '../../state/farm_provider.dart';
 import '../widgets/app_glass_container.dart';
 
@@ -347,6 +348,151 @@ class DiagnosisDetailScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (AgriCalculatorService.diseaseRecoveryRecipes.containsKey(advisory.label)) ...[
+                  const SizedBox(height: 14),
+                  Builder(
+                    builder: (context) {
+                      final recipe = AgriCalculatorService.diseaseRecoveryRecipes[advisory.label]!;
+                      return AppGlassContainer(
+                        radius: 18,
+                        hasGoldGlow: true,
+                        padding: const EdgeInsets.all(18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.15),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons.science_rounded,
+                                        color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                                        size: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'RESEARCH RECOVERY COMBO',
+                                      style: GoogleFonts.jetBrainsMono(
+                                        fontSize: 10.5,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 0.5,
+                                        color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                                  decoration: BoxDecoration(
+                                    color: (isDark ? AppTheme.emeraldLight : AppTheme.forestGreen).withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Text(
+                                    'PEER-REVIEWED',
+                                    style: GoogleFonts.jetBrainsMono(
+                                      fontSize: 8.5,
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Best Fertilizer Combo to Heal Disease',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: isDark ? AppTheme.darkTextPrimary : AppTheme.lightTextPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              recipe.cellularMechanism,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12.5,
+                                color: isDark ? AppTheme.darkTextMuted : AppTheme.lightTextMuted,
+                                height: 1.4,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            // Nitrogen Advisory Banner
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: recipe.haltNitrogen
+                                    ? AppTheme.alertRose.withValues(alpha: 0.12)
+                                    : AppTheme.amberWarningSoft,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: recipe.haltNitrogen
+                                      ? AppTheme.alertRose.withValues(alpha: 0.3)
+                                      : AppTheme.amberWarning.withValues(alpha: 0.3),
+                                ),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(
+                                    recipe.haltNitrogen ? Icons.cancel_outlined : Icons.info_outline,
+                                    color: recipe.haltNitrogen ? AppTheme.alertRose : AppTheme.amberWarning,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      recipe.nitrogenAdvisory,
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: recipe.haltNitrogen ? AppTheme.alertRose : AppTheme.amberWarning,
+                                        height: 1.35,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: isDark ? AppTheme.emeraldLight : AppTheme.forestGreen,
+                                  foregroundColor: isDark ? const Color(0xFF03120E) : Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 16),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  elevation: 0,
+                                ),
+                                icon: const Icon(Icons.calculate_rounded, size: 18),
+                                label: Text(
+                                  'Calculate Exact Dosage for My Plot →',
+                                  style: GoogleFonts.plusJakartaSans(fontSize: 13, fontWeight: FontWeight.w700),
+                                ),
+                                onPressed: () {
+                                  provider.openRecoveryCalculator(
+                                    crop: recipe.crop,
+                                    diseaseId: recipe.id,
+                                  );
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ],
                 const SizedBox(height: 24),
               ],
             ),

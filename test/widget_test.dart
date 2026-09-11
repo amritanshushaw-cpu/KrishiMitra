@@ -55,7 +55,7 @@ void main() {
         value: provider,
         child: MaterialApp(
           home: Scaffold(
-            body: ProfileSettingsTab(onOpenSafetyNet: () {}),
+            body: ProfileSettingsTab(),
           ),
         ),
       ),
@@ -87,7 +87,7 @@ void main() {
         value: provider,
         child: MaterialApp(
           home: Scaffold(
-            body: ProfileSettingsTab(onOpenSafetyNet: () {}),
+            body: ProfileSettingsTab(),
           ),
         ),
       ),

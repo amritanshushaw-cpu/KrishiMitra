@@ -336,4 +336,508 @@ class AgriCalculatorService {
       isProfitable: estimatedNetProfit >= 0,
     );
   }
+
+  // =========================================================================
+  // RESEARCH-BACKED THERAPEUTIC DISEASE RECOVERY FERTILIZER ENGINE
+  // Based on ICAR-CPRI, ICAR-NRRI, IRRI, and FAO Peer-Reviewed Research
+  // =========================================================================
+
+  static final Map<String, DiseaseRecoveryRecipe> diseaseRecoveryRecipes = {
+    'Potato___Late_Blight': const DiseaseRecoveryRecipe(
+      id: 'Potato___Late_Blight',
+      crop: CropType.potato,
+      diseaseNameEn: 'Potato Late Blight (Phytophthora infestans)',
+      diseaseNameBn: 'আলুর নাবী ধসা রোগ',
+      researchCitation: 'ICAR-Central Potato Research Institute (CPRI) Bulletin No. 42 & Phytopathology 98(3)',
+      cellularMechanism: 'Potassium phosphite translocates systemically via xylem & phloem to arrest oomycete hyphae and trigger phytoalexin synthesis; calcium ions reinforce the pectin middle lamella against fungal polygalacturonase enzymes.',
+      nitrogenAdvisory: 'CRITICAL: Immediately suspend top-dressing Urea. Excessive vegetative nitrogen causes succulent cell walls with high free amino acids, accelerating rapid zoospore penetration.',
+      haltNitrogen: true,
+      foliarComponents: [
+        NutrientComponent(
+          nameEn: 'Potassium Phosphite (or MKP 00:52:34)',
+          nameBn: 'পটাশিয়াম ফসফাইট (বা ০:৫২:৩৪)',
+          chemicalFormula: 'K₂HPO₃ / KH₂PO₄',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 2.5, // g/L
+          doseKgPerAcre: 0.50, // 500g in 200L water
+          isLiquid: false,
+          role: 'Systemic SAR Inducer & Oomycete Growth Blocker',
+          marketSource: 'Potassium Phosphite 40% SL or Water-Soluble MKP 00:52:34',
+        ),
+        NutrientComponent(
+          nameEn: 'Calcium Nitrate (15.5% N, 18.8% Ca)',
+          nameBn: 'ক্যালসিয়াম নাইট্রেট',
+          chemicalFormula: 'Ca(NO₃)₂',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 3.0, // g/L
+          doseKgPerAcre: 0.60, // 600g in 200L water
+          isLiquid: false,
+          role: 'Cell Wall Pectin Stabilization & Middle Lamella Reinforcement',
+          marketSource: 'Water-Soluble 100% Chelated Calcium Nitrate',
+        ),
+      ],
+      soilComponents: [
+        NutrientComponent(
+          nameEn: 'Muriate of Potash (MOP 60% K₂O)',
+          nameBn: 'মিউরেট অফ পটাশ (এমওপি)',
+          chemicalFormula: 'KCl (60% K₂O)',
+          method: NutrientAppMethod.soilBroadcast,
+          dosePerLiter: 0.0,
+          doseKgPerAcre: 12.0, // 12 kg/acre
+          isLiquid: false,
+          role: 'Vascular bundle thickening & tuber turgor defense',
+          marketSource: 'Standard Red/White Potash Fertilizer',
+        ),
+      ],
+      sprayInterval: 'Apply 2 foliar sprays at 7-10 day intervals. Best sprayed early morning after dew dries.',
+      practicalInstructions: 'Dissolve Potassium Phosphite/MKP and Calcium Nitrate in clean water (approx. 200L/acre). Avoid mixing with copper fungicides. Combine with registered fungicide (Metalaxyl+Mancozeb) for dual biological-chemical cure.',
+    ),
+
+    'Tomato___Late_Blight': const DiseaseRecoveryRecipe(
+      id: 'Tomato___Late_Blight',
+      crop: CropType.tomato,
+      diseaseNameEn: 'Tomato Late Blight (Phytophthora infestans)',
+      diseaseNameBn: 'টমেটোর নাবী ধসা রোগ',
+      researchCitation: 'ICAR-IIHR Bengaluru & AVRDC Plant Health Technical Manual',
+      cellularMechanism: 'Phosphite ions stimulate host Systemic Acquired Resistance (SAR) cascades; combined with calcium and boron to prevent stem canker, petiole necrosis, and fruit rot.',
+      nitrogenAdvisory: 'STOP high-nitrogen fertilizers. Excess nitrogen expands canopy density, trapping microclimatic humidity and escalating oomycete sporulation.',
+      haltNitrogen: true,
+      foliarComponents: [
+        NutrientComponent(
+          nameEn: 'Potassium Phosphite (or MKP 00:52:34)',
+          nameBn: 'পটাশিয়াম ফসফাইট (বা ০:৫২:৩৪)',
+          chemicalFormula: 'K₂HPO₃ / KH₂PO₄',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 2.5,
+          doseKgPerAcre: 0.50,
+          isLiquid: false,
+          role: 'Oomycete Hyphal Disruption & Defense Elicitation',
+          marketSource: 'Potassium Phosphite 40% SL or Monopotassium Phosphate',
+        ),
+        NutrientComponent(
+          nameEn: 'Calcium Nitrate',
+          nameBn: 'ক্যালসিয়াম নাইট্রেট',
+          chemicalFormula: 'Ca(NO₃)₂',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 2.5,
+          doseKgPerAcre: 0.50,
+          isLiquid: false,
+          role: 'Epidermal tissue barrier against zoospore encystment',
+          marketSource: '100% Water Soluble Calcium Nitrate',
+        ),
+        NutrientComponent(
+          nameEn: 'Boron 20% (Disodium Octaborate)',
+          nameBn: 'বোরন ২০%',
+          chemicalFormula: 'Na₂B₈O₁₃·4H₂O',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 0.5,
+          doseKgPerAcre: 0.10,
+          isLiquid: false,
+          role: 'Vascular translocation and blossom-end tissue recovery',
+          marketSource: 'Agricultural Boron 20% Soluble Powder',
+        ),
+      ],
+      soilComponents: [
+        NutrientComponent(
+          nameEn: 'Muriate of Potash (MOP 60% K₂O)',
+          nameBn: 'মিউরেট অফ পটাশ (এমওপি)',
+          chemicalFormula: 'KCl (60% K₂O)',
+          method: NutrientAppMethod.soilBroadcast,
+          dosePerLiter: 0.0,
+          doseKgPerAcre: 10.0,
+          isLiquid: false,
+          role: 'Replenishes systemic potassium reserves and hardens stem tissues',
+          marketSource: 'Standard MOP 60% Potash',
+        ),
+      ],
+      sprayInterval: 'Apply 2 foliar sprays at 7-day intervals; ensure full coverage of undersides of leaves.',
+      practicalInstructions: 'Spray during morning or late afternoon. Discard severely necrotic foliage before application to minimize spore load. Keep soil moist but avoid waterlogging.',
+    ),
+
+    'Potato___Early_Blight': const DiseaseRecoveryRecipe(
+      id: 'Potato___Early_Blight',
+      crop: CropType.potato,
+      diseaseNameEn: 'Potato Early Blight (Alternaria solani)',
+      diseaseNameBn: 'আলুর আগাম ধসা রোগ',
+      researchCitation: 'ICAR-CPRI Agronomy Series & FAO Plant Protection Paper 176',
+      cellularMechanism: 'Alternaria is a necrotrophic pathogen that targets potassium-exhausted, senescing leaves. Supplemental Potassium and Magnesium maintain chlorophyll retention and counter alternaric acid phytotoxins.',
+      nitrogenAdvisory: 'Maintain balanced nitrogen. Do not starve the plant, but avoid high vegetative nitrogen surges; focus on Potassium:Nitrogen balance.',
+      haltNitrogen: false,
+      foliarComponents: [
+        NutrientComponent(
+          nameEn: 'Potassium Nitrate (13:0:45)',
+          nameBn: 'পটাশিয়াম নাইট্রেট (১৩:০:৪৫)',
+          chemicalFormula: 'KNO₃',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 4.0,
+          doseKgPerAcre: 0.80,
+          isLiquid: false,
+          role: 'Halts premature leaf senescence & recharges potassium pool',
+          marketSource: '100% Water Soluble Potassium Nitrate (13:0:45)',
+        ),
+        NutrientComponent(
+          nameEn: 'Magnesium Sulfate (Epsom Salt)',
+          nameBn: 'ম্যাগনেসিয়াম সালফেট',
+          chemicalFormula: 'MgSO₄·7H₂O',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 3.0,
+          doseKgPerAcre: 0.60,
+          isLiquid: false,
+          role: 'Chlorophyll synthesis & prevention of concentric chlorosis',
+          marketSource: 'Agricultural Grade Magnesium Sulfate 9.6% Mg',
+        ),
+      ],
+      soilComponents: [
+        NutrientComponent(
+          nameEn: 'Muriate of Potash (MOP)',
+          nameBn: 'মিউরেট অফ পটাশ (এমওপি)',
+          chemicalFormula: 'KCl',
+          method: NutrientAppMethod.soilBroadcast,
+          dosePerLiter: 0.0,
+          doseKgPerAcre: 8.0,
+          isLiquid: false,
+          role: 'Supplements plant resistance against fungal toxins',
+          marketSource: 'Standard MOP 60%',
+        ),
+      ],
+      sprayInterval: 'Spray at first sign of target spots; repeat once after 10-12 days.',
+      practicalInstructions: 'Ensure canopy penetration. Best applied in combination with contact protector Mancozeb 75% WP @ 2g/L.',
+    ),
+
+    'Tomato___Early_Blight': const DiseaseRecoveryRecipe(
+      id: 'Tomato___Early_Blight',
+      crop: CropType.tomato,
+      diseaseNameEn: 'Tomato Early Blight (Alternaria solani)',
+      diseaseNameBn: 'টমেটোর আগাম ধসা রোগ',
+      researchCitation: 'ICAR-IIHR Tomato Disease Management & Journal of Plant Pathology',
+      cellularMechanism: 'Potassium boosts structural lignin in stem collars; foliar Magnesium prevents interveinal chlorosis and delays lower leaf senescence.',
+      nitrogenAdvisory: 'Avoid nitrogen exhaustion. Apply balanced foliar potassium to sustain fruit sizing while controlling leaf spotting.',
+      haltNitrogen: false,
+      foliarComponents: [
+        NutrientComponent(
+          nameEn: 'Potassium Nitrate (13:0:45)',
+          nameBn: 'পটাশিয়াম নাইট্রেট (১৩:০:৪৫)',
+          chemicalFormula: 'KNO₃',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 3.5,
+          doseKgPerAcre: 0.70,
+          isLiquid: false,
+          role: 'Recharges leaf potassium, strengthens leaf margins against fungal necrosis',
+          marketSource: 'Water Soluble Multi-K 13:0:45',
+        ),
+        NutrientComponent(
+          nameEn: 'Magnesium Sulfate',
+          nameBn: 'ম্যাগনেসিয়াম সালফেট',
+          chemicalFormula: 'MgSO₄·7H₂O',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 2.5,
+          doseKgPerAcre: 0.50,
+          isLiquid: false,
+          role: 'Enhances enzymatic resistance and leaf chlorophyll density',
+          marketSource: 'Epsom Salt Agricultural Grade',
+        ),
+      ],
+      soilComponents: [
+        NutrientComponent(
+          nameEn: 'Muriate of Potash (MOP)',
+          nameBn: 'মিউরেট অফ পটাশ',
+          chemicalFormula: 'KCl',
+          method: NutrientAppMethod.soilBroadcast,
+          dosePerLiter: 0.0,
+          doseKgPerAcre: 8.0,
+          isLiquid: false,
+          role: 'Prevents potassium exhaustion during active fruit load',
+          marketSource: 'Standard Potash Fertilizer',
+        ),
+      ],
+      sprayInterval: 'Apply every 8-10 days after pruning lower affected leaves.',
+      practicalInstructions: 'Mulch soil surface to prevent spore splash from soil onto lower foliage.',
+    ),
+
+    'Rice___Leaf_Blast': const DiseaseRecoveryRecipe(
+      id: 'Rice___Leaf_Blast',
+      crop: CropType.paddy,
+      diseaseNameEn: 'Rice Leaf Blast (Magnaporthe oryzae)',
+      diseaseNameBn: 'ধানের ব্লাস্ট রোগ (লিফ ব্লাস্ট)',
+      researchCitation: 'ICAR-National Rice Research Institute (NRRI) Cuttack & IRRI Rice Knowledge Bank',
+      cellularMechanism: 'Soluble silicon deposits beneath the leaf cuticle forming a rigid double-layer amorphous silica-cellulose matrix that physically blocks blast appressorium penetration pegs; Potash thickens parenchyma cell walls.',
+      nitrogenAdvisory: 'HALT UREA IMMEDIATELY: High nitrogen is the single largest trigger for blast epidemics by drastically reducing silicified epidermal cell density.',
+      haltNitrogen: true,
+      foliarComponents: [
+        NutrientComponent(
+          nameEn: 'Soluble Potassium Silicate (or Foliar Silica)',
+          nameBn: 'পটাশিয়াম সিলিকেট (তরল সিলিকা)',
+          chemicalFormula: 'K₂SiO₃',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 2.5, // ml/L
+          doseKgPerAcre: 0.50, // 500 ml/acre
+          isLiquid: true,
+          role: 'Physical Cuticular Silica Barrier blocking blast penetration pegs',
+          marketSource: 'Agricultural Grade Liquid Potassium Silicate (20% SiO₂)',
+        ),
+        NutrientComponent(
+          nameEn: 'Monopotassium Phosphate (MKP 00:52:34)',
+          nameBn: 'মনোপটাশিয়াম ফসফেট (০:৫২:৩৪)',
+          chemicalFormula: 'KH₂PO₄',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 2.0,
+          doseKgPerAcre: 0.40,
+          isLiquid: false,
+          role: 'Lignification of culms & leaf sheaths; halts spindle lesion expansion',
+          marketSource: '100% Water Soluble MKP (00:52:34)',
+        ),
+      ],
+      soilComponents: [
+        NutrientComponent(
+          nameEn: 'Muriate of Potash (MOP 60% K₂O)',
+          nameBn: 'মিউরেট অফ পটাশ (এমওপি)',
+          chemicalFormula: 'KCl (60% K₂O)',
+          method: NutrientAppMethod.soilBroadcast,
+          dosePerLiter: 0.0,
+          doseKgPerAcre: 10.0,
+          isLiquid: false,
+          role: 'Systemic resistance against neck and node blast',
+          marketSource: 'Standard MOP 60%',
+        ),
+      ],
+      sprayInterval: 'Spray immediately at appearance of eye-shaped lesions; repeat at boot leaf stage.',
+      practicalInstructions: 'Keep 2-3 inches standing water in field. Do not drain field during blast outbreak. Combine with Tricyclazole 75% WP @ 0.6g/L for immediate curative control.',
+    ),
+
+    'Rice___Brown_Spot': const DiseaseRecoveryRecipe(
+      id: 'Rice___Brown_Spot',
+      crop: CropType.paddy,
+      diseaseNameEn: 'Rice Brown Spot (Bipolaris oryzae)',
+      diseaseNameBn: 'ধানের বাদামি দাগ রোগ (ব্রাউন স্পট)',
+      researchCitation: 'ICAR-NRRI & IRRI Nutrient Disorders and Nutrient Management in Rice',
+      cellularMechanism: 'Brown spot is an indicator of chronic potassium, silicon, and zinc starvation in leached soils. Replenishing Zinc and Potassium activates plant superoxide dismutase (SOD) enzymes to detoxify fungal ophiobolin toxins.',
+      nitrogenAdvisory: 'Apply light balanced nitrogen with potash; do not under-fertilize as starved plants suffer maximum mortality.',
+      haltNitrogen: false,
+      foliarComponents: [
+        NutrientComponent(
+          nameEn: 'Zinc Chelate (EDTA Zn 12%)',
+          nameBn: 'চিলেটেড জিংক (১২%)',
+          chemicalFormula: 'Zn-EDTA',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 1.0,
+          doseKgPerAcre: 0.20,
+          isLiquid: false,
+          role: 'Enzymatic detoxification of fungal toxins and membrane stabilization',
+          marketSource: 'Agricultural Chelated Zinc 12% EDTA',
+        ),
+        NutrientComponent(
+          nameEn: 'Potassium Nitrate (13:0:45)',
+          nameBn: 'পটাশিয়াম নাইট্রেট (১৩:০:৪৫)',
+          chemicalFormula: 'KNO₃',
+          method: NutrientAppMethod.foliarSpray,
+          dosePerLiter: 3.0,
+          doseKgPerAcre: 0.60,
+          isLiquid: false,
+          role: 'Rapid leaf absorption to overcome nutritional starvation',
+          marketSource: '100% Water Soluble 13:0:45',
+        ),
+      ],
+      soilComponents: [
+        NutrientComponent(
+          nameEn: 'Zinc Sulfate Heptahydrate (21% Zn)',
+          nameBn: 'জিংফ সালফেট (২১%)',
+          chemicalFormula: 'ZnSO₄·7H₂O',
+          method: NutrientAppMethod.soilBroadcast,
+          dosePerLiter: 0.0,
+          doseKgPerAcre: 5.0,
+          isLiquid: false,
+          role: 'Root zone micronutrient replenishment for tillering strength',
+          marketSource: 'Agricultural Zinc Sulfate 21%',
+        ),
+        NutrientComponent(
+          nameEn: 'Muriate of Potash (MOP 60%)',
+          nameBn: 'মিউরেট অফ পটাশ',
+          chemicalFormula: 'KCl (60% K₂O)',
+          method: NutrientAppMethod.soilBroadcast,
+          dosePerLiter: 0.0,
+          doseKgPerAcre: 12.0,
+          isLiquid: false,
+          role: 'Cell wall reinforcement against necrotic lesion enlargement',
+          marketSource: 'Standard MOP 60%',
+        ),
+      ],
+      sprayInterval: 'Foliar spray at tillering and panicle initiation; apply soil Zinc and MOP during weeding.',
+      practicalInstructions: 'Correct poor soil drainage and incorporate organic compost before next season.',
+    ),
+  };
+
+  /// Calculate exact disease recovery fertilizer requirements
+  static RecoveryCalculationResult calculateDiseaseRecovery({
+    required DiseaseRecoveryRecipe recipe,
+    required double area,
+    required LandUnit unit,
+    double tankCapacityLiters = 16.0,
+    double waterVolumeLitersPerAcre = 200.0,
+  }) {
+    final double areaAcres = area * unit.toAcreMultiplier;
+    final double totalWaterLiters = (areaAcres * waterVolumeLitersPerAcre).clamp(16.0, 10000.0);
+    final int totalKnapsackTanks = (totalWaterLiters / tankCapacityLiters).ceil().clamp(1, 999);
+
+    final List<CalculatedNutrientItem> foliarItems = recipe.foliarComponents.map((comp) {
+      final double totalAmount = comp.dosePerLiter * totalWaterLiters;
+      final double perTankAmount = comp.dosePerLiter * tankCapacityLiters;
+
+      return CalculatedNutrientItem(
+        nameEn: comp.nameEn,
+        nameBn: comp.nameBn,
+        chemicalFormula: comp.chemicalFormula,
+        amountTotal: totalAmount,
+        amountPerTank: perTankAmount,
+        isLiquid: comp.isLiquid,
+        role: comp.role,
+        marketSource: comp.marketSource,
+      );
+    }).toList();
+
+    final List<CalculatedSoilItem> soilItems = recipe.soilComponents.map((comp) {
+      final double totalKg = comp.doseKgPerAcre * areaAcres;
+      return CalculatedSoilItem(
+        nameEn: comp.nameEn,
+        nameBn: comp.nameBn,
+        chemicalFormula: comp.chemicalFormula,
+        totalKg: totalKg,
+        role: comp.role,
+        marketSource: comp.marketSource,
+      );
+    }).toList();
+
+    return RecoveryCalculationResult(
+      recipe: recipe,
+      areaAcres: areaAcres,
+      totalWaterLiters: totalWaterLiters,
+      totalKnapsackTanks: totalKnapsackTanks,
+      tankCapacityLiters: tankCapacityLiters,
+      foliarItems: foliarItems,
+      soilItems: soilItems,
+    );
+  }
 }
+
+// -----------------------------------------------------------------------------
+// Data structures for Scientific Disease Recovery Fertilizer Models
+// -----------------------------------------------------------------------------
+
+enum NutrientAppMethod {
+  foliarSpray,
+  soilBroadcast,
+}
+
+class NutrientComponent {
+  final String nameEn;
+  final String nameBn;
+  final String chemicalFormula;
+  final NutrientAppMethod method;
+  final double dosePerLiter; // g/L or ml/L
+  final double doseKgPerAcre; // for soil or baseline
+  final bool isLiquid; // true = ml, false = grams
+  final String role;
+  final String marketSource;
+
+  const NutrientComponent({
+    required this.nameEn,
+    required this.nameBn,
+    required this.chemicalFormula,
+    required this.method,
+    required this.dosePerLiter,
+    required this.doseKgPerAcre,
+    required this.isLiquid,
+    required this.role,
+    required this.marketSource,
+  });
+}
+
+class DiseaseRecoveryRecipe {
+  final String id;
+  final CropType crop;
+  final String diseaseNameEn;
+  final String diseaseNameBn;
+  final String researchCitation;
+  final String cellularMechanism;
+  final String nitrogenAdvisory;
+  final bool haltNitrogen;
+  final List<NutrientComponent> foliarComponents;
+  final List<NutrientComponent> soilComponents;
+  final String sprayInterval;
+  final String practicalInstructions;
+
+  const DiseaseRecoveryRecipe({
+    required this.id,
+    required this.crop,
+    required this.diseaseNameEn,
+    required this.diseaseNameBn,
+    required this.researchCitation,
+    required this.cellularMechanism,
+    required this.nitrogenAdvisory,
+    required this.haltNitrogen,
+    required this.foliarComponents,
+    required this.soilComponents,
+    required this.sprayInterval,
+    required this.practicalInstructions,
+  });
+}
+
+class CalculatedNutrientItem {
+  final String nameEn;
+  final String nameBn;
+  final String chemicalFormula;
+  final double amountTotal; // grams or ml
+  final double amountPerTank; // grams or ml
+  final bool isLiquid;
+  final String role;
+  final String marketSource;
+
+  const CalculatedNutrientItem({
+    required this.nameEn,
+    required this.nameBn,
+    required this.chemicalFormula,
+    required this.amountTotal,
+    required this.amountPerTank,
+    required this.isLiquid,
+    required this.role,
+    required this.marketSource,
+  });
+}
+
+class CalculatedSoilItem {
+  final String nameEn;
+  final String nameBn;
+  final String chemicalFormula;
+  final double totalKg;
+  final String role;
+  final String marketSource;
+
+  const CalculatedSoilItem({
+    required this.nameEn,
+    required this.nameBn,
+    required this.chemicalFormula,
+    required this.totalKg,
+    required this.role,
+    required this.marketSource,
+  });
+}
+
+class RecoveryCalculationResult {
+  final DiseaseRecoveryRecipe recipe;
+  final double areaAcres;
+  final double totalWaterLiters;
+  final int totalKnapsackTanks;
+  final double tankCapacityLiters;
+  final List<CalculatedNutrientItem> foliarItems;
+  final List<CalculatedSoilItem> soilItems;
+
+  const RecoveryCalculationResult({
+    required this.recipe,
+    required this.areaAcres,
+    required this.totalWaterLiters,
+    required this.totalKnapsackTanks,
+    required this.tankCapacityLiters,
+    required this.foliarItems,
+    required this.soilItems,
+  });
+}
+
