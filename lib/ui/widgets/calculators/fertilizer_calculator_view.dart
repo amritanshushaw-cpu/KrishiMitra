@@ -64,7 +64,6 @@ class _FertilizerCalculatorViewState extends State<FertilizerCalculatorView> {
   Widget build(BuildContext context) {
     final provider = context.watch<FarmProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final provider = context.watch<FarmProvider>();
 
     if (provider.openCalculatorInRecoveryMode) {
       _isRecoveryMode = true;
