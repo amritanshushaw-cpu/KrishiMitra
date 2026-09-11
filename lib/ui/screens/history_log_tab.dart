@@ -66,7 +66,7 @@ class HistoryLogTab extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  provider.strings.selectDuration,
+                  context.read<FarmProvider>().strings.selectDuration,
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
