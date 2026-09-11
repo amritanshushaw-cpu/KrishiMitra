@@ -8,8 +8,6 @@ import '../widgets/app_glass_container.dart';
 import '../widgets/liquid_glass_container.dart';
 import '../widgets/farm_health_ring.dart';
 import '../widgets/weather_status_bar.dart';
-import '../widgets/historical_advisory_card.dart';
-
 import 'latest_scan_details_screen.dart';
 
 class HomeDashboardTab extends StatelessWidget {
@@ -148,10 +146,6 @@ class HomeDashboardTab extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 16),
-
-              // Historical 7-Day DB Scan Card
-              const HistoricalAdvisoryCard(),
               const SizedBox(height: 16),
               
               // Pump Control Card
